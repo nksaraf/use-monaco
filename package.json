@@ -4,7 +4,8 @@
   "main": "dist/cjs/use-monaco.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "build": "pkger build"
+    "start": "next",
+    "build": "next build"
   },
   "peerDependencies": {
     "react": ">=16"
