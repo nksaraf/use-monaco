@@ -1,31 +1,40 @@
 import * as monaco from 'monaco-editor';
 
 export interface IWordRange {
-	/**
-	 * The index where the word starts.
-	 */
-	readonly start: number;
-	/**
-	 * The index where the word ends.
-	 */
-	readonly end: number;
+  /**
+   * The index where the word starts.
+   */
+  readonly start: number;
+  /**
+   * The index where the word ends.
+   */
+  readonly end: number;
 }
 
 export interface IMirrorModel {
   readonly uri: monaco.Uri;
   readonly version: number;
-	readonly eol: string;
-	getValue(): string;
-	getLinesContent(): string[];
-	getLineCount(): number;
-	getLineContent(lineNumber: number): string;
-	getLineWords(lineNumber: number, wordDefinition: RegExp): monaco.editor.IWordAtPosition[];
-	createWordIterator(wordDefinition: RegExp): Iterator<string>;
-	getWordUntilPosition(position: monaco.IPosition, wordDefinition: RegExp): monaco.editor.IWordAtPosition;
-	getValueInRange(range: monaco.IRange): string;
-	getWordAtPosition(position: monaco.IPosition, wordDefinition: RegExp): monaco.Range | null;
-	offsetAt(position: monaco.IPosition): number;
-	positionAt(offset: number): monaco.IPosition;
+  readonly eol: string;
+  getValue(): string;
+  getLinesContent(): string[];
+  getLineCount(): number;
+  getLineContent(lineNumber: number): string;
+  getLineWords(
+    lineNumber: number,
+    wordDefinition: RegExp
+  ): monaco.editor.IWordAtPosition[];
+  createWordIterator(wordDefinition: RegExp): Iterator<string>;
+  getWordUntilPosition(
+    position: monaco.IPosition,
+    wordDefinition: RegExp
+  ): monaco.editor.IWordAtPosition;
+  getValueInRange(range: monaco.IRange): string;
+  getWordAtPosition(
+    position: monaco.IPosition,
+    wordDefinition: RegExp
+  ): monaco.Range | null;
+  offsetAt(position: monaco.IPosition): number;
+  positionAt(offset: number): monaco.IPosition;
   getValue(): string;
   getFullModelRange(): monaco.IRange;
 }
@@ -40,7 +49,6 @@ export interface IWorkerContext<H = undefined> {
    */
   getMirrorModels(): IMirrorModel[];
 }
-
 
 export interface BaseWorker {
   // constructor()
@@ -148,7 +156,7 @@ export interface BaseWorker {
     position: monaco.Position,
     item: monaco.languages.CompletionItem
   ): monaco.languages.ProviderResult<monaco.languages.CompletionItem>;
-  completionTriggerCharacters?: string[],
+  completionTriggerCharacters?: string[];
   provideDocumentColors?(
     model: IMirrorModel
   ): monaco.languages.ProviderResult<monaco.languages.IColorInformation[]>;
@@ -200,6 +208,15 @@ export class BaseWorker {
   getModel(uri: string) {
     for (let model of this.getModels()) {
       if (model.uri.toString() === uri) {
+        Object.assign(model, {
+          getFullModelRange: () => ({
+            startLineNumber: 1,
+            endLineNumber: model.getLineCount(),
+            startColumn: 1,
+            endColumn:
+              model.getLineContent(model.getLineCount() - 1).length + 1,
+          }),
+        });
         return model;
       }
     }
@@ -215,14 +232,14 @@ export class BaseWorker {
     uri: string,
     ...args: any[]
   ): monaco.languages.ProviderResult<T> {
-    const providerFunc = 'provide' + provider.charAt(0).toUpperCase() + provider.slice(1);
+    const providerFunc =
+      'provide' + provider.charAt(0).toUpperCase() + provider.slice(1);
     if ((this as any)[providerFunc]) {
       return (this as any)[providerFunc](this.getModel(uri), ...args);
     } else {
       console.error(`No provider for ${provider}`);
       return null;
     }
-    
   }
 
   resolve<T>(
@@ -230,7 +247,8 @@ export class BaseWorker {
     uri: string,
     ...args: any[]
   ): monaco.languages.ProviderResult<T> {
-    const resolverFunc = 'resolve' + resolver.charAt(0).toUpperCase() + resolver.slice(1);
+    const resolverFunc =
+      'resolve' + resolver.charAt(0).toUpperCase() + resolver.slice(1);
     if ((this as any)[resolverFunc]) {
       return (this as any)[resolverFunc](this.getModel(uri), ...args);
     } else {

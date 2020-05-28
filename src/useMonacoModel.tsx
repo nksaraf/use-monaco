@@ -1,8 +1,8 @@
-import { fixPath } from 'utils';
+import { fixPath } from './utils';
 import React from 'react';
 import * as monacoApi from 'monaco-editor';
 
-export const useEditorModel = ({
+export const useMonacoModel = ({
   monaco,
   value,
   language,
@@ -64,6 +64,7 @@ export const useEditorModel = ({
     }
     return model;
   }
+
   const [model, setModel] = React.useState<monacoApi.editor.ITextModel>();
 
   path = fixPath(path);

@@ -1,5 +1,5 @@
 {
-  "include": ["src", "types", "test", "pages"],
+  "include": ["src"],
   "compilerOptions": {
     "target": "es5",
     "module": "esnext",
@@ -7,24 +7,21 @@
     "importHelpers": true,
     "declaration": true,
     "sourceMap": true,
-    "rootDir": "./",
-    "noImplicitThis": true,
-    "alwaysStrict": true,
-    "noFallthroughCasesInSwitch": true,
+    "rootDir": "./src",
+    "outDir": "dist/types",
+    "strict": false,
     "moduleResolution": "node",
-    "baseUrl": "./",
-    "paths": {
-      "*": ["src/*", "node_modules/*"]
-    },
-    "jsx": "preserve",
+    "baseUrl": "./src",
+    "jsx": "react",
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "allowJs": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
+    "noEmit": false,
+    "emitDeclarationOnly": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
-    "strict": false
+    "isolatedModules": true
   },
   "exclude": ["node_modules"]
 }

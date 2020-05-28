@@ -1,8 +1,23 @@
 import { noop, asDisposable } from './utils';
 import * as monacoApi from 'monaco-editor';
 import React from 'react';
-import { useRefWithEffects } from 'useRefEffect';
 import useDeepCompareEffect from 'use-deep-compare-effect';
+
+export function useRefWithEffect<T>(): [
+  React.MutableRefObject<T | undefined>,
+  (effect: (obj: T) => void, deps: any[]) => void
+] {
+  const ref = React.useRef<T>();
+  const useRefEffect = (effect: (obj: T) => void, deps: any[]) => {
+    React.useEffect(() => {
+      if (ref.current) {
+        return effect(ref.current);
+      }
+    }, [...deps]);
+  };
+
+  return [ref, useRefEffect];
+}
 
 export const useEditor = ({
   options = {},
@@ -38,7 +53,7 @@ export const useEditor = ({
   model?: monacoApi.editor.ITextModel;
 }) => {
   const containerRef = React.useRef<HTMLDivElement>();
-  const [editorRef, useEditorEffect] = useRefWithEffects<
+  const [editorRef, useEditorEffect] = useRefWithEffect<
     monacoApi.editor.IStandaloneCodeEditor
   >();
   const subscriptionRef = React.useRef<monacoApi.IDisposable>(null);
@@ -52,8 +67,6 @@ export const useEditor = ({
       console.error('Assign container ref to something');
       return;
     }
-
-    // monaco.worker.setEnvironment(getWorkerUrl, getWorker);
 
     options = Object.assign(
       {

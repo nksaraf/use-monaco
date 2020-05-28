@@ -2,12 +2,7 @@ import { useEffect } from 'react';
 import React from 'react';
 import * as monacoApi from 'monaco-editor';
 import addons from './monaco';
-
-const config = {
-  paths: {
-    vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.20.0/min/vs',
-  },
-};
+import { noop } from './utils';
 
 interface CancellablePromise<T> extends Promise<T> {
   cancel: () => void;
@@ -40,8 +35,8 @@ const makeCancelable = function <T>(
 
 export class MonacoLoader {
   config: any;
-  constructor(config = {}) {
-    this.config = config;
+  constructor() {
+    this.config = {};
   }
   resolve: any;
   reject: any;
@@ -62,11 +57,11 @@ export class MonacoLoader {
     loaderScript.onerror = this.reject;
     return loaderScript;
   }
+
   createMainScript() {
     const mainScript = this.createScript();
     mainScript.innerHTML = `
       require.config(${JSON.stringify(this.config)});
-      
       require(['vs/editor/editor.main'], function() {
         document.dispatchEvent(new Event('monaco_init'));
       });
@@ -97,27 +92,55 @@ export class MonacoLoader {
   }
 }
 
-export const monacoLoader = new MonacoLoader(config);
+export const monacoLoader = new MonacoLoader();
 
-export const useMonaco = (monacoConfig = config) => {
+export const useMonaco = ({
+  paths: {
+    vs = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.20.0/min/vs',
+  } = {},
+  onLoad = noop,
+  plugins = [],
+}: {
+  paths?: {
+    vs?: string;
+  };
+  onLoad?: (monaco: typeof monacoApi) => (() => void) | void;
+  plugins?: monacoApi.plugin.IPlugin[];
+} = {}) => {
   const [isMonacoMounting, setIsMonacoMounting] = React.useState(true);
   const monacoRef = React.useRef<typeof monacoApi>();
+  const cleanupRef = React.useRef<() => void>();
 
   useEffect(() => {
-    const cancelable = monacoLoader.init(monacoConfig);
+    const cancelable = monacoLoader.init({ paths: { vs } });
     cancelable
-      .then(
-        (monaco) =>
-          (monacoRef.current = addons(monaco)) && setIsMonacoMounting(false)
-      )
+      .then((monaco) => {
+        monaco = addons(monaco);
+        var pluginDisposables = monaco.plugin.install(...plugins);
+        var onLoadCleanup = onLoad?.(monaco) as any;
+        cleanupRef.current = () => {
+          pluginDisposables.dispose();
+          if (onLoadCleanup) {
+            onLoadCleanup();
+          }
+        };
+        monacoRef.current = monaco;
+        setIsMonacoMounting(false);
+      })
       .catch((error) =>
         console.error(
           'An error occurred during initialization of Monaco:',
           error
         )
       );
-    return () => cancelable.cancel();
+    return () => {
+      cancelable.cancel();
+      if (cleanupRef.current) {
+        cleanupRef.current();
+      }
+    };
   }, []);
+
   return {
     monaco: monacoRef.current,
     loading: Boolean(monacoRef.current),

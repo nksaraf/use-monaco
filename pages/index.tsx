@@ -1,41 +1,32 @@
 import React from 'react';
 import { useMonaco } from '../src/useMonaco';
 import { processDimensions } from '../src/utils';
-import { useEditorModel } from '../src/useEditorModel';
+import { useMonacoModel } from '../src/useMonacoModel';
 import { useEditor } from '../src/useEditor';
+import '../src/prettier/prettier.monaco.worker';
+import { prettier } from '../src/prettier';
 
-let Editor = React.forwardRef<any, any>(
-  ({ width = 800, height = 600, id = 'monaco', ...props }: any, ref) => {
-    const { monaco, loading } = useMonaco({
-      paths: {
-        vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.20.0/dev/vs',
-      },
-    });
-    const model = useEditorModel({
-      path: 'model.ts',
-      monaco,
-      defaultValue: [
-        'function x() {',
-        '\tconsole.log("Hello world!");',
-        '}',
-      ].join('\n'),
-    });
-    const { containerRef } = useEditor({ model, monaco });
-    React.useEffect(() => {
-      if (monaco) {
-        console.log(
-          monaco.worker.register({
-            languageId: 'typescript',
-            label: 'hello',
-            providers: false,
-          })
-        );
-      }
-    }, [monaco]);
+let Editor = () => {
+  const { monaco, loading } = useMonaco({
+    paths: {
+      vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.20.0/dev/vs',
+    },
+    plugins: [prettier(['typescript'])],
+  });
 
-    return <div ref={containerRef} style={processDimensions(800, 600)} />;
-  }
-);
+  const model = useMonacoModel({
+    path: 'model.ts',
+    monaco,
+    defaultValue: [
+      'function x() {',
+      '\tconsole.log("Hello world!");',
+      '}',
+    ].join('\n'),
+  });
+  const { containerRef, editor } = useEditor({ model, monaco });
+
+  return <div ref={containerRef} style={processDimensions(800, 600)} />;
+};
 
 export default () => {
   return (
