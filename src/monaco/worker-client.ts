@@ -38,7 +38,7 @@ declare module 'monaco-editor' {
     interface IWorkerConfig<TOptions> {
       label?: string;
       languageId?: string;
-      path?: string;
+      src?: string;
       // to be passed on to the worker
       options?: TOptions;
       /* if boolean, all providers registered/not-registered,
@@ -71,11 +71,14 @@ declare module 'monaco-editor' {
       ...uri: monacoApi.Uri[]
     ): Promise<TWorker>;
 
-    function setEnvironment(environment: {
+    function setEnvironment(environment?: {
       baseUrl?: string;
       getWorkerUrl?: (label: string) => string | undefined;
       getWorker?: (label: string) => Worker | undefined;
+      workerLoader?: string;
     }): void;
+
+    const environment: any;
 
     function updateConfig<TOptions>(
       label: string,
@@ -325,13 +328,16 @@ export default (monaco: typeof monacoApi) => {
       this._lastUsedTime = Date.now();
       if (!this._client) {
         this._worker = this.monaco.editor.createWebWorker<TWorker>({
-          // moduleId: `http://localhost:3000/workerLoader`,
-          moduleId: `https://unpkg.com/use-monaco/dist/assets/workerLoader.js`,
+          moduleId:
+            this.config.config.src ||
+            this.monaco.worker.environment.workerLoader,
+          // `http://localhost:3000/workerLoader`,
+          // moduleId: `https://unpkg.com/use-monaco/dist/assets/workerLoader.js`,
           label: this.config.label,
           createData: {
             ...this.config.options,
             label: this.config.label,
-            path: this.config.config.path,
+            path: this.config.config.src,
           },
         });
         // this._worker = this.monaco.editor.createWebWorker<TWorker>({
@@ -713,12 +719,13 @@ export default (monaco: typeof monacoApi) => {
       typescript: typescriptClient,
       javascript: javascriptClient,
     };
+    environment: any = {};
 
     _editor?: monacoApi.editor.ICodeEditor;
     _registerWorker<TOptions>({
       languageId,
       label = languageId,
-      path,
+      src: path,
       options,
       providers = defaultProviderConfig,
       onRegister,
@@ -727,7 +734,7 @@ export default (monaco: typeof monacoApi) => {
         {
           languageId,
           label,
-          path,
+          src: path,
           options,
           providers,
         },
@@ -807,32 +814,37 @@ export default (monaco: typeof monacoApi) => {
 
     setEnvironment({
       getWorkerUrl = noop as any,
-      getWorker = noop as any,
-      baseUrl = '/',
+      getWorker,
+      baseUrl,
+      workerLoader = 'http://localhost:3000/workerLoader.js',
     }: {
       baseUrl?: string;
       getWorkerUrl?: (label: string) => string | undefined;
       getWorker?: (label: string) => Worker | undefined;
-    }) {
+      workerLoader?: string;
+    } = {}) {
       const getWorkerPath = (_moduleId: string, label: string) => {
         const url = getWorkerUrl(label);
         if (url) return url;
         return undefined;
       };
-      // @ts-ignore
-      window.MonacoEnvironment = {
-        baseUrl: baseUrl,
-        getWorker: (_moduleId: string, label: string) => {
-          const worker = getWorker(label);
-          if (worker) return worker;
+      if (baseUrl) {
+        // @ts-ignore
+        window.MonacoEnvironment = {
+          baseUrl: baseUrl,
+          getWorker: (_moduleId: string, label: string) => {
+            const worker = getWorker(label);
+            if (worker) return worker;
 
-          const url = getWorkerPath(_moduleId, label);
-          if (url) {
-            return new Worker(baseUrl + url);
-          }
-          return null;
-        },
-      };
+            const url = getWorkerPath(_moduleId, label);
+            if (url) {
+              return new Worker(baseUrl + url);
+            }
+            return null;
+          },
+        };
+      }
+      this.environment = { baseUrl, workerLoader, getWorker, getWorkerUrl };
     }
   }
 

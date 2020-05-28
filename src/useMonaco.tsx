@@ -116,6 +116,7 @@ export const useMonaco = ({
     cancelable
       .then((monaco) => {
         monaco = addons(monaco);
+        monaco.worker.setEnvironment();
         var pluginDisposables = monaco.plugin.install(...plugins);
         var onLoadCleanup = onLoad?.(monaco) as any;
         cleanupRef.current = () => {
