@@ -15,7 +15,6 @@ const pipe = <T>(a: T, ...addons: ((t: T) => T)[]) => {
 };
 
 export default (monaco: typeof monacoApi) => {
-  workerAddons(monaco);
   return pipe(monaco, workerAddons, languagesAddon, editorAddons, pluginsAddon);
 };
 

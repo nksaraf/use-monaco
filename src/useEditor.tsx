@@ -32,12 +32,12 @@ export const useEditor = ({
     monaco: typeof monacoApi
   ) => monacoApi.IDisposable[] | Promise<void> | void;
   editorWillMount?: (
-    monaco: typeof monacoApi,
-    containerRef: React.RefObject<HTMLDivElement>
+    monaco: typeof monacoApi
+    // containerRef: React.RefObject<HTMLDivElement>
   ) => monacoApi.editor.IEditorOptions | void;
   model?: monacoApi.editor.ITextModel;
 }) => {
-  const containerRef = React.useRef<HTMLElement>();
+  const containerRef = React.useRef<HTMLDivElement>();
   const [editorRef, useEditorEffect] = useRefWithEffects<
     monacoApi.editor.IStandaloneCodeEditor
   >();
@@ -61,8 +61,7 @@ export const useEditor = ({
         formatOnSave: true,
       },
       options,
-      //@ts-ignore
-      editorWillMount(monaco, containerRef) || {}
+      editorWillMount(monaco) || {}
     );
 
     // const pluginDisposables = monaco.plugin.install(...plugins);
@@ -139,5 +138,8 @@ export const useEditor = ({
     }
   }, [options]);
 
-  return { containerRef, editor: editorRef.current };
+  return {
+    containerRef: containerRef as React.MutableRefObject<HTMLDivElement | null>,
+    editor: editorRef.current,
+  };
 };

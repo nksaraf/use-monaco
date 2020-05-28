@@ -39,18 +39,12 @@ const makeCancelable = function <T>(
 };
 
 export class MonacoLoader {
-  __config: any;
+  config: any;
   constructor(config = {}) {
-    this.__config = config;
+    this.config = config;
   }
   resolve: any;
   reject: any;
-  config(config: any) {
-    if (config) {
-      this.__config = merge(this.__config, config);
-    }
-    return this;
-  }
   injectScripts(script: HTMLScriptElement) {
     document.body.appendChild(script);
   }
@@ -63,9 +57,7 @@ export class MonacoLoader {
     return src && (script.src = src), script;
   }
   createMonacoLoaderScript(mainScript: HTMLScriptElement) {
-    const loaderScript = this.createScript(
-      `${this.__config.paths.vs}/loader.js`
-    );
+    const loaderScript = this.createScript(`${this.config.paths.vs}/loader.js`);
     loaderScript.onload = () => this.injectScripts(mainScript);
     loaderScript.onerror = this.reject;
     return loaderScript;
@@ -73,7 +65,8 @@ export class MonacoLoader {
   createMainScript() {
     const mainScript = this.createScript();
     mainScript.innerHTML = `
-      require.config(${JSON.stringify(this.__config)});
+      require.config(${JSON.stringify(this.config)});
+      
       require(['vs/editor/editor.main'], function() {
         document.dispatchEvent(new Event('monaco_init'));
       });
@@ -86,13 +79,14 @@ export class MonacoLoader {
     this.resolve = res;
     this.reject = rej;
   });
-  init(): CancellablePromise<typeof monacoApi> {
+  init(config: any): CancellablePromise<typeof monacoApi> {
     if (!this.isInitialized) {
       //@ts-ignore
       if (window.monaco && window.monaco.editor) {
         //@ts-ignore
         return new Promise((res, rej) => res(window.monaco));
       }
+      this.config = merge(this.config, config);
       document.addEventListener('monaco_init', this.handleMainScriptLoad);
       const mainScript = this.createMainScript();
       const loaderScript = this.createMonacoLoaderScript(mainScript);
@@ -105,12 +99,12 @@ export class MonacoLoader {
 
 export const monacoLoader = new MonacoLoader(config);
 
-export const useMonaco = () => {
+export const useMonaco = (monacoConfig = config) => {
   const [isMonacoMounting, setIsMonacoMounting] = React.useState(true);
   const monacoRef = React.useRef<typeof monacoApi>();
 
   useEffect(() => {
-    const cancelable = monacoLoader.init();
+    const cancelable = monacoLoader.init(monacoConfig);
     cancelable
       .then(
         (monaco) =>

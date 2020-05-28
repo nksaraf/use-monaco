@@ -47,7 +47,8 @@ declare module 'monaco-editor' {
 
     interface IWorkerRegistrationOptions<T> extends IWorkerConfig<T> {
       onRegister?: (
-        client: WorkerClient<T, any>,
+        // client: WorkerClient<T, any>,
+        client: any,
         monaco: typeof monacoApi
       ) => void;
     }
@@ -56,9 +57,8 @@ declare module 'monaco-editor' {
       config: worker.IWorkerConfig<TOptions>
     ): monacoApi.IDisposable;
 
-    function getClient<TOptions, TWorker extends any>(
-      label: string
-    ): WorkerClient<TOptions, TWorker>;
+    function getClient<TOptions, TWorker extends any>(label: string): any;
+    // ): WorkerClient<TOptions, TWorker>;
 
     // provided in MonacoEditor.tsx
     function setEditor(editor: monacoApi.editor.ICodeEditor): void;
@@ -178,480 +178,493 @@ export const getResolver = (
   };
 };
 
-class WorkerConfig<TOptions>
-  implements monacoApi.IDisposable, monacoApi.worker.IWorkerConfig<TOptions> {
-  private _onDidChange = new monacoApi.Emitter<
-    monacoApi.worker.IWorkerConfig<TOptions>
-  >();
-  private _config: monacoApi.worker.IWorkerConfig<TOptions>;
-  constructor(config: monacoApi.worker.IWorkerConfig<TOptions>) {
-    this._config = config;
-  }
-  // @ts-ignore
-
-  get onDidChange(): monacoApi.IEvent<
-    monacoApi.worker.IWorkerConfig<TOptions>
-  > {
-    return this._onDidChange.event;
-  }
-
-  dispose(): void {
-    this._onDidChange.dispose();
-  }
-
-  get config(): monacoApi.worker.IWorkerConfig<TOptions> {
-    return this._config;
-  }
-
-  get languageId() {
-    return this._config.languageId;
-  }
-
-  get label() {
-    return this._config.label;
-  }
-
-  get providers() {
-    return this._config.providers;
-  }
-
-  get options() {
-    return this._config.options;
-  }
-
-  setConfig(config: monacoApi.worker.IWorkerConfig<TOptions>) {
-    this._config = Object.assign({}, this._config, config);
-    this._onDidChange.fire(this._config);
-  }
-
-  setOptions(options: TOptions) {
-    this._config.options = Object.assign({}, this._config.options, options);
-    this._onDidChange.fire(this._config);
-  }
-}
-
-const STOP_WHEN_IDLE_FOR = 2 * 60 * 1000; // 2min
-
-class WorkerClient<TOptions, TWorker> implements monacoApi.IDisposable {
-  private _config: WorkerConfig<TOptions>;
-  private _idleCheckInterval: number;
-  private _lastUsedTime: number;
-  private _worker: monacoApi.editor.MonacoWebWorker<TWorker> | null;
-  private _client: Promise<TWorker> | null;
-  private _providerDisposables: monacoApi.IDisposable[];
-  private _disposables: monacoApi.IDisposable[];
-
-  monaco: typeof monacoApi;
-
-  constructor(
-    config: monacoApi.worker.IWorkerConfig<TOptions>,
-    monaco: typeof monacoApi
-  ) {
-    this._config = new WorkerConfig(config);
-    this.monaco = monaco;
-    this._idleCheckInterval = window.setInterval(
-      () => this._checkIfIdle(),
-      30 * 1000
-    );
-    this._lastUsedTime = 0;
-    this._worker = null;
-    this._client = null;
-    const stopWorkerConfigListener = this._config.onDidChange(() =>
-      this._stopWorker()
-    );
-    const registerProviderListener = this._config.onDidChange(() =>
-      this._registerProviders()
-    );
-    this._providerDisposables = [];
-    this._disposables = [
-      stopWorkerConfigListener,
-      registerProviderListener,
-      this._config,
-    ];
-    this._registerProviders();
-  }
-
-  private _stopWorker(): void {
-    if (this._worker) {
-      this._worker.dispose();
-      this._worker = null;
+export default (monaco: typeof monacoApi) => {
+  class WorkerConfig<TOptions>
+    implements monacoApi.IDisposable, monacoApi.worker.IWorkerConfig<TOptions> {
+    private _onDidChange = new monaco.Emitter<
+      monacoApi.worker.IWorkerConfig<TOptions>
+    >();
+    private _config: monacoApi.worker.IWorkerConfig<TOptions>;
+    constructor(config: monacoApi.worker.IWorkerConfig<TOptions>) {
+      this._config = config;
     }
-    this._client = null;
+    // @ts-ignore
+
+    get onDidChange(): monacoApi.IEvent<
+      monacoApi.worker.IWorkerConfig<TOptions>
+    > {
+      return this._onDidChange.event;
+    }
+
+    dispose(): void {
+      this._onDidChange.dispose();
+    }
+
+    get config(): monacoApi.worker.IWorkerConfig<TOptions> {
+      return this._config;
+    }
+
+    get languageId() {
+      return this._config.languageId;
+    }
+
+    get label() {
+      return this._config.label;
+    }
+
+    get providers() {
+      return this._config.providers;
+    }
+
+    get options() {
+      return this._config.options;
+    }
+
+    setConfig(config: monacoApi.worker.IWorkerConfig<TOptions>) {
+      this._config = Object.assign({}, this._config, config);
+      this._onDidChange.fire(this._config);
+    }
+
+    setOptions(options: TOptions) {
+      this._config.options = Object.assign({}, this._config.options, options);
+      this._onDidChange.fire(this._config);
+    }
   }
 
-  dispose(): void {
-    clearInterval(this._idleCheckInterval);
-    disposeAll(this._disposables);
-    this._stopWorker();
-  }
+  const STOP_WHEN_IDLE_FOR = 2 * 60 * 1000; // 2min
 
-  _registerProviders() {
-    if (this.config.languageId) {
-      disposeAll(this._providerDisposables);
-      this._providerDisposables = setupWorkerProviders(
-        this.config.languageId,
-        this.config.providers,
-        this,
-        this.monaco
+  class WorkerClient<TOptions, TWorker> implements monacoApi.IDisposable {
+    private _config: WorkerConfig<TOptions>;
+    private _idleCheckInterval: number;
+    private _lastUsedTime: number;
+    private _worker: monacoApi.editor.MonacoWebWorker<TWorker> | null;
+    private _client: Promise<TWorker> | null;
+    private _providerDisposables: monacoApi.IDisposable[];
+    private _disposables: monacoApi.IDisposable[];
+
+    monaco: typeof monacoApi;
+
+    constructor(
+      config: monacoApi.worker.IWorkerConfig<TOptions>,
+      monaco: typeof monacoApi
+    ) {
+      this._config = new WorkerConfig(config);
+      this.monaco = monaco;
+      this._idleCheckInterval = window.setInterval(
+        () => this._checkIfIdle(),
+        30 * 1000
       );
-      this._disposables.push(asDisposable(this._providerDisposables));
+      this._lastUsedTime = 0;
+      this._worker = null;
+      this._client = null;
+      const stopWorkerConfigListener = this._config.onDidChange(() =>
+        this._stopWorker()
+      );
+      const registerProviderListener = this._config.onDidChange(() =>
+        this._registerProviders()
+      );
+      this._providerDisposables = [];
+      this._disposables = [
+        stopWorkerConfigListener,
+        registerProviderListener,
+        this._config,
+      ];
+      this._registerProviders();
     }
-  }
 
-  get config(): WorkerConfig<TOptions> {
-    return this._config;
-  }
-
-  get onConfigDidChange(): monacoApi.IEvent<
-    monacoApi.worker.IWorkerConfig<TOptions>
-  > {
-    return this._config.onDidChange;
-  }
-
-  private _checkIfIdle(): void {
-    if (!this._worker) {
-      return;
+    private _stopWorker(): void {
+      if (this._worker) {
+        this._worker.dispose();
+        this._worker = null;
+      }
+      this._client = null;
     }
-    let timePassedSinceLastUsed = Date.now() - this._lastUsedTime;
-    if (timePassedSinceLastUsed > STOP_WHEN_IDLE_FOR) {
+
+    dispose(): void {
+      clearInterval(this._idleCheckInterval);
+      disposeAll(this._disposables);
       this._stopWorker();
     }
-  }
 
-  private _getClient(): Promise<TWorker> {
-    this._lastUsedTime = Date.now();
-
-    if (!this._client) {
-      this._worker = this.monaco.editor.createWebWorker<TWorker>({
-        moduleId: `vs/language/${this.config.languageId}`,
-        label: this.config.label,
-        createData: this.config.options,
-      });
-      this._client = this._worker.getProxy() as Promise<TWorker>;
-    }
-
-    return this._client;
-  }
-
-  async getSyncedWorker(...resources: monacoApi.Uri[]): Promise<TWorker> {
-    const client = await this._getClient();
-    await this._worker?.withSyncedResources(resources);
-    return client;
-  }
-}
-
-class DiagnosticsProvider {
-  private _disposables: monacoApi.IDisposable[] = [];
-  private _listener: { [uri: string]: monacoApi.IDisposable } = Object.create(
-    null
-  );
-  private _editor?: monacoApi.editor.ICodeEditor;
-  private _client?: WorkerClient<any, any>;
-  monaco: typeof monacoApi;
-  isActiveModel(model: monacoApi.editor.ITextModel) {
-    if (this._editor) {
-      const currentModel = this._editor.getModel();
-      if (
-        currentModel &&
-        currentModel.uri.toString() === model.uri.toString()
-      ) {
-        return true;
+    _registerProviders() {
+      if (this.config.languageId) {
+        disposeAll(this._providerDisposables);
+        this._providerDisposables = setupWorkerProviders(
+          this.config.languageId,
+          this.config.providers,
+          this,
+          this.monaco
+        );
+        this._disposables.push(asDisposable(this._providerDisposables));
       }
     }
 
-    return false;
-  }
+    get config(): WorkerConfig<TOptions> {
+      return this._config;
+    }
 
-  constructor(
-    private client: WorkerClient<any, any>,
-    monaco: typeof monacoApi
-  ) {
-    this._client = client;
-    this.monaco = monaco;
-    this._disposables.push(
-      monaco.editor.onDidCreateEditor((editor) => {
-        this._editor = editor;
-      })
-    );
-    const onModelAdd = (model: monacoApi.editor.IModel): void => {
-      const modeId = model.getModeId();
-      if (modeId !== client.config.languageId) {
+    get onConfigDidChange(): monacoApi.IEvent<
+      monacoApi.worker.IWorkerConfig<TOptions>
+    > {
+      return this._config.onDidChange;
+    }
+
+    private _checkIfIdle(): void {
+      if (!this._worker) {
         return;
       }
-
-      let handle: number;
-      this._listener[model.uri.toString()] = model.onDidChangeContent(() => {
-        clearTimeout(handle);
-        // @ts-ignore
-        handle = setTimeout(() => {
-          if (this.isActiveModel(model)) {
-            this._doValidate(model.uri, modeId);
-          }
-        }, 500);
-      });
-
-      // if (this.isActiveModel(model)) {
-      //   this._doValidate(model.uri, modeId);
-      // }
-    };
-
-    const onModelRemoved = (model: monacoApi.editor.IModel): void => {
-      monaco.editor.setModelMarkers(model, client.config.languageId ?? '', []);
-      const uriStr = model.uri.toString();
-      const listener = this._listener[uriStr];
-      if (listener) {
-        listener.dispose();
-        delete this._listener[uriStr];
+      let timePassedSinceLastUsed = Date.now() - this._lastUsedTime;
+      if (timePassedSinceLastUsed > STOP_WHEN_IDLE_FOR) {
+        this._stopWorker();
       }
-    };
+    }
 
-    this._disposables.push(monaco.editor.onDidCreateModel(onModelAdd));
-    this._disposables.push(
-      monaco.editor.onWillDisposeModel((model) => {
-        onModelRemoved(model);
-      })
-    );
-    this._disposables.push(
-      monaco.editor.onDidChangeModelLanguage((event) => {
-        onModelRemoved(event.model);
-        onModelAdd(event.model);
-      })
-    );
+    private _getClient(): Promise<TWorker> {
+      this._lastUsedTime = Date.now();
 
-    this._disposables.push(
-      client.onConfigDidChange((_: any) => {
-        monaco.editor.getModels().forEach((model) => {
-          if (model.getModeId() === client.config.languageId) {
-            onModelRemoved(model);
-            onModelAdd(model);
-          }
+      if (!this._client) {
+        debugger;
+        this._worker = this.monaco.editor.createWebWorker<TWorker>({
+          moduleId: `vs/language/${this.config.languageId}`,
+          label: this.config.label,
+          createData: this.config.options,
         });
-      })
-    );
+        this._client = this._worker.getProxy() as Promise<TWorker>;
+      }
 
-    this._disposables.push({
-      dispose: () => {
-        for (const key in this._listener) {
-          this._listener[key].dispose();
-        }
-      },
-    });
+      return this._client;
+    }
 
-    // monaco.editor.getModels().forEach(onModelAdd);
-  }
-
-  public dispose(): void {
-    this._disposables.forEach((d) => d && d.dispose());
-    this._disposables = [];
-  }
-
-  private async _doValidate(resource: monacoApi.Uri, languageId: string) {
-    try {
-      const worker = await this.client.getSyncedWorker(resource);
-      const diagnostics = await worker.doValidation(resource.toString());
-      this.monaco.editor.setModelMarkers(
-        this.monaco.editor.getModel(resource) as monacoApi.editor.ITextModel,
-        languageId,
-        diagnostics
-      );
-    } catch (e) {
-      console.error(e);
-      return null;
+    async getSyncedWorker(...resources: monacoApi.Uri[]): Promise<TWorker> {
+      const client = await this._getClient();
+      await this._worker?.withSyncedResources(resources);
+      return client;
     }
   }
-}
 
-const setupWorkerProviders = (
-  languageId: string,
-  providers:
-    | monacoApi.worker.ILangProvidersOptions
-    | boolean = defaultProviderConfig,
-  client: WorkerClient<any, any>,
-  monaco: typeof monacoApi
-): monacoApi.IDisposable[] => {
-  const disposables: monacoApi.IDisposable[] = [];
-  if (!providers) {
-    return [];
+  class DiagnosticsProvider {
+    private _disposables: monacoApi.IDisposable[] = [];
+    private _listener: { [uri: string]: monacoApi.IDisposable } = Object.create(
+      null
+    );
+    private _editor?: monacoApi.editor.ICodeEditor;
+    private _client?: WorkerClient<any, any>;
+    monaco: typeof monacoApi;
+    isActiveModel(model: monacoApi.editor.ITextModel) {
+      if (this._editor) {
+        const currentModel = this._editor.getModel();
+        if (
+          currentModel &&
+          currentModel.uri.toString() === model.uri.toString()
+        ) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    constructor(
+      private client: WorkerClient<any, any>,
+      monaco: typeof monacoApi
+    ) {
+      this._client = client;
+      this.monaco = monaco;
+      this._disposables.push(
+        monaco.editor.onDidCreateEditor((editor) => {
+          this._editor = editor;
+        })
+      );
+      const onModelAdd = (model: monacoApi.editor.IModel): void => {
+        const modeId = model.getModeId();
+        if (modeId !== client.config.languageId) {
+          return;
+        }
+
+        let handle: number;
+        this._listener[model.uri.toString()] = model.onDidChangeContent(() => {
+          clearTimeout(handle);
+          // @ts-ignore
+          handle = setTimeout(() => {
+            if (this.isActiveModel(model)) {
+              this._doValidate(model.uri, modeId);
+            }
+          }, 500);
+        });
+
+        // if (this.isActiveModel(model)) {
+        //   this._doValidate(model.uri, modeId);
+        // }
+      };
+
+      const onModelRemoved = (model: monacoApi.editor.IModel): void => {
+        monaco.editor.setModelMarkers(
+          model,
+          client.config.languageId ?? '',
+          []
+        );
+        const uriStr = model.uri.toString();
+        const listener = this._listener[uriStr];
+        if (listener) {
+          listener.dispose();
+          delete this._listener[uriStr];
+        }
+      };
+
+      this._disposables.push(monaco.editor.onDidCreateModel(onModelAdd));
+      this._disposables.push(
+        monaco.editor.onWillDisposeModel((model) => {
+          onModelRemoved(model);
+        })
+      );
+      this._disposables.push(
+        monaco.editor.onDidChangeModelLanguage((event) => {
+          onModelRemoved(event.model);
+          onModelAdd(event.model);
+        })
+      );
+
+      this._disposables.push(
+        client.onConfigDidChange((_: any) => {
+          monaco.editor.getModels().forEach((model) => {
+            if (model.getModeId() === client.config.languageId) {
+              onModelRemoved(model);
+              onModelAdd(model);
+            }
+          });
+        })
+      );
+
+      this._disposables.push({
+        dispose: () => {
+          for (const key in this._listener) {
+            this._listener[key].dispose();
+          }
+        },
+      });
+
+      // monaco.editor.getModels().forEach(onModelAdd);
+    }
+
+    public dispose(): void {
+      this._disposables.forEach((d) => d && d.dispose());
+      this._disposables = [];
+    }
+
+    private async _doValidate(resource: monacoApi.Uri, languageId: string) {
+      try {
+        const worker = await this.client.getSyncedWorker(resource);
+        const diagnostics = await worker.doValidation(resource.toString());
+        this.monaco.editor.setModelMarkers(
+          this.monaco.editor.getModel(resource) as monacoApi.editor.ITextModel,
+          languageId,
+          diagnostics
+        );
+      } catch (e) {
+        console.error(e);
+        return null;
+      }
+    }
   }
 
-  const getWorker = async (...resources: monacoApi.Uri[]) => {
-    return await client.getSyncedWorker(...resources);
+  const setupWorkerProviders = (
+    languageId: string,
+    providers:
+      | monacoApi.worker.ILangProvidersOptions
+      | boolean = defaultProviderConfig,
+    client: WorkerClient<any, any>,
+    monaco: typeof monacoApi
+  ): monacoApi.IDisposable[] => {
+    const disposables: monacoApi.IDisposable[] = [];
+    if (!providers) {
+      return [];
+    }
+
+    const getWorker = async (...resources: monacoApi.Uri[]) => {
+      return await client.getSyncedWorker(...resources);
+    };
+
+    providers =
+      typeof providers === 'boolean' && providers
+        ? defaultProviderConfig
+        : (providers as monacoApi.worker.ILangProvidersOptions);
+
+    if (providers.diagnostics) {
+      disposables.push(new DiagnosticsProvider(client, monaco));
+    }
+
+    if (providers.reference) {
+      disposables.push(
+        monaco.languages.registerReferenceProvider(languageId, {
+          provideReferences: getProvider(getWorker, 'references'),
+        })
+      );
+    }
+    if (providers.rename) {
+      disposables.push(
+        monaco.languages.registerRenameProvider(languageId, {
+          provideRenameEdits: getProvider(getWorker, 'renameEdits'),
+          resolveRenameLocation: getResolver(getWorker, 'renameLocation'),
+        })
+      );
+    }
+    if (providers.signatureHelp) {
+      disposables.push(
+        monaco.languages.registerSignatureHelpProvider(languageId, {
+          provideSignatureHelp: getSignatureHelpProvider(getWorker),
+        })
+      );
+    }
+    if (providers.hover) {
+      disposables.push(
+        monaco.languages.registerHoverProvider(languageId, {
+          provideHover: getProvider(getWorker, 'hover'),
+        })
+      );
+    }
+    if (providers.documentSymbol) {
+      disposables.push(
+        monaco.languages.registerDocumentSymbolProvider(languageId, {
+          provideDocumentSymbols: getProvider(getWorker, 'documentSymbols'),
+        })
+      );
+    }
+    if (providers.documentHighlight) {
+      disposables.push(
+        monaco.languages.registerDocumentHighlightProvider(languageId, {
+          provideDocumentHighlights: getProvider(
+            getWorker,
+            'documentHighlights'
+          ),
+        })
+      );
+    }
+    if (providers.definition) {
+      disposables.push(
+        monaco.languages.registerDefinitionProvider(languageId, {
+          provideDefinition: getProvider(getWorker, 'definition'),
+        })
+      );
+    }
+    if (providers.implementation) {
+      disposables.push(
+        monaco.languages.registerImplementationProvider(languageId, {
+          provideImplementation: getProvider(getWorker, 'implementation'),
+        })
+      );
+    }
+    if (providers.typeDefinition) {
+      disposables.push(
+        monaco.languages.registerTypeDefinitionProvider(languageId, {
+          provideTypeDefinition: getProvider(getWorker, 'typeDefinition'),
+        })
+      );
+    }
+    if (providers.codeLens) {
+      disposables.push(
+        monaco.languages.registerCodeLensProvider(languageId, {
+          provideCodeLenses: getProvider(getWorker, 'codeLenses'),
+          resolveCodeLens: getResolver(getWorker, 'codeLens'),
+        })
+      );
+    }
+    if (providers.codeAction) {
+      disposables.push(
+        monaco.languages.registerCodeActionProvider(languageId, {
+          provideCodeActions: getProvider(getWorker, 'codeActions'),
+        })
+      );
+    }
+    if (providers.documentFormattingEdit) {
+      disposables.push(
+        monaco.languages.registerDocumentFormattingEditProvider(languageId, {
+          provideDocumentFormattingEdits: getProvider(
+            getWorker,
+            'documentFormattingEdits'
+          ),
+        })
+      );
+    }
+    if (providers.documentRangeFormattingEdit) {
+      disposables.push(
+        monaco.languages.registerDocumentRangeFormattingEditProvider(
+          languageId,
+          {
+            provideDocumentRangeFormattingEdits: getProvider(
+              getWorker,
+              'documentRangeFormattingEdits'
+            ),
+          }
+        )
+      );
+    }
+    // if (providers.onTypeFormattingEdit) {
+    //   disposables.push(
+    //     monaco.languages.registerOnTypeFormattingEditProvider(languageId, {
+    //       provideOnTypeFormattingEdits: getProvider(
+    //         getWorker,
+    //         'onTypeFormattingEdits'
+    //       ),
+    //     })
+    //   );
+    // }
+    if (providers.link) {
+      disposables.push(
+        monaco.languages.registerLinkProvider(languageId, {
+          provideLinks: getProvider(getWorker, 'links'),
+        })
+      );
+    }
+    if (providers.completionItem) {
+      disposables.push(
+        monaco.languages.registerCompletionItemProvider(languageId, {
+          triggerCharacters: providers.completionTriggerCharacters || [],
+          provideCompletionItems: getProvider(getWorker, 'completionItems'),
+          resolveCompletionItem: getResolver(getWorker, 'completionItem'),
+        })
+      );
+    }
+    if (providers.color) {
+      disposables.push(
+        monaco.languages.registerColorProvider(languageId, {
+          provideDocumentColors: getProvider(getWorker, 'documentColors'),
+          provideColorPresentations: getProvider(
+            getWorker,
+            'colorPresentations'
+          ),
+        })
+      );
+    }
+    if (providers.foldingRange) {
+      disposables.push(
+        monaco.languages.registerFoldingRangeProvider(languageId, {
+          provideFoldingRanges: getProvider(getWorker, 'foldingRanges'),
+        })
+      );
+    }
+    if (providers.declaration) {
+      disposables.push(
+        monaco.languages.registerDeclarationProvider(languageId, {
+          provideDeclaration: getProvider(getWorker, 'declaration'),
+        })
+      );
+    }
+    if (providers.selectionRange) {
+      disposables.push(
+        monaco.languages.registerSelectionRangeProvider(languageId, {
+          provideSelectionRanges: getProvider(getWorker, 'selectionRanges'),
+        })
+      );
+    }
+
+    return disposables;
+
+    // if (providers.onTypeFormattingEdit) {
+    //     monaco.languages.registerOnTypeFormattingEditProvider(languageId, {
+    // provideOnTypeFormattingEdits: getProvider(getWorker, 'onTypeFormattingEdits')
+    // });
+    // }
   };
-
-  providers =
-    typeof providers === 'boolean' && providers
-      ? defaultProviderConfig
-      : (providers as monacoApi.worker.ILangProvidersOptions);
-
-  if (providers.diagnostics) {
-    disposables.push(new DiagnosticsProvider(client, monaco));
-  }
-
-  if (providers.reference) {
-    disposables.push(
-      monaco.languages.registerReferenceProvider(languageId, {
-        provideReferences: getProvider(getWorker, 'references'),
-      })
-    );
-  }
-  if (providers.rename) {
-    disposables.push(
-      monaco.languages.registerRenameProvider(languageId, {
-        provideRenameEdits: getProvider(getWorker, 'renameEdits'),
-        resolveRenameLocation: getResolver(getWorker, 'renameLocation'),
-      })
-    );
-  }
-  if (providers.signatureHelp) {
-    disposables.push(
-      monaco.languages.registerSignatureHelpProvider(languageId, {
-        provideSignatureHelp: getSignatureHelpProvider(getWorker),
-      })
-    );
-  }
-  if (providers.hover) {
-    disposables.push(
-      monaco.languages.registerHoverProvider(languageId, {
-        provideHover: getProvider(getWorker, 'hover'),
-      })
-    );
-  }
-  if (providers.documentSymbol) {
-    disposables.push(
-      monaco.languages.registerDocumentSymbolProvider(languageId, {
-        provideDocumentSymbols: getProvider(getWorker, 'documentSymbols'),
-      })
-    );
-  }
-  if (providers.documentHighlight) {
-    disposables.push(
-      monaco.languages.registerDocumentHighlightProvider(languageId, {
-        provideDocumentHighlights: getProvider(getWorker, 'documentHighlights'),
-      })
-    );
-  }
-  if (providers.definition) {
-    disposables.push(
-      monaco.languages.registerDefinitionProvider(languageId, {
-        provideDefinition: getProvider(getWorker, 'definition'),
-      })
-    );
-  }
-  if (providers.implementation) {
-    disposables.push(
-      monaco.languages.registerImplementationProvider(languageId, {
-        provideImplementation: getProvider(getWorker, 'implementation'),
-      })
-    );
-  }
-  if (providers.typeDefinition) {
-    disposables.push(
-      monaco.languages.registerTypeDefinitionProvider(languageId, {
-        provideTypeDefinition: getProvider(getWorker, 'typeDefinition'),
-      })
-    );
-  }
-  if (providers.codeLens) {
-    disposables.push(
-      monaco.languages.registerCodeLensProvider(languageId, {
-        provideCodeLenses: getProvider(getWorker, 'codeLenses'),
-        resolveCodeLens: getResolver(getWorker, 'codeLens'),
-      })
-    );
-  }
-  if (providers.codeAction) {
-    disposables.push(
-      monaco.languages.registerCodeActionProvider(languageId, {
-        provideCodeActions: getProvider(getWorker, 'codeActions'),
-      })
-    );
-  }
-  if (providers.documentFormattingEdit) {
-    disposables.push(
-      monaco.languages.registerDocumentFormattingEditProvider(languageId, {
-        provideDocumentFormattingEdits: getProvider(
-          getWorker,
-          'documentFormattingEdits'
-        ),
-      })
-    );
-  }
-  if (providers.documentRangeFormattingEdit) {
-    disposables.push(
-      monaco.languages.registerDocumentRangeFormattingEditProvider(languageId, {
-        provideDocumentRangeFormattingEdits: getProvider(
-          getWorker,
-          'documentRangeFormattingEdits'
-        ),
-      })
-    );
-  }
-  // if (providers.onTypeFormattingEdit) {
-  //   disposables.push(
-  //     monaco.languages.registerOnTypeFormattingEditProvider(languageId, {
-  //       provideOnTypeFormattingEdits: getProvider(
-  //         getWorker,
-  //         'onTypeFormattingEdits'
-  //       ),
-  //     })
-  //   );
-  // }
-  if (providers.link) {
-    disposables.push(
-      monaco.languages.registerLinkProvider(languageId, {
-        provideLinks: getProvider(getWorker, 'links'),
-      })
-    );
-  }
-  if (providers.completionItem) {
-    disposables.push(
-      monaco.languages.registerCompletionItemProvider(languageId, {
-        triggerCharacters: providers.completionTriggerCharacters || [],
-        provideCompletionItems: getProvider(getWorker, 'completionItems'),
-        resolveCompletionItem: getResolver(getWorker, 'completionItem'),
-      })
-    );
-  }
-  if (providers.color) {
-    disposables.push(
-      monaco.languages.registerColorProvider(languageId, {
-        provideDocumentColors: getProvider(getWorker, 'documentColors'),
-        provideColorPresentations: getProvider(getWorker, 'colorPresentations'),
-      })
-    );
-  }
-  if (providers.foldingRange) {
-    disposables.push(
-      monaco.languages.registerFoldingRangeProvider(languageId, {
-        provideFoldingRanges: getProvider(getWorker, 'foldingRanges'),
-      })
-    );
-  }
-  if (providers.declaration) {
-    disposables.push(
-      monaco.languages.registerDeclarationProvider(languageId, {
-        provideDeclaration: getProvider(getWorker, 'declaration'),
-      })
-    );
-  }
-  if (providers.selectionRange) {
-    disposables.push(
-      monaco.languages.registerSelectionRangeProvider(languageId, {
-        provideSelectionRanges: getProvider(getWorker, 'selectionRanges'),
-      })
-    );
-  }
-
-  return disposables;
-
-  // if (providers.onTypeFormattingEdit) {
-  //     monaco.languages.registerOnTypeFormattingEditProvider(languageId, {
-  // provideOnTypeFormattingEdits: getProvider(getWorker, 'onTypeFormattingEdits')
-  // });
-  // }
-};
-
-export default (monaco: typeof monacoApi) => {
   const javascriptClient: WorkerClient<
     monacoApi.languages.typescript.LanguageServiceDefaults,
     monacoApi.languages.typescript.TypeScriptWorker
