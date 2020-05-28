@@ -325,7 +325,8 @@ export default (monaco: typeof monacoApi) => {
       this._lastUsedTime = Date.now();
       if (!this._client) {
         this._worker = this.monaco.editor.createWebWorker<TWorker>({
-          moduleId: `http://localhost:3000/workerLoader`,
+          // moduleId: `http://localhost:3000/workerLoader`,
+          moduleId: `https://unpkg.com/use-monaco/dist/assets/workerLoader.js`,
           label: this.config.label,
           createData: {
             ...this.config.options,
