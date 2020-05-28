@@ -1,5 +1,5 @@
 {
-  "version": "0.0.1-beta.1",
+  "version": "0.0.1-beta.2",
   "license": "MIT",
   "main": "dist/cjs/use-monaco.js",
   "scripts": {
@@ -24,13 +24,13 @@
     "@types/jest": "^25.2.3",
     "@types/react": "^16.9.35",
     "@types/react-dom": "^16.9.8",
+    "hasha": "^5.2.0",
     "husky": "^4.2.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "tsdx": "^0.13.2",
     "tslib": "^2.0.0",
-    "typescript": "^3.9.3",
-    "hasha": "^5.2.0"
+    "typescript": "^3.9.3"
   },
   "dependencies": {
     "monaco-editor": "^0.20.0",
