@@ -3,7 +3,9 @@ import * as monacoApi from 'monaco-editor';
 declare module 'monaco-editor' {
   namespace languages {
     interface ILanguageExtensionPoint {
-      // eg. () => import('./typescript');
+      /**
+       * eg. () => import('./typescript')
+       **/
       loader?: () => Promise<ILangImpl>;
       // if true, worker with languageId as label is registered
       worker?: Omit<worker.IWorkerConfig<any>, 'languageId'> | boolean;

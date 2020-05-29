@@ -1,5 +1,6 @@
 import { asDisposable } from '../utils';
 import * as monacoApi from 'monaco-editor';
+import { BASE_WORKER_PATH } from 'monaco/worker';
 
 const parsers: { [key: string]: keyof typeof plugins } = {
   javascript: 'babel',
@@ -32,10 +33,7 @@ export const prettier = (
   )[] = [],
   options: any = {}
 ) => (api: typeof monacoApi) => {
-  const workerPath =
-    'http://localhost:3000/_next/static/workers/prettier.monaco.worker.js';
-
-  // 'https://unpkg.com/use-monaco/dist/assets/prettier.monaco.worker.js';
+  const workerPath = BASE_WORKER_PATH + 'prettier.monaco.worker.js';
   let disposables: monacoApi.IDisposable[] = [];
   languages.forEach((langauge) => {
     if (typeof langauge === 'string') {

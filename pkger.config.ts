@@ -2,7 +2,7 @@ import { Toolbox } from 'pkger';
 export default {
   format: 'cjs,esm,umd',
   typecheck: true,
-  entries: ['worker'],
+  entries: ['worker', 'themes'],
   // rollup: (config, options) => {
   //   if (options.format === 'umd') {
   //     console.log(config, options);
@@ -18,17 +18,6 @@ export default {
   //   return config;
   // },
   postBuild: (toolbox: Toolbox, config: any) => {
-    toolbox.filesystem.copy(
-      '.next/static/workers',
-      'dist/assets/'
-    );
-    toolbox.filesystem.copy(
-      '.next/static/workers/typings.monaco.worker.js',
-      'dist/assets/typings.monaco.worker.js'
-    );
-    toolbox.filesystem.copy(
-      'public/workerLoader.js',
-      'dist/assets/workerLoader.js'
-    );
+    toolbox.filesystem.copy('public/workers', 'dist/assets/');
   },
 };

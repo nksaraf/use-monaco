@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import React from 'react';
 import * as monacoApi from 'monaco-editor';
 import addons from './monaco';
-import { noop, getNextWorkerPath } from './utils';
+import { noop } from './utils';
 
 interface CancellablePromise<T> extends Promise<T> {
   cancel: () => void;
@@ -94,19 +94,79 @@ export class MonacoLoader {
 
 export const monacoLoader = new MonacoLoader();
 
+function setupThemes(
+  monaco: typeof monacoApi,
+  // editor: monacoApi.editor.IStandaloneCodeEditor,
+  themes: any
+) {
+  const allThemes = {
+    // ...defaultThemes,
+    ...themes,
+  };
+
+  Object.keys(allThemes).forEach((themeName) => {
+    monaco.editor.defineTheme(
+      themeName,
+      allThemes[themeName as keyof typeof allThemes]
+    );
+  });
+
+  // editor.addSelectAction({
+  //   id: 'editor.action.selectTheme',
+  //   label: 'Preferences: Color Theme',
+  //   choices: () => Object.keys(themeNames),
+  //   runChoice: (choice, mode, ctx, api) => {
+  //     if (mode === 0) {
+  //       api.editor.setTheme(themeNames[choice]);
+  //     } else if (mode === 1) {
+  //       api.editor.setTheme(themeNames[choice]);
+  //     }
+  //   },
+  //   runAction: function (editor: any, api: any) {
+  //     const _this: any = this;
+  //     const currentTheme = editor._themeService._theme.themeName;
+  //     console.log(currentTheme);
+  //     const controller = _this.getController(editor);
+  //     const oldDestroy = controller.widget.quickOpenWidget.callbacks.onCancel;
+  //     controller.widget.quickOpenWidget.callbacks.onCancel = function () {
+  //       debugger;
+  //       monaco.editor.setTheme(currentTheme);
+  //       oldDestroy();
+  //     };
+  //     console.log(
+  //       controller,
+  //       controller.widget.quickOpenWidget.callbacks.onCancel,
+  //       this
+  //     );
+  //     _this.show(editor);
+  //     return Promise.resolve();
+  //   },
+  // });
+}
+
+export interface UseMonacoOptions {
+  paths?: {
+    vs?: string;
+  };
+  themes?: { [key: string]: monacoApi.editor.IStandaloneThemeData };
+  onLoad?: (monaco: typeof monacoApi) => (() => void) | void;
+  onThemeChange?: (theme: string, monaco: typeof monacoApi) => void;
+  plugins?: monacoApi.plugin.IPlugin[];
+}
+
+export interface Monaco {
+  monaco?: typeof monacoApi;
+}
+
 export const useMonaco = ({
   paths: {
     vs = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.20.0/min/vs',
   } = {},
   onLoad = noop,
   plugins = [],
-}: {
-  paths?: {
-    vs?: string;
-  };
-  onLoad?: (monaco: typeof monacoApi) => (() => void) | void;
-  plugins?: monacoApi.plugin.IPlugin[];
-} = {}) => {
+  themes = {},
+  onThemeChange = noop,
+}: UseMonacoOptions = {}) => {
   const [isMonacoMounting, setIsMonacoMounting] = React.useState(true);
   const monacoRef = React.useRef<typeof monacoApi>();
   const cleanupRef = React.useRef<() => void>();
@@ -116,43 +176,19 @@ export const useMonaco = ({
     cancelable
       .then((monaco) => {
         monaco = addons(monaco);
-        monaco.worker.setEnvironment({
-          getWorkerUrl: (label) => {
-            let worker;
-            if (label === 'editorWorkerService') {
-              worker = getNextWorkerPath('editor');
-            } else if (label === 'typescript' || label === 'javascript') {
-              worker = getNextWorkerPath('ts');
-            } else {
-              worker = getNextWorkerPath(label);
-            }
-
-            var workerSrcBlob, workerBlobURL;
-            workerSrcBlob = new Blob(
-              [`importScripts("http://localhost:3000/${worker}")`],
-              {
-                type: 'text/javascript',
-              }
-            );
-            workerBlobURL = window.URL.createObjectURL(workerSrcBlob);
-            return workerBlobURL;
-          },
-
-          // () => {
-          //   return 'http://localhost:3000/_next/static/workers/typings.monaco.worker.js';
-
-          //   return new Worker(
-          //     `data:text/javascript;charset=utf-8,${encodeURIComponent(`
-          // // self.MonacoEnvironment = {
-          // //   baseUrl: 'http://www.mycdn.com/monaco-editor/min/'
-          // // };
-          // importScripts('https://cdn.jsdelivr.net/npm/monaco-editor@0.20.0/esm/vs/language/typescript/ts.worker.js');`)}`
-          //   );
-          // },
-        });
+        monaco.worker.setup();
         var pluginDisposables = monaco.plugin.install(...plugins);
+
+        // CMD + Shift + P (like vscode), CMD + Shift + C
+        const themeListener = monaco.editor.onDidChangeTheme((theme) =>
+          onThemeChange(theme, monaco)
+        );
+
+        setupThemes(monaco, themes);
+
         var onLoadCleanup = onLoad?.(monaco) as any;
         cleanupRef.current = () => {
+          themeListener.dispose();
           pluginDisposables.dispose();
           if (onLoadCleanup) {
             onLoadCleanup();

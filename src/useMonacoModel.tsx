@@ -1,6 +1,16 @@
 import { fixPath } from './utils';
 import React from 'react';
+import { Monaco } from './useMonaco';
 import * as monacoApi from 'monaco-editor';
+
+export interface UseMonacoModelOptions {
+  value?: string;
+  defaultValue?: string;
+  path?: string;
+  language?: string;
+  files?: { [key: string]: string };
+  syncAllFiles?: boolean;
+}
 
 export const useMonacoModel = ({
   monaco,
@@ -14,15 +24,7 @@ export const useMonacoModel = ({
   files = {
     [fixPath(path)]: value != null ? value : defaultValue,
   },
-}: {
-  monaco?: typeof monacoApi;
-  value?: string;
-  defaultValue?: string;
-  path?: string;
-  language?: string;
-  files?: { [key: string]: string };
-  syncAllFiles?: boolean;
-}) => {
+}: UseMonacoModelOptions & Monaco) => {
   function findModel(path: string) {
     return monaco?.editor.getModel(monaco.Uri.file(fixPath(path)));
   }

@@ -8,7 +8,7 @@
  */
 
 import path from 'path';
-// import { Store, set as setItem, get as getItem } from 'idb-keyval';
+import { Store, set as setItem, get as getItem } from 'idb-keyval';
 import { BaseWorker, initialize } from '../worker';
 
 self.importScripts(
@@ -17,7 +17,7 @@ self.importScripts(
 
 const ROOT_URL = `https://cdn.jsdelivr.net/`;
 
-// const store = new Store('typescript-definitions-cache-v1');
+const store = new Store('typescript-definitions-cache-v1');
 const fetchCache = new Map();
 
 const doFetch = (url) => {
@@ -246,36 +246,37 @@ function fetchDefinitions(name, version) {
   // Query cache for the defintions
   const key = `${name}@${version}`;
 
-  // return getItem(key, store)
-  //   .catch((e) => {
-  //     console.error('An error occurred when getting definitions from cache', e);
-  //   })
-  //   .then((result) => {
-  //     if (result) {
-  //       return result;
-  //     }
-
-  // If result is empty, fetch from remote
-  const fetchedPaths = {};
-
-  return fetchFromTypings(name, version, fetchedPaths)
-    .catch(() =>
-      // not available in package.json, try checking meta for inline .d.ts files
-      fetchFromMeta(name, version, fetchedPaths)
-    )
-    .catch(() =>
-      // Not available in package.json or inline from meta, try checking in @types/
-      fetchFromDefinitelyTyped(name, version, fetchedPaths)
-    )
-    .then(() => {
-      if (Object.keys(fetchedPaths).length) {
-        // Also cache the definitions
-        // setItem(key, fetchedPaths, store);
-
-        return fetchedPaths;
-      } else {
-        throw new Error(`Type definitions are empty for ${key}`);
+  return getItem(key, store)
+    .catch((e) => {
+      console.error('An error occurred when getting definitions from cache', e);
+    })
+    .then((result) => {
+      if (result) {
+        return result;
       }
+
+      // If result is empty, fetch from remote
+      const fetchedPaths = {};
+
+      return fetchFromTypings(name, version, fetchedPaths)
+        .catch(() =>
+          // not available in package.json, try checking meta for inline .d.ts files
+          fetchFromMeta(name, version, fetchedPaths)
+        )
+        .catch(() =>
+          // Not available in package.json or inline from meta, try checking in @types/
+          fetchFromDefinitelyTyped(name, version, fetchedPaths)
+        )
+        .then(() => {
+          if (Object.keys(fetchedPaths).length) {
+            // Also cache the definitions
+            setItem(key, fetchedPaths, store);
+
+            return fetchedPaths;
+          } else {
+            throw new Error(`Type definitions are empty for ${key}`);
+          }
+        });
     });
   // });
 }
@@ -283,7 +284,7 @@ function fetchDefinitions(name, version) {
 export class TypingsWorker extends BaseWorker {
   async fetchTypings(name, version) {
     const typings = await fetchDefinitions(name, version);
-    console.log(`Fetching typings for ${name}@${version}...`);
+    console.log(`[typings] Fetching typings for ${name}@${version}...`);
     return { name, version, typings };
   }
 }

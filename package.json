@@ -50,6 +50,7 @@
   "files": [
     "dist",
     "worker",
-    "dist/types"
+    "dist/types",
+    "themes"
   ]
 }

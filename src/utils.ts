@@ -36,4 +36,6 @@ export const getNextWorkerPath = (label: string) => {
 export const fixPath = (path: string) =>
   path.startsWith('/') ? path : `/${path}`;
 
-export function noop() {}
+export function noop<T>(): T {
+  return undefined as any;
+}

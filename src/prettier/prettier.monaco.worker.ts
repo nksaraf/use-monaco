@@ -17,7 +17,6 @@ export class PrettierWorker extends BaseWorker {
     super(ctx, config);
     this.options = config;
     this.loader = this.importPrettier();
-    console.log(self);
   }
 
   async importPrettier() {
@@ -37,6 +36,8 @@ export class PrettierWorker extends BaseWorker {
     model
   ) => {
     const { plugins, ...options } = this.options;
+    console.log(`[prettier] Formatting ...`);
+
     const text = this.prettier.format(model.getValue(), {
       plugins: this.plugins,
       singleQuote: true,

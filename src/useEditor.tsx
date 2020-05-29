@@ -2,6 +2,7 @@ import { noop, asDisposable } from './utils';
 import * as monacoApi from 'monaco-editor';
 import React from 'react';
 import useDeepCompareEffect from 'use-deep-compare-effect';
+import { Monaco } from 'useMonaco';
 
 export function useRefWithEffect<T>(): [
   React.MutableRefObject<T | undefined>,
@@ -19,16 +20,8 @@ export function useRefWithEffect<T>(): [
   return [ref, useRefEffect];
 }
 
-export const useEditor = ({
-  options = {},
-  editorWillMount = noop,
-  editorDidMount = noop,
-  model,
-  monaco,
-  overrideServices,
-  onChange = noop,
-}: {
-  monaco?: typeof monacoApi;
+export interface UseEditorOptions {
+  theme?: string | monacoApi.editor.IStandaloneThemeData;
   onChange?: (
     newValue: string,
     editor: monacoApi.editor.IStandaloneCodeEditor,
@@ -51,7 +44,18 @@ export const useEditor = ({
     // containerRef: React.RefObject<HTMLDivElement>
   ) => monacoApi.editor.IEditorOptions | void;
   model?: monacoApi.editor.ITextModel;
-}) => {
+}
+
+export const useEditor = ({
+  options = {},
+  editorWillMount = noop,
+  editorDidMount = noop,
+  model,
+  theme = 'vs-dark',
+  monaco,
+  overrideServices,
+  onChange = noop,
+}: UseEditorOptions & Monaco) => {
   const containerRef = React.useRef<HTMLDivElement>();
   const [editorRef, useEditorEffect] = useRefWithEffect<
     monacoApi.editor.IStandaloneCodeEditor
@@ -77,8 +81,6 @@ export const useEditor = ({
       editorWillMount(monaco) || {}
     );
 
-    // const pluginDisposables = monaco.plugin.install(...plugins);
-
     editorRef.current = monaco.editor.create(
       containerRef.current,
       options,
@@ -86,13 +88,6 @@ export const useEditor = ({
         ? overrideServices(monaco)
         : overrideServices
     );
-
-    // CMD + Shift + P (like vscode), CMD + Shift + C
-    // const themeListener = monaco.editor.onDidChangeTheme((theme) =>
-    //   onThemeChange(theme, monaco)
-    // );
-
-    // setupThemes(monaco, editorRef.current, themes);
 
     // After initializing monaco editor
     //@ts-ignore
@@ -104,7 +99,6 @@ export const useEditor = ({
 
     return () => {
       // themeListener.dispose();
-      // pluginDisposables.dispose();
       if (userDisposables) {
         (userDisposables as monacoApi.IDisposable).dispose();
       }
@@ -127,6 +121,10 @@ export const useEditor = ({
     },
     [model]
   );
+
+  React.useEffect(() => {
+    if (monaco) monaco.editor.setTheme(theme);
+  }, [monaco, theme]);
 
   useEditorEffect(
     (editor) => {

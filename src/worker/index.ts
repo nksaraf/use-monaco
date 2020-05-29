@@ -1,33 +1,7 @@
-// @ts-ignore
-// import { MirrorTextModel } from 'monaco-editor/esm/vs/editor/common/model/mirrorTextModel';
-
-// MirrorTextModel.prototype.getFullModelRange = function () {
-//   return {
-//     startLineNumber: 1,
-//     endLineNumber: this._lines.length,
-//     startColumn: 1,
-//     endColumn: this._lines[this._lines.length - 1].length + 1,
-//   };
-// };
-
-// @ts-ignor
-// import * as workerApi from 'monaco-editor/esm/vs/editor/editor.worker';
-
 import { BaseWorker, IWorkerContext } from './base-worker';
-// import * as Comlink from 'comlink';
 
-// import '../../node_modules/monaco-editor/esm/vs/editor/editor.worker';
 import { SimpleWorkerServer } from '../../node_modules/monaco-editor/esm/vs/base/common/worker/simpleWorker.js';
 import { EditorSimpleWorker } from '../../node_modules/monaco-editor/esm/vs/editor/common/services/editorSimpleWorker.js';
-
-// console.log(SimpleWorkerServer, EditorSimpleWorker);
-
-// console.log(self.monaco);
-// interface IWorkerInitializer {
-//   initialize: (
-//     initalizer: (ctx: IWorkerContext, createData: any) => any
-//   ) => void;
-// }
 
 const hashCode = function (s: string) {
   var hash = 0;
@@ -71,8 +45,6 @@ export function initialize(name: string, WorkerClass: typeof BaseWorker) {
   initialized = true;
   var simpleWorker = new SimpleWorkerServer(
     function (msg) {
-      console.log('here');
-
       //@ts-ignore
       self.postMessage(msg);
     },

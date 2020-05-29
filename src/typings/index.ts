@@ -1,14 +1,19 @@
 import * as monacoApi from 'monaco-editor';
-
+import { BASE_WORKER_PATH } from '../monaco/worker';
 const extraLibs = new Map();
 
 declare module 'monaco-editor' {
   namespace languages.typescript {
-    export const loadTypes: (
+    function loadTypes(
       name: string,
       version: string
-    ) => Promise<{ [key: string]: string }>;
-    export const addGlobal: (code: string) => void;
+    ): Promise<{ [key: string]: string }>;
+    function exposeGlobal(
+      pkg: string,
+      imported: string,
+      exported: string
+    ): void;
+    function addGlobal(code: string): void;
   }
 }
 
@@ -18,12 +23,9 @@ export const typings = (
   let disposable = api.worker.register({
     label: 'typings',
     // src: 'https://unpkg.com/use-monaco/dist/assets/typings.monaco.worker.js',
-
+    src: `${BASE_WORKER_PATH}typings.monaco.worker.js`,
     // src: 'http://localhost:3000/_next/static/workers/typings.monaco.worker.js',
-    options: {
-      workerSrc:
-        'http://localhost:3000/_next/static/workers/typings.monaco.worker.js',
-    },
+    options: {},
     providers: false,
   });
   api.languages.typescript.typescriptDefaults.setEagerModelSync(true);
@@ -52,6 +54,19 @@ export const typings = (
     defaultCompilerOptions
   );
 
+  const addGlobal = (code: string) => {
+    // const currentLib = api.languages.typescript.javascriptDefaults.getExtraLibs();
+    // console.log(currentLib);
+    api.languages.typescript.typescriptDefaults.addExtraLib(
+      code,
+      api.Uri.file('global.d.ts').toString()
+    );
+    api.languages.typescript.javascriptDefaults.addExtraLib(
+      code,
+      api.Uri.file('global.d.ts').toString()
+    );
+  };
+
   Object.assign(api.languages.typescript, {
     loadTypes: async (name: string, version: string) => {
       const worker = await api.worker.get<{
@@ -73,18 +88,15 @@ export const typings = (
       });
       return typings;
     },
-    addGlobal: (code: string) => {
-      // const currentLib = api.languages.typescript.javascriptDefaults.getExtraLibs();
-      // console.log(currentLib);
-      api.languages.typescript.typescriptDefaults.addExtraLib(
-        code,
-        api.Uri.file('global.d.ts').toString()
-      );
-      api.languages.typescript.javascriptDefaults.addExtraLib(
-        code,
-        api.Uri.file('global.d.ts').toString()
-      );
+    exposeGlobal: (pkg: string, imported: string, exported: string) => {
+      const pkgName = pkg.replace('-', '').replace('@', '').replace('/', '');
+      addGlobal(`import * as ${pkgName} from "./node_modules/${pkg}";
+
+      declare global {
+        export const ${exported}: typeof ${pkgName}.${imported}
+      }`);
     },
+    addGlobal: addGlobal,
   });
 
   return disposable;
