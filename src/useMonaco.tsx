@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import React from 'react';
 import * as monacoApi from 'monaco-editor';
 import addons from './monaco';
-import { noop } from './utils';
+import { noop, getNextWorkerPath } from './utils';
 
 interface CancellablePromise<T> extends Promise<T> {
   cancel: () => void;
@@ -117,15 +117,38 @@ export const useMonaco = ({
       .then((monaco) => {
         monaco = addons(monaco);
         monaco.worker.setEnvironment({
-          //   getWorker: () => {
-          //     return new Worker(
-          //       `data:text/javascript;charset=utf-8,${encodeURIComponent(`
+          getWorker: (label) => {
+            let worker;
+            if (label === 'editorWorkerService') {
+              worker = getNextWorkerPath('editor');
+            } else if (label === 'typescript' || label === 'javascript') {
+              worker = getNextWorkerPath('ts');
+            } else {
+              worker = getNextWorkerPath(label);
+            }
+
+            var workerSrcBlob, workerBlobURL;
+            workerSrcBlob = new Blob(
+              [`importScripts("http://localhost:3000/${worker}")`],
+              {
+                type: 'text/javascript',
+              }
+            );
+            workerBlobURL = window.URL.createObjectURL(workerSrcBlob);
+            return new Worker(workerBlobURL);
+          },
+
+          // () => {
+          //   return 'http://localhost:3000/_next/static/workers/typings.monaco.worker.js';
+
+          //   return new Worker(
+          //     `data:text/javascript;charset=utf-8,${encodeURIComponent(`
           // // self.MonacoEnvironment = {
           // //   baseUrl: 'http://www.mycdn.com/monaco-editor/min/'
           // // };
           // importScripts('https://cdn.jsdelivr.net/npm/monaco-editor@0.20.0/esm/vs/language/typescript/ts.worker.js');`)}`
-          //     );
-          //   },
+          //   );
+          // },
         });
         var pluginDisposables = monaco.plugin.install(...plugins);
         var onLoadCleanup = onLoad?.(monaco) as any;

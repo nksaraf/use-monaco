@@ -1,14 +1,14 @@
 // @ts-ignore
-// import { MirrorTextModel } from 'monaco-editor/esm/vs/editor/common/model/mirrorTextModel';
+import { MirrorTextModel } from 'monaco-editor/esm/vs/editor/common/model/mirrorTextModel';
 
-// MirrorTextModel.prototype.getFullModelRange = function () {
-//   return {
-//     startLineNumber: 1,
-//     endLineNumber: this._lines.length,
-//     startColumn: 1,
-//     endColumn: this._lines[this._lines.length - 1].length + 1,
-//   };
-// };
+MirrorTextModel.prototype.getFullModelRange = function () {
+  return {
+    startLineNumber: 1,
+    endLineNumber: this._lines.length,
+    startColumn: 1,
+    endColumn: this._lines[this._lines.length - 1].length + 1,
+  };
+};
 
 // @ts-ignor
 // import * as workerApi from 'monaco-editor/esm/vs/editor/editor.worker';
@@ -17,8 +17,8 @@ import { BaseWorker, IWorkerContext } from './base-worker';
 // import * as Comlink from 'comlink';
 
 // import '../../node_modules/monaco-editor/esm/vs/editor/editor.worker';
-// import { SimpleWorkerServer } from '../../node_modules/monaco-editor/esm/vs/base/common/worker/simpleWorker.js';
-// import { EditorSimpleWorker } from '../../node_modules/monaco-editor/esm/vs/editor/common/services/editorSimpleWorker.js';
+import { SimpleWorkerServer } from '../../node_modules/monaco-editor/esm/vs/base/common/worker/simpleWorker.js';
+import { EditorSimpleWorker } from '../../node_modules/monaco-editor/esm/vs/editor/common/services/editorSimpleWorker.js';
 
 // console.log(SimpleWorkerServer, EditorSimpleWorker);
 
@@ -44,9 +44,9 @@ const hashCode = function (s: string) {
 
 export * from './base-worker';
 
-// declare global {
-//   const importScripts: any;
-// }
+declare global {
+  const importScripts: any;
+}
 
 export const importScript = async (src: string) => {
   const _this = self as any;
@@ -57,47 +57,41 @@ export const importScript = async (src: string) => {
       });
     });
   } else {
-    throw new Error('Not on AMD');
+    importScripts(src);
+    // throw new Error('Not on AMD');
   }
 };
 
-class WorkerServer {
-  creator: any;
-  initialize(ctx, options) {
-    console.log(ctx, options);
-  }
-}
-
-// console.log(SimpleWorkerServer, EditorSimpleWorker);
 var initialized = false;
 
 export function initialize(name: string, WorkerClass: typeof BaseWorker) {
-  // if (initialized) {
-  //   return;
-  // }
-  // initialized = true;
-  // var simpleWorker = new SimpleWorkerServer(
-  //   function (msg) {
-  //     console.log('here');
+  if (initialized) {
+    return;
+  }
+  initialized = true;
+  var simpleWorker = new SimpleWorkerServer(
+    function (msg) {
+      console.log('here');
 
-  //     //@ts-ignore
-  //     self.postMessage(msg);
-  //   },
-  //   function (host) {
-  //     console.log('here');
-
-  //     return new EditorSimpleWorker(host, (ctx, options) => {
-  //       new WorkerClass(ctx, options);
-  //     });
-  //   }
-  // );
-  // console.log(simpleWorker);
-  // self.onmessage = function (e) {
-  //   console.log(simpleWorker);
-  //   simpleWorker.onmessage(e.data);
-  // };
+      //@ts-ignore
+      self.postMessage(msg);
+    },
+    function (host) {
+      return new EditorSimpleWorker(host, (ctx, options) => {
+        return new WorkerClass(ctx, options);
+      });
+    }
+  );
+  self.onmessage = function (e) {
+    simpleWorker.onmessage(e.data);
+  };
   self[name + 'MonacoWorker'] = WorkerClass;
 }
+
+// @ts-ignore
+self.initialize = initialize;
+// @ts-ignore
+self.BaseWorker = BaseWorker;
 
 // self.onmessage = function (e) {
 //   // Ignore first message in this case and initialize if not yet initialized

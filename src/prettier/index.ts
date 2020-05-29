@@ -33,9 +33,9 @@ export const prettier = (
   options: any = {}
 ) => (api: typeof monacoApi) => {
   const workerPath =
-    // 'http://localhost:3000/_next/static/workers/prettier.monaco.worker.js',
+    'http://localhost:3000/_next/static/workers/prettier.monaco.worker.js';
 
-    'https://unpkg.com/use-monaco/dist/assets/prettier.monaco.worker.js';
+  // 'https://unpkg.com/use-monaco/dist/assets/prettier.monaco.worker.js';
   let disposables: monacoApi.IDisposable[] = [];
   languages.forEach((langauge) => {
     if (typeof langauge === 'string') {
@@ -43,6 +43,7 @@ export const prettier = (
         api.worker.register({
           languageId: langauge,
           label: 'prettier',
+          src: workerPath,
           providers: {
             documentFormattingEdit: true,
           },
@@ -50,7 +51,7 @@ export const prettier = (
             parser: parsers[langauge],
             plugins: plugins[parsers[langauge]],
             ...options,
-            workerSrc: workerPath,
+            // workerSrc: workerPath,
           },
         })
       );

@@ -17,17 +17,20 @@ export class PrettierWorker extends BaseWorker {
     super(ctx, config);
     this.options = config;
     this.loader = this.importPrettier();
+    console.log(self);
   }
 
   async importPrettier() {
-    this.prettier = await importScript(
-      'https://unpkg.com/prettier@2.0.4/standalone.js'
-    );
+    await importScript('https://unpkg.com/prettier@2.0.4/standalone.js');
+    // @ts-ignore
+    this.prettier = prettier;
     for (var plugin of this.options.plugins) {
-      this.plugins.push(
-        await importScript(`https://unpkg.com/prettier@2.0.4/${plugin}.js`)
-      );
+      // this.plugins.push(
+      await importScript(`https://unpkg.com/prettier@2.0.4/${plugin}.js`);
+      // );
     }
+    // @ts-ignore
+    this.plugins = prettierPlugins;
   }
 
   provideDocumentFormattingEdits: BaseWorker['provideDocumentFormattingEdits'] = async (
