@@ -199,6 +199,7 @@ export class BaseWorker {
   constructor(_ctx: IWorkerContext, _options: any) {
     this.ctx = _ctx;
     this.options = _options;
+    console.log(_ctx, this.options);
   }
 
   getModels() {

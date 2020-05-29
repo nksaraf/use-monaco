@@ -4,14 +4,28 @@ import { processDimensions } from '../src/utils';
 import { useMonacoModel } from '../src/useMonacoModel';
 import { useEditor } from '../src/useEditor';
 import '../src/prettier/prettier.monaco.worker';
+import '../src/typings/typings.monaco.worker';
 import { prettier } from '../src/prettier';
+import { typings } from '../src/typings';
 
 let Editor = () => {
   const { monaco, loading } = useMonaco({
     paths: {
       vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.20.0/dev/vs',
     },
-    plugins: [prettier(['typescript'])],
+    plugins: [prettier(['typescript']), typings()],
+    onLoad: (monaco) => {
+      monaco.languages.typescript.loadTypes('faunadb', '2.13.0');
+      monaco.languages.typescript.addGlobal(
+        `
+                      import * as faunadb from "./node_modules/faunadb";
+
+                      declare global {
+                        export const q: typeof faunadb.query
+                      }
+                      `
+      );
+    },
   });
 
   const model = useMonacoModel({
@@ -23,7 +37,11 @@ let Editor = () => {
       '}',
     ].join('\n'),
   });
-  const { containerRef, editor } = useEditor({ model, monaco });
+  const { containerRef, editor } = useEditor({
+    model,
+    monaco,
+    // editorDidMount: (model) => {},
+  });
 
   return <div ref={containerRef} style={processDimensions(800, 600)} />;
 };

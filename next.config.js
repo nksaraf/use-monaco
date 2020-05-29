@@ -11,7 +11,7 @@ var MonacoWebpackPlugin = _interopDefault(
 const withTM = require('next-transpile-modules')([
   // `monaco-editor` isn't published to npm correctly: it includes both CSS
   // imports and non-Node friendly syntax, so it needs to be compiled.
-  'monaco-editor',
+  // 'monaco-editor',
 ]);
 
 const withMonaco = (monacoOptions = {}) => (nextConfig = {}) => {
@@ -54,17 +54,17 @@ const withMonaco = (monacoOptions = {}) => (nextConfig = {}) => {
           ],
         });
         config.output.globalObject = 'self';
-        // config.plugins.push(
-        //   new MonacoWebpackPlugin(
-        //     Object.assign(
-        //       {
-        //         filename: 'static/workers/[name].monaco.worker.js',
-        //         publicPath: '/_next/',
-        //       },
-        //       monacoOptions
-        //     )
-        //   )
-        // );
+        config.plugins.push(
+          new MonacoWebpackPlugin(
+            Object.assign(
+              {
+                filename: 'static/workers/[name].monaco.worker.js',
+                publicPath: '/_next/',
+              },
+              monacoOptions
+            )
+          )
+        );
 
         if (typeof nextConfig.webpack === 'function') {
           return nextConfig.webpack(config, options);

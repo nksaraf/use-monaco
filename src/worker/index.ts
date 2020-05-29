@@ -10,11 +10,19 @@
 //   };
 // };
 
-// @ts-ignore
+// @ts-ignor
 // import * as workerApi from 'monaco-editor/esm/vs/editor/editor.worker';
 
 import { BaseWorker, IWorkerContext } from './base-worker';
+// import * as Comlink from 'comlink';
 
+// import '../../node_modules/monaco-editor/esm/vs/editor/editor.worker';
+// import { SimpleWorkerServer } from '../../node_modules/monaco-editor/esm/vs/base/common/worker/simpleWorker.js';
+// import { EditorSimpleWorker } from '../../node_modules/monaco-editor/esm/vs/editor/common/services/editorSimpleWorker.js';
+
+// console.log(SimpleWorkerServer, EditorSimpleWorker);
+
+// console.log(self.monaco);
 // interface IWorkerInitializer {
 //   initialize: (
 //     initalizer: (ctx: IWorkerContext, createData: any) => any
@@ -53,19 +61,69 @@ export const importScript = async (src: string) => {
   }
 };
 
-// export const monacoWorker: IWorkerInitializer = workerApi;
-export const initialize = (name: string, WorkerClass: typeof BaseWorker) => {
-  // @ts-ignore
-  self[name + 'MonacoWorker'] = WorkerClass;
+class WorkerServer {
+  creator: any;
+  initialize(ctx, options) {
+    console.log(ctx, options);
+  }
+}
 
-  // self.onmessage = () => {
-  //   try {
-  //     monacoWorker.initialize((ctx, options) => {
-  //       return new WorkerClass(ctx, options);
+// console.log(SimpleWorkerServer, EditorSimpleWorker);
+var initialized = false;
+
+export function initialize(name: string, WorkerClass: typeof BaseWorker) {
+  // if (initialized) {
+  //   return;
+  // }
+  // initialized = true;
+  // var simpleWorker = new SimpleWorkerServer(
+  //   function (msg) {
+  //     console.log('here');
+
+  //     //@ts-ignore
+  //     self.postMessage(msg);
+  //   },
+  //   function (host) {
+  //     console.log('here');
+
+  //     return new EditorSimpleWorker(host, (ctx, options) => {
+  //       new WorkerClass(ctx, options);
   //     });
-  //   } catch (err) {
-  //     console.error(err);
-  //     throw err;
   //   }
+  // );
+  // console.log(simpleWorker);
+  // self.onmessage = function (e) {
+  //   console.log(simpleWorker);
+  //   simpleWorker.onmessage(e.data);
   // };
-};
+  self[name + 'MonacoWorker'] = WorkerClass;
+}
+
+// self.onmessage = function (e) {
+//   // Ignore first message in this case and initialize if not yet initialized
+//   if (!initialized) {
+//     // @ts-ignore
+//     initialize(null);
+//   }
+// };
+
+// // export const monacoWorker: IWorkerInitializer = workerApi;
+// export const initialize = (name: string, WorkerClass: typeof BaseWorker) => {
+//   // @ts-ignore
+//   self[name + 'MonacoWorker'] = WorkerClass;
+
+//   const server = new WorkerServer();
+
+//   Comlink.expose(server);
+
+//   // self.onmessage = () => {
+//   //   try {
+//   //     monacoWorker.initialize((ctx, options) => {
+//   //       return new WorkerClass(ctx, options);
+//   //     });
+//   //   } catch (err) {
+//   //     console.error(err);
+//   //     throw err;
+//   //   }
+//   // };
+// };

@@ -33,6 +33,8 @@
     "typescript": "^3.9.3"
   },
   "dependencies": {
+    "comlink": "^4.3.0",
+    "isomorphic-unfetch": "^3.0.0",
     "monaco-editor": "^0.20.0",
     "next": "^9.4.2",
     "next-monaco-editor": "^0.0.1-beta.22",

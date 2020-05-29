@@ -23,6 +23,10 @@ export default {
       'dist/assets/prettier.monaco.worker.js'
     );
     toolbox.filesystem.copy(
+      '.next/static/workers/typings.monaco.worker.js',
+      'dist/assets/typings.monaco.worker.js'
+    );
+    toolbox.filesystem.copy(
       'public/workerLoader.js',
       'dist/assets/workerLoader.js'
     );

@@ -1,5 +1,7 @@
 import * as monacoApi from 'monaco-editor';
 import { asDisposable, disposeAll } from '../utils';
+import * as Comlink from 'comlink';
+import fetch from 'isomorphic-unfetch';
 
 declare module 'monaco-editor' {
   namespace worker {
@@ -238,6 +240,50 @@ export default (monaco: typeof monacoApi) => {
 
   const STOP_WHEN_IDLE_FOR = 2 * 60 * 1000; // 2min
 
+  const createWebWorker = <TWorker>({
+    moduleId,
+    label,
+    createData: {},
+  }): monacoApi.editor.MonacoWebWorker<TWorker> => {
+    let worker = undefined;
+    let proxy = undefined;
+    return {
+      getProxy: async () => {
+        console.log(moduleId);
+        const w = await fetch(moduleId, {
+          method: 'GET',
+        });
+        var workerSrcBlob, workerBlobURL;
+        workerSrcBlob = new Blob([await w.text()], {
+          type: 'text/javascript',
+        });
+        workerBlobURL = window.URL.createObjectURL(workerSrcBlob);
+        worker = new Worker(workerBlobURL);
+        proxy = Comlink.wrap(worker);
+        await proxy.initialize();
+        console.log(proxy);
+        // console.log(w);
+        // var xhr = new XMLHttpRequest();
+        // xhr.open('GET', moduleId);
+        // xhr.onload = function() {
+        //     if (xhr.status === 200) {
+        //         var workerSrcBlob, workerBlobURL;
+        //             workerSrcBlob = new Blob([xhr.responseText], { type: 'text/javascript' });
+        //             workerBlobURL = window.URL.createObjectURL(workerSrcBlob);
+        //             var worker = new Worker(workerBlobURL);
+        //     }
+        // };
+        // xhr.send();
+        // Comlink.wrap();
+        return {} as TWorker;
+      },
+      withSyncedResources: async (resources: monacoApi.Uri[]) => {
+        return {} as TWorker;
+      },
+      dispose: () => {},
+    };
+  };
+
   class WorkerClient<TOptions, TWorker> implements monacoApi.IDisposable {
     private _config: WorkerConfig<TOptions>;
     private _idleCheckInterval: number;
@@ -327,19 +373,27 @@ export default (monaco: typeof monacoApi) => {
     private _getClient(): Promise<TWorker> {
       this._lastUsedTime = Date.now();
       if (!this._client) {
-        this._worker = this.monaco.editor.createWebWorker<TWorker>({
-          moduleId:
-            this.config.config.src ||
-            this.monaco.worker.environment.workerLoader,
-          // `http://localhost:3000/workerLoader`,
-          // moduleId: `https://unpkg.com/use-monaco/dist/assets/workerLoader.js`,
-          label: this.config.label,
-          createData: {
-            ...this.config.options,
+        // console.log();
+        console.log(this.monaco);
+
+        this._worker = this.monaco.editor.createWebWorker<TWorker>(
+          //@ts-ignore
+          // StaticServices.modelService.get(),
+          // undefined,
+          {
+            moduleId:
+              this.config.config.src ||
+              this.monaco.worker.environment.workerLoader,
+            // `http://localhost:3000/workerLoader`,
+            // moduleId: `https://unpkg.com/use-monaco/dist/assets/workerLoader.js`,
             label: this.config.label,
-            path: this.config.config.src,
-          },
-        });
+            createData: {
+              ...this.config.options,
+              label: this.config.label,
+              path: this.config.config.src,
+            },
+          }
+        );
         // this._worker = this.monaco.editor.createWebWorker<TWorker>({
         //   moduleId: `vs/language,
         //   label: this.config.label,
@@ -813,7 +867,7 @@ export default (monaco: typeof monacoApi) => {
     }
 
     setEnvironment({
-      getWorkerUrl = noop as any,
+      getWorkerUrl,
       getWorker,
       baseUrl,
       workerLoader = 'http://localhost:3000/workerLoader.js',
@@ -823,22 +877,22 @@ export default (monaco: typeof monacoApi) => {
       getWorker?: (label: string) => Worker | undefined;
       workerLoader?: string;
     } = {}) {
-      const getWorkerPath = (_moduleId: string, label: string) => {
-        const url = getWorkerUrl(label);
-        if (url) return url;
-        return undefined;
-      };
-      if (baseUrl) {
+      if (baseUrl || getWorker || getWorkerUrl) {
+        const getWorkerPath = (_moduleId: string, label: string) => {
+          const url = getWorkerUrl?.(label);
+          if (url) return url;
+          return undefined;
+        };
         // @ts-ignore
         window.MonacoEnvironment = {
-          baseUrl: baseUrl,
+          // baseUrl: baseUrl,
           getWorker: (_moduleId: string, label: string) => {
-            const worker = getWorker(label);
+            const worker = getWorker?.(label);
             if (worker) return worker;
 
             const url = getWorkerPath(_moduleId, label);
             if (url) {
-              return new Worker(baseUrl + url);
+              return new Worker(url);
             }
             return null;
           },

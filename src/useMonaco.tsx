@@ -116,7 +116,17 @@ export const useMonaco = ({
     cancelable
       .then((monaco) => {
         monaco = addons(monaco);
-        monaco.worker.setEnvironment();
+        monaco.worker.setEnvironment({
+          //   getWorker: () => {
+          //     return new Worker(
+          //       `data:text/javascript;charset=utf-8,${encodeURIComponent(`
+          // // self.MonacoEnvironment = {
+          // //   baseUrl: 'http://www.mycdn.com/monaco-editor/min/'
+          // // };
+          // importScripts('https://cdn.jsdelivr.net/npm/monaco-editor@0.20.0/esm/vs/language/typescript/ts.worker.js');`)}`
+          //     );
+          //   },
+        });
         var pluginDisposables = monaco.plugin.install(...plugins);
         var onLoadCleanup = onLoad?.(monaco) as any;
         cleanupRef.current = () => {
