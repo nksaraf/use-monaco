@@ -1,14 +1,14 @@
 // @ts-ignore
-import { MirrorTextModel } from 'monaco-editor/esm/vs/editor/common/model/mirrorTextModel';
+// import { MirrorTextModel } from 'monaco-editor/esm/vs/editor/common/model/mirrorTextModel';
 
-MirrorTextModel.prototype.getFullModelRange = function () {
-  return {
-    startLineNumber: 1,
-    endLineNumber: this._lines.length,
-    startColumn: 1,
-    endColumn: this._lines[this._lines.length - 1].length + 1,
-  };
-};
+// MirrorTextModel.prototype.getFullModelRange = function () {
+//   return {
+//     startLineNumber: 1,
+//     endLineNumber: this._lines.length,
+//     startColumn: 1,
+//     endColumn: this._lines[this._lines.length - 1].length + 1,
+//   };
+// };
 
 // @ts-ignor
 // import * as workerApi from 'monaco-editor/esm/vs/editor/editor.worker';

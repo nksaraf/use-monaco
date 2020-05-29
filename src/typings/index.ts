@@ -54,8 +54,9 @@ export const typings = (
 
   Object.assign(api.languages.typescript, {
     loadTypes: async (name: string, version: string) => {
-      const worker = await api.worker.get('typings');
-      console.log(worker);
+      const worker = await api.worker.get<{
+        fetchTypings: (name: string, varsion: string) => any;
+      }>('typings');
       const { typings } = await worker.fetchTypings(name, version);
       Object.keys(typings).forEach((path) => {
         let extraLib = extraLibs.get(path);

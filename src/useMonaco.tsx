@@ -117,7 +117,7 @@ export const useMonaco = ({
       .then((monaco) => {
         monaco = addons(monaco);
         monaco.worker.setEnvironment({
-          getWorker: (label) => {
+          getWorkerUrl: (label) => {
             let worker;
             if (label === 'editorWorkerService') {
               worker = getNextWorkerPath('editor');
@@ -135,7 +135,7 @@ export const useMonaco = ({
               }
             );
             workerBlobURL = window.URL.createObjectURL(workerSrcBlob);
-            return new Worker(workerBlobURL);
+            return workerBlobURL;
           },
 
           // () => {

@@ -19,8 +19,8 @@ export default {
   // },
   postBuild: (toolbox: Toolbox, config: any) => {
     toolbox.filesystem.copy(
-      '.next/static/workers/prettier.monaco.worker.js',
-      'dist/assets/prettier.monaco.worker.js'
+      '.next/static/workers',
+      'dist/assets/'
     );
     toolbox.filesystem.copy(
       '.next/static/workers/typings.monaco.worker.js',
