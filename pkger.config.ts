@@ -1,6 +1,7 @@
 import { Toolbox } from 'pkger';
 export default {
-  format: 'cjs,esm,umd',
+  format: 'cjs,esm',
+  target: 'browser',
   typecheck: true,
   entries: ['worker', 'themes'],
   postBuild: (toolbox: Toolbox, config: any) => {

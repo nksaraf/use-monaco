@@ -1,6 +1,6 @@
 import { asDisposable } from '../utils';
 import * as monacoApi from 'monaco-editor';
-import { BASE_WORKER_PATH } from 'monaco/worker';
+import { BASE_WORKER_PATH } from '../monaco/worker';
 
 const parsers: { [key: string]: keyof typeof plugins } = {
   javascript: 'babel',

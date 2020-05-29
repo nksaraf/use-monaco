@@ -15,9 +15,12 @@ export const useMonacoEditor = ({
   editorDidMount,
   editorWillMount,
   theme,
+  options,
+  files,
+  syncAllFiles,
   overrideServices,
   onChange,
-}: UseEditorOptions & UseMonacoModelOptions & UseMonacoOptions) => {
+}: UseEditorOptions & UseMonacoModelOptions & UseMonacoOptions = {}) => {
   const { monaco, loading } = useMonaco({
     paths,
     onLoad,
@@ -31,6 +34,8 @@ export const useMonacoEditor = ({
     value,
     defaultValue,
     language,
+    files,
+    syncAllFiles,
     monaco,
   });
   const { containerRef, editor } = useEditor({
@@ -41,6 +46,7 @@ export const useMonacoEditor = ({
     editorWillMount,
     onChange,
     overrideServices,
+    options,
   });
 
   return { monaco, loading, model, containerRef, editor };
