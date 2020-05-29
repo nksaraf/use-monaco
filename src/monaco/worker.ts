@@ -17,7 +17,7 @@ declare module 'monaco-editor' {
     interface IWorkerConfig<TOptions> {
       label?: string;
       languageId?: string;
-      src?: string;
+      src?: string | (() => Worker);
       // to be passed on to the worker
       options?: TOptions;
       timeoutDelay?: number;
@@ -139,14 +139,22 @@ export default (monaco: typeof monacoApi) => {
         ...defaultClients(basePath),
       } as any;
       this.setEnvironment({
-        getWorkerUrl: (label) => {
+        getWorker: (label) => {
           const workerSrc = this.workerClients[label].src;
-          var workerSrcBlob, workerBlobURL;
-          workerSrcBlob = new Blob([`importScripts("${workerSrc}")`], {
-            type: 'text/javascript',
-          });
-          workerBlobURL = window.URL.createObjectURL(workerSrcBlob);
-          return workerBlobURL;
+          console.log('here', workerSrc);
+          if (typeof workerSrc === 'string') {
+            var workerSrcBlob, workerBlobURL;
+            workerSrcBlob = new Blob([`importScripts("${workerSrc}")`], {
+              type: 'text/javascript',
+            });
+            workerBlobURL = window.URL.createObjectURL(workerSrcBlob);
+            return new Worker(workerBlobURL, {
+              name: label,
+            });
+          } else {
+            console.log('here', workerSrc);
+            return workerSrc();
+          }
         },
       });
     }

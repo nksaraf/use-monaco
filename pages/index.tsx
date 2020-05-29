@@ -1,6 +1,6 @@
 import React from 'react';
 import { useMonacoEditor, typings, prettier } from '../src';
-import themes from 'sandkit/themes';
+import themes from '../src/themes';
 
 let Editor = () => {
   const { containerRef, editor, monaco, loading } = useMonacoEditor({

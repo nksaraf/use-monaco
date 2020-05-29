@@ -193,13 +193,11 @@ export class WorkerClient<TOptions, TWorker> implements monacoApi.IDisposable {
           }
         ),
         {
-          moduleId: this.config.config.src,
+          moduleId: this.config.label,
           // this._monaco.worker.environment.workerLoader,
           label: this.config.label,
           createData: {
             ...this.config.options,
-            label: this.config.label,
-            path: this.config.config.src,
           },
         }
       );
