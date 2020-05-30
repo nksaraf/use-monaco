@@ -1,7 +1,7 @@
 {
-  "version": "0.0.2",
+  "version": "0.0.2-patch.1",
   "license": "MIT",
-  "main": "./dist/cjs/use-monaco.js",
+  "main": "./dist/cjs/production/use-monaco.js",
   "scripts": {
     "start": "next",
     "build": "next build"
@@ -51,23 +51,23 @@
     ".": {
       "import": "./dist/esm/use-monaco.js",
       "browser": "./dist/esm/use-monaco.js",
-      "require": "./dist/cjs/use-monaco.js",
-      "node": "./dist/cjs/use-monaco.js",
+      "require": "./dist/cjs/production/use-monaco.js",
+      "node": "./dist/cjs/production/use-monaco.js",
       "default": "./dist/esm/use-monaco.js"
     },
     "./worker": {
-      "import": "./dist/esm/use-monaco.js",
-      "browser": "./dist/esm/use-monaco.js",
-      "require": "./dist/cjs/use-monaco.js",
-      "node": "./dist/cjs/use-monaco.js",
-      "default": "./dist/esm/use-monaco.js"
+      "import": "./dist/esm/worker.js",
+      "browser": "./dist/esm/worker.js",
+      "require": "./dist/cjs/production/worker.js",
+      "node": "./dist/cjs/production/worker.js",
+      "default": "./dist/esm/worker.js"
     },
     "./themes": {
-      "import": "./dist/esm/use-monaco.js",
-      "browser": "./dist/esm/use-monaco.js",
-      "require": "./dist/cjs/use-monaco.js",
-      "node": "./dist/cjs/use-monaco.js",
-      "default": "./dist/esm/use-monaco.js"
+      "import": "./dist/esm/themes.js",
+      "browser": "./dist/esm/themes.js",
+      "require": "./dist/cjs/production/themes.js",
+      "node": "./dist/cjs/production/themes.js",
+      "default": "./dist/esm/themes.js"
     },
     "./package.json": "./package.json",
     "./": "./"
