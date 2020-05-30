@@ -1,7 +1,7 @@
 {
-  "version": "0.0.2-beta.7",
+  "version": "0.0.2-beta.8",
   "license": "MIT",
-  "main": "dist/cjs/use-monaco.js",
+  "main": "./dist/cjs/use-monaco.js",
   "scripts": {
     "start": "next",
     "build": "next build"
@@ -44,9 +44,34 @@
     "use-debounce": "^3.4.2",
     "use-deep-compare-effect": "^1.3.1"
   },
-  "module": "dist/esm/use-monaco.js",
-  "browser": "dist/esm/use-monaco.js",
+  "module": "./dist/esm/use-monaco.js",
+  "browser": "./dist/esm/use-monaco.js",
   "types": "dist/types",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/use-monaco.js",
+      "browser": "./dist/esm/use-monaco.js",
+      "require": "./dist/cjs/use-monaco.js",
+      "node": "./dist/cjs/use-monaco.js",
+      "default": "./dist/esm/use-monaco.js"
+    },
+    "./worker": {
+      "import": "./dist/esm/use-monaco.js",
+      "browser": "./dist/esm/use-monaco.js",
+      "require": "./dist/cjs/use-monaco.js",
+      "node": "./dist/cjs/use-monaco.js",
+      "default": "./dist/esm/use-monaco.js"
+    },
+    "./themes": {
+      "import": "./dist/esm/use-monaco.js",
+      "browser": "./dist/esm/use-monaco.js",
+      "require": "./dist/cjs/use-monaco.js",
+      "node": "./dist/cjs/use-monaco.js",
+      "default": "./dist/esm/use-monaco.js"
+    },
+    "./package.json": "./package.json",
+    "./": "./"
+  },
   "files": [
     "dist",
     "worker",
