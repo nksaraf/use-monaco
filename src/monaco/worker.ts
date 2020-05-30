@@ -141,13 +141,9 @@ export default (monaco: typeof monacoApi) => {
       this.setEnvironment({
         getWorker: (label) => {
           const workerSrc = this.workerClients[label].src;
-          console.log('here', workerSrc);
+          console.log(`[monaco] Loading worker ${label} from ${workerSrc}...`);
           if (typeof workerSrc === 'string') {
-            var workerSrcBlob, workerBlobURL;
-            workerSrcBlob = new Blob([`importScripts("${workerSrc}")`], {
-              type: 'text/javascript',
-            });
-            workerBlobURL = window.URL.createObjectURL(workerSrcBlob);
+            var workerBlobURL = createBlobURL(`importScripts("${workerSrc}")`);
             return new Worker(workerBlobURL, {
               name: label,
             });
@@ -245,9 +241,10 @@ export default (monaco: typeof monacoApi) => {
         window.MonacoEnvironment = {
           // baseUrl: baseUrl,
           getWorker: (_moduleId: string, label: string) => {
-            console.log(`[monaco] Loading worker ${label}...`);
             const worker = getWorker?.(label);
-            if (worker) return worker;
+            if (worker) {
+              return worker;
+            }
             const url = getWorkerPath(_moduleId, label);
             if (url) {
               return new Worker(url, {
@@ -266,3 +263,11 @@ export default (monaco: typeof monacoApi) => {
   });
   return monaco;
 };
+export function createBlobURL(workerSrc: string) {
+  var workerSrcBlob, workerBlobURL;
+  workerSrcBlob = new Blob([workerSrc], {
+    type: 'text/javascript',
+  });
+  workerBlobURL = window.URL.createObjectURL(workerSrcBlob);
+  return workerBlobURL;
+}
