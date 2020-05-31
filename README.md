@@ -11,10 +11,11 @@
   - Work with underlying monaco objects like [`monaco`](https://microsoft.github.io/monaco-editor/api/index.html), the [`editor`](https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.istandalonecodeeditor.html) instance, and the [`model`](https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.itextmodel.html) instances
   - Use these in effects together to wire up custom functionality
 - Inspired by [@monaco-editor/react](https://github.com/suren-atoyan/monaco-react).
-- Availabe on Pika CDN. Here is a simple example of using it, (no build tool here, just copy this [html](https://use-monaco.now.sh/simple.html) anywhere and you are golden).
+- Availabe on Pika CDN. There is a simple example of using this below, (no build tool, just copy this [html](https://use-monaco.now.sh/simple.html) anywhere and you are golden).
 - Built with [pkger](https://github.com/nksaraf/pkger)
 - In progress: docs about setting up language providers, example with parcel, next.js, vanilla
 
+## Example
 ```html
 <body>
   <div id="root"></div>
