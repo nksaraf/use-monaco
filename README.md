@@ -2,7 +2,7 @@
 
 - Simple hooks to use [monaco-editor](https://microsoft.github.io/monaco-editor/) in any React app
 - No webpack plugins or AMD loaders required while maintaining full worker support without build tools
-- Easy API  for web-workers.
+- Easy API for working with web-workers.
 - Headless (just hooks), so you can 
     - Render however you want (it's just a single div) 
     - Decide how to show loading state
@@ -166,3 +166,18 @@ function useEditor(options: {
 - Can be used multiple times with multiple models to get a bunch of editors
 - Controlled and uncontrolled based on how you control the model
 - Returns editor instance so that you can play with it
+
+## Working with workers
+`monaco-editor` is already using a bunch of workers for typescript, etc. You can add custom workers to offload work from the main thread. You can register workers in your components using the `monaco.worker` api available on the main thread.
+```typescript
+// Register the worker in onLoad or in an effect (remember to cleanup)
+monaco.worker.register({ 
+  label: 'babel', 
+  src: () => new Worker('./path.to.worker.js')
+});
+
+// You get a proxy to the registered worker with the contents 
+// of the files that you mention here synced. The worker has to extend a simple interface
+const worker = await monaco.worker.get('babel', 'model1.ts', 'model2.ts');
+const something = await worker.doSomeWork('model.ts');
+```
