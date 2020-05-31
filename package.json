@@ -1,5 +1,5 @@
 {
-  "version": "0.0.3-patch.1",
+  "version": "0.0.3-patch.2",
   "license": "MIT",
   "main": "./dist/cjs/production/use-monaco.js",
   "scripts": {
@@ -20,6 +20,15 @@
   "repository": {
     "url": "https://github.com/nksaraf/use-monaco"
   },
+  "keywords": [
+    "use-monaco",
+    "monaco",
+    "editor",
+    "monaco-editor",
+    "react-hooks",
+    "web-editor",
+    "react-monaco-editor"
+  ],
   "devDependencies": {
     "@types/jest": "^25.2.3",
     "@types/react": "^16.9.35",
