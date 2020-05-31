@@ -1,6 +1,6 @@
 # 🗒️ use-monaco
 
-A few simple hooks to use [monaco-editor](https://github.com/microsoft/monaco-editor) in any React app without webpack plugins or AMD loaders (in esm) without losing support for web-workers. This library is inspired by [@monaco-editor/react](https://github.com/suren-atoyan/monaco-react). `use-monaco` is headless so you have render the element yourself (it's just a single div without space for an editor). But this allows us to give you easy access to the underlying monaco objects like `monaco`, the `editor` instance, and the `model` instances. You can use these in effects them to wire up custom functionality. Here is a simple example of using it with support of the pika cdn, (no build tool here, just copy this [html](https://use-monaco.now.sh/simple.html) anywhere and you are golden).
+A few simple hooks to use [monaco-editor](https://microsoft.github.io/monaco-editor/) in any React app without webpack plugins or AMD loaders (in esm) without losing support for web-workers. This library is inspired by [@monaco-editor/react](https://github.com/suren-atoyan/monaco-react). `use-monaco` is headless so you have render the element yourself (it's just a single div without space for an editor). But this allows us to give you easy access to the underlying monaco objects like `monaco`, the `editor` instance, and the `model` instances. You can use these in effects them to wire up custom functionality. Here is a simple example of using it with support of the pika cdn, (no build tool here, just copy this [html](https://use-monaco.now.sh/simple.html) anywhere and you are golden).
 
 ```html
 <body>
@@ -38,7 +38,22 @@ A few simple hooks to use [monaco-editor](https://github.com/microsoft/monaco-ed
 
 ## useMonacoEditor
 
-Single hook to get all `monaco` functionality for one editor that wires up these underlying hooks. **All the props are optional** with sensible defaults. The `useMonacoEditor` accepts all the props from all these hooks and returns everything they return;
+Single hook to get all `monaco` functionality for one editor that wires up the three underlying hooks `useMonaco`, `useMonacoModel` and `useEditor`. If you only need a single editor, `useMonacoEditor` is fine for you. For multiple editors, you would need to use some of the other hooks like `useMonacoModel` and `useEditor`. Most props are optional with sensible defaults. `useMonacoEditor` accepts the props for all these hooks and returns everything they return. 
+
+```typescript
+function useMonacoEditor(options: {
+ ...useMonacoOptions, // see below
+ ...useMonacoModelOptions,
+ ...useEditorOptions
+}): {
+  // assign to a div to render editor
+  containerRef: React.MutableRefObject<HTMLDivElement>;
+  editor: monaco.editor.IStandaloneCodeEditor;
+  loading: boolean;
+  monaco: typeof monaco;
+  model: monaco.editor.ITextModel;
+};
+```
 
 ### useMonaco
 
