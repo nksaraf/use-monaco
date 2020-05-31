@@ -148,7 +148,6 @@ export default (monaco: typeof monacoApi) => {
               name: label,
             });
           } else {
-            console.log('here', workerSrc);
             return workerSrc();
           }
         },
