@@ -1,4 +1,4 @@
-# 🗒️ use-monaco  
+# 🗒️ `use-monaco`
 
   [![npm](https://img.shields.io/npm/v/use-monaco)](https://npm.im/use-monaco)
 
@@ -49,7 +49,7 @@
 </body>
 ```
 
-## useMonacoEditor
+## `useMonacoEditor`
 
 Single hook to get all `monaco` functionality for one editor that wires up the three underlying hooks `useMonaco`, `useMonacoModel` and `useEditor`. If you only need a single editor, `useMonacoEditor` is fine for you. For multiple editors, you would need to use some of the other hooks like `useMonacoModel` and `useEditor`. Most props are optional with sensible defaults. `useMonacoEditor` accepts the props for all these hooks and returns everything they return.
 
@@ -68,7 +68,7 @@ function useMonacoEditor(options: {
 };
 ```
 
-### useMonaco
+### `useMonaco`
 
 ```typescript
 function useMonaco(options: {
@@ -95,7 +95,7 @@ function useMonaco(options: {
 - Optinal plugins like `prettier`, `typings`, `graphql` that are backed by web-workers
 - Dedupes the request for the `monaco-editor` from the CDN across multiple calls
 
-### useMonacoModel
+### `useMonacoModel`
 
 ```typescript
 function useMonacoModel(options: {
@@ -122,7 +122,7 @@ function useMonacoModel(options: {
 - Basically a super simple file system backed by monaco models
 - Use path to select model
 
-### useEditor
+### `useEditor`
 
 ```typescript
 function useEditor(options: {
