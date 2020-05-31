@@ -42,13 +42,9 @@
     "husky": "^4.2.5",
     "isomorphic-unfetch": "^3.0.0",
     "next": "^9.4.2",
-    "next-monaco-editor": "^0.0.1-beta.22",
     "prettier": "^2.0.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-query": "^1.5.3",
-    "sandkit": "^0.0.2-canary.9",
-    "tsdx": "^0.13.2",
     "tslib": "^2.0.0",
     "typescript": "^3.9.3"
   },

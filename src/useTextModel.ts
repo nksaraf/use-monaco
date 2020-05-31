@@ -3,7 +3,7 @@ import React from 'react';
 import { Monaco } from './useMonaco';
 import * as monacoApi from 'monaco-editor';
 
-export interface UseMonacoModelOptions {
+export interface UseTextModelOptions {
   value?: string;
   defaultValue?: string;
   path?: string;
@@ -12,7 +12,7 @@ export interface UseMonacoModelOptions {
   syncAllFiles?: boolean;
 }
 
-export const useMonacoModel = ({
+export const useTextModel = ({
   monaco,
   value,
   language,
@@ -24,7 +24,7 @@ export const useMonacoModel = ({
   files = {
     [fixPath(path)]: value != null ? value : defaultValue,
   },
-}: UseMonacoModelOptions & Monaco) => {
+}: UseTextModelOptions & Monaco) => {
   function findModel(path: string) {
     return monaco?.editor.getModel(monaco.Uri.file(fixPath(path)));
   }

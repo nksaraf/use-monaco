@@ -1,4 +1,4 @@
-import { useMonacoModel, UseMonacoModelOptions } from './useMonacoModel';
+import { useTextModel, UseTextModelOptions } from './useTextModel';
 import { useEditor, UseEditorOptions } from './useEditor';
 import { useMonaco, UseMonacoOptions } from './useMonaco';
 
@@ -20,16 +20,17 @@ export const useMonacoEditor = ({
   syncAllFiles,
   overrideServices,
   onChange,
-}: UseEditorOptions & UseMonacoModelOptions & UseMonacoOptions = {}) => {
+}: UseEditorOptions & UseTextModelOptions & UseMonacoOptions = {}) => {
   const { monaco, loading } = useMonaco({
     paths,
     onLoad,
     plugins,
     themes,
+    theme,
     onThemeChange,
   });
 
-  const model = useMonacoModel({
+  const model = useTextModel({
     path,
     value,
     defaultValue,
@@ -41,7 +42,6 @@ export const useMonacoEditor = ({
   const { containerRef, editor } = useEditor({
     model,
     monaco,
-    theme,
     editorDidMount,
     editorWillMount,
     onChange,

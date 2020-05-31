@@ -21,7 +21,6 @@ export function useRefWithEffect<T>(): [
 }
 
 export interface UseEditorOptions {
-  theme?: string | monacoApi.editor.IStandaloneThemeData;
   onChange?: (
     newValue: string,
     editor: monacoApi.editor.IStandaloneCodeEditor,
@@ -51,7 +50,6 @@ export const useEditor = ({
   editorWillMount = noop,
   editorDidMount = noop,
   model,
-  theme = 'vs-dark',
   monaco,
   overrideServices,
   onChange = noop,
@@ -121,10 +119,6 @@ export const useEditor = ({
     },
     [model]
   );
-
-  React.useEffect(() => {
-    if (monaco) monaco.editor.setTheme(theme);
-  }, [monaco, theme]);
 
   useEditorEffect(
     (editor) => {

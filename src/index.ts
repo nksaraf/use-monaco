@@ -1,6 +1,6 @@
 export * from './useEditor';
 export * from './useMonaco';
-export * from './useMonacoModel';
+export * from './useTextModel';
 export * from './useMonacoEditor';
 export * from './utils';
 export * from 'use-debounce';

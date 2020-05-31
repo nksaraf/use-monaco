@@ -148,14 +148,15 @@ export interface UseMonacoOptions {
   paths?: {
     vs?: string;
   };
-  themes?: { [key: string]: monacoApi.editor.IStandaloneThemeData };
   onLoad?: (monaco: typeof monacoApi) => (() => void) | void;
-  onThemeChange?: (theme: string, monaco: typeof monacoApi) => void;
   plugins?: monacoApi.plugin.IPlugin[];
+  onThemeChange?: (theme: string, monaco: typeof monacoApi) => void;
+  themes?: { [key: string]: monacoApi.editor.IStandaloneThemeData };
+  theme?: string | monacoApi.editor.IStandaloneThemeData;
 }
 
 export interface Monaco {
-  monaco?: typeof monacoApi;
+  monaco: typeof monacoApi | null;
 }
 
 export const useMonaco = ({
@@ -165,10 +166,11 @@ export const useMonaco = ({
   onLoad = noop,
   plugins = [],
   themes = {},
+  theme = 'vs-dark',
   onThemeChange = noop,
 }: UseMonacoOptions = {}) => {
   const [isMonacoMounting, setIsMonacoMounting] = React.useState(true);
-  const monacoRef = React.useRef<typeof monacoApi>();
+  const monacoRef = React.useRef<null | typeof monacoApi>(null);
   const cleanupRef = React.useRef<() => void>();
 
   useEffect(() => {
@@ -210,6 +212,10 @@ export const useMonaco = ({
       }
     };
   }, []);
+
+  React.useEffect(() => {
+    if (monacoRef.current) monacoRef.current.editor.setTheme(theme);
+  }, [monacoRef.current, theme]);
 
   return {
     monaco: monacoRef.current,

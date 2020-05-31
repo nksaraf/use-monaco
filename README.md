@@ -23,10 +23,11 @@
 - [`useMonacoEditor`](#usemonacoeditor)
   - [`useMonaco`](#usemonaco)
   - [`useEditor`](#useeditor)
-  - [`useMonacoModel`](#usemonacomodel)
+  - [`useTextModel`](#usetextmodel)
 - [Working with workers](#workingwithworkers)
 
 ## Example
+
 ```html
 <body>
   <div id="root"></div>
@@ -64,28 +65,31 @@
 ## Installation
 
 You can get `use-monaco` from `yarn` or `npm`:
+
 ```bash
 yarn add use-monaco
 
 #or
 npm install use-monaco
 ```
-or use it directly from a CDN like Pika or unpkg in browsers with ESM support:
-```typescript
-import { useMonacoEditor } from "https://cdn.pika.dev/use-monaco";
-import { initialize } from "https://cdn.pika.dev/use-monaco/worker";
 
-import { useMonacoEditor } from "https://unpkg.com/use-monaco";
+or use it directly from a CDN like Pika or unpkg in browsers with ESM support:
+
+```typescript
+import { useMonacoEditor } from 'https://cdn.pika.dev/use-monaco';
+import { initialize } from 'https://cdn.pika.dev/use-monaco/worker';
+
+import { useMonacoEditor } from 'https://unpkg.com/use-monaco';
 ```
 
 ## `useMonacoEditor`
 
-Single hook to get all `monaco` functionality for one editor that wires up the three underlying hooks `useMonaco`, `useMonacoModel` and `useEditor`. If you only need a single editor, `useMonacoEditor` is fine for you. For multiple editors, you would need to use some of the other hooks like `useMonacoModel` and `useEditor`. Most props are optional with sensible defaults. `useMonacoEditor` accepts the props for all these hooks and returns everything they return.
+Single hook to get all `monaco` functionality for one editor that wires up the three underlying hooks `useMonaco`, `useTextModel` and `useEditor`. If you only need a single editor, `useMonacoEditor` is fine for you. For multiple editors, you would need to use some of the other hooks like `useTextModel` and `useEditor`. Most props are optional with sensible defaults. `useMonacoEditor` accepts the props for all these hooks and returns everything they return.
 
 ```typescript
 function useMonacoEditor(options: {
  ...useMonacoOptions, // see below
- ...useMonacoModelOptions,
+ ...useTextModelOptions,
  ...useEditorOptions
 }): {
   // assign to a div to render editor
@@ -123,14 +127,14 @@ function useMonaco(options: {
 };
 ```
 
-- ### `useMonacoModel`
+- ### `useTextModel`
   - Create models to be viewed on `monaco` editors
   - Create more that one for different files to show across editors
   - Basically a super simple file system backed by monaco models
   - Use path to select model
 
 ```typescript
-function useMonacoModel(options: {
+function useTextModel(options: {
   // must provide monaco instance from useMonaco hook
   monaco?: typeof monaco;
   // just the initial value for uncontrolled model
@@ -161,7 +165,7 @@ function useEditor(options: {
   // must provide monaco instance from useMonaco hook
   monaco?: typeof monaco;
 
-  // model to assign to editor (get this from useMonacoModel hook)
+  // model to assign to editor (get this from useTextModel hook)
   model?: monaco.editor.ITextModel;
 
   // theme for the editor (can be a custom one or name of theme providede to useMonaco hook) [theme will change across editors]
@@ -196,6 +200,48 @@ function useEditor(options: {
   containerRef: React.MutableRefObject<HTMLDivElement>;
   editor: monaco.editor.IStandaloneCodeEditor;
 };
+```
+
+Example of using the hooks separately,
+
+```html
+<body>
+  <div id="root"></div>
+  <script defer type="module">
+    import {
+      useMonaco,
+      useEditor,
+      useTextModel,
+      prettier,
+    } from 'https://cdn.pika.dev/use-monaco@0.0.3';
+    import themes from 'https://cdn.pika.dev/use-monaco@0.0.3/themes';
+    import * as React from 'https://cdn.pika.dev/react';
+    import ReactDOM from 'https://cdn.pika.dev/react-dom';
+    import htm from 'https://cdn.pika.dev/htm';
+    const html = htm.bind(React.createElement);
+
+    let Editor = () => {
+      const { monaco, loading } = useMonaco({
+        plugins: [prettier(['graphql'])],
+        themes,
+        theme: 'github',
+      });
+
+      const model = useTextModel({
+        path: 'model.graphql',
+        defaultValue: ['type Query {}'].join('\n'),
+      });
+      const { containerRef } = useEditor({ monaco, model });
+
+      return html`<div
+        ref=${containerRef}
+        style=${{ height: 800, width: 600 }}
+      />`;
+    };
+
+    ReactDOM.render(html`<${Editor} />`, document.getElementById('root'));
+  </script>
+</body>
 ```
 
 ## Working with workers
