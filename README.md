@@ -1,6 +1,6 @@
 # 🗒️ `use-monaco`
 
-  [![npm](https://img.shields.io/npm/v/use-monaco)](https://npm.im/use-monaco)
+[![npm](https://img.shields.io/npm/v/use-monaco)](https://npm.im/use-monaco)
 
 - Simple hooks to use [monaco-editor](https://microsoft.github.io/monaco-editor/) in any React app
 - No webpack plugins or AMD loaders required while maintaining full support for monaco web-workers without build tools
@@ -68,7 +68,11 @@ function useMonacoEditor(options: {
 };
 ```
 
-* ### `useMonaco`
+- ### `useMonaco`
+  - Provides you with `monaco` namespace to work with
+  - Extended API for easy support for adding custom workers and languages
+  - Optinal plugins like `prettier`, `typings`, `graphql` that are backed by web-workers
+  - Dedupes the request for the `monaco-editor` from the CDN across multiple calls
 
 ```typescript
 function useMonaco(options: {
@@ -90,12 +94,11 @@ function useMonaco(options: {
 };
 ```
 
-- Provides you with `monaco` namespace to work with
-- Extended API for easy support for adding custom workers and languages
-- Optinal plugins like `prettier`, `typings`, `graphql` that are backed by web-workers
-- Dedupes the request for the `monaco-editor` from the CDN across multiple calls
-
-* ### `useMonacoModel`
+- ### `useMonacoModel`
+  - Create models to be viewed on `monaco` editors
+  - Create more that one for different files to show across editors
+  - Basically a super simple file system backed by monaco models
+  - Use path to select model
 
 ```typescript
 function useMonacoModel(options: {
@@ -117,12 +120,12 @@ function useMonacoModel(options: {
 }): monaco.editor.ITextModel;
 ```
 
-- Create models to be viewed on `monaco` editors
-- Create more that one for different files to show across editors
-- Basically a super simple file system backed by monaco models
-- Use path to select model
-
-* ### `useEditor`
+- ### `useEditor`
+  - Creates a monaco code editor which provides a `containerRef` that you will need to render as a `div` in your React app.
+  - Uses models to show content.
+  - Can be used multiple times with multiple models to get a bunch of editors
+  - Controlled and uncontrolled based on how you control the model
+  - Returns editor instance so that you can play with it
 
 ```typescript
 function useEditor(options: {
@@ -166,12 +169,6 @@ function useEditor(options: {
 };
 ```
 
-- Creates a monaco code editor which provides a `containerRef` that you will need to render as a `div` in your React app.
-- Uses models to show content.
-- Can be used multiple times with multiple models to get a bunch of editors
-- Controlled and uncontrolled based on how you control the model
-- Returns editor instance so that you can play with it
-
 ## Working with workers
 
 `monaco-editor` is already using a bunch of workers for typescript, etc. You can add custom workers to offload work from the main thread. You can register workers in your components using the `monaco.worker` api available on the main thread.
@@ -194,7 +191,7 @@ You worker needs to follow a simple interface to work with `use-monaco`.
 import { initialize, BaseWorker } from 'use-monaco/worker';
 // or https://unpkg.com/use-monaco@0.0.2-patch.1/dist/esm/worker.js to load from CDN
 
-// Extend BaseWorker to get the ability to use the monaco models on the worker side. 
+// Extend BaseWorker to get the ability to use the monaco models on the worker side.
 class BabelWorker extends BaseWorker {
   transpile(path) {
     const text = this.getText(path);

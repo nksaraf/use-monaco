@@ -26,7 +26,7 @@ const defaultValue = `<body>
 
     return html\`<div
       ref=\${containerRef}
-      style=${{ height: 800, width: 600 }}
+      style=\${{ height: 800, width: 600 }}
     />\`;
   };
 
@@ -52,7 +52,14 @@ let Editor = () => {
     // },
   });
 
-  return <div ref={containerRef} style={{ width: 800, height: 600 }} />;
+  return (
+    <div>
+      <pre>
+        🗒️ <a href="https://github.com/nksaraf/use-monaco">use-monaco</a>
+      </pre>
+      <div ref={containerRef} style={{ width: 800, height: 600 }} />
+    </div>
+  );
 };
 
 export default () => {
