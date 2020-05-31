@@ -1,6 +1,6 @@
 # 🗒️ use-monaco  
 
-  [![npm](https://img.shields.io/npm/v/use-monaco)](https://npm.im/tsdx)
+  [![npm](https://img.shields.io/npm/v/use-monaco)](https://npm.im/use-monaco)
 
 - Simple hooks to use [monaco-editor](https://microsoft.github.io/monaco-editor/) in any React app
 - No webpack plugins or AMD loaders required while maintaining full support for monaco web-workers without build tools
