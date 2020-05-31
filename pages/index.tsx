@@ -108,7 +108,11 @@ let Editor = () => {
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <style jsx global>
+      <style
+        // @ts-ignore
+        jsx
+        global
+      >
         {`
           body {
             margin: 0;
