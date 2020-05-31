@@ -1,4 +1,6 @@
-# 🗒️ use-monaco
+# 🗒️ use-monaco  
+
+  [![npm](https://img.shields.io/npm/v/use-monaco)](https://npm.im/use-monaco)
 
 - Simple hooks to use [monaco-editor](https://microsoft.github.io/monaco-editor/) in any React app
 - No webpack plugins or AMD loaders required while maintaining full support for monaco web-workers without build tools
@@ -10,6 +12,7 @@
   - Use these in effects together to wire up custom functionality
 - Inspired by [@monaco-editor/react](https://github.com/suren-atoyan/monaco-react).
 - Availabe on Pika CDN. Here is a simple example of using it, (no build tool here, just copy this [html](https://use-monaco.now.sh/simple.html) anywhere and you are golden).
+- Built with [pkger](https://github.com/nksaraf/pkger)
 - In progress: docs about setting up language providers, example with parcel, next.js, vanilla
 
 ```html
