@@ -50,6 +50,23 @@
 </body>
 ```
 
+## Installation
+
+You can get `use-monaco` from `yarn` or `npm`:
+```bash
+yarn add use-monaco
+
+#or
+npm install use-monaco
+```
+or use it directly from a CDN like Pika or unpkg in browsers with ESM support:
+```typescript
+import { useMonacoEditor } from "https://cdn.pika.dev/use-monaco";
+import { initialize } from "https://cdn.pika.dev/use-monaco/worker";
+
+import { useMonacoEditor } from "https://unpkg.com/use-monaco";
+```
+
 ## `useMonacoEditor`
 
 Single hook to get all `monaco` functionality for one editor that wires up the three underlying hooks `useMonaco`, `useMonacoModel` and `useEditor`. If you only need a single editor, `useMonacoEditor` is fine for you. For multiple editors, you would need to use some of the other hooks like `useMonacoModel` and `useEditor`. Most props are optional with sensible defaults. `useMonacoEditor` accepts the props for all these hooks and returns everything they return.
