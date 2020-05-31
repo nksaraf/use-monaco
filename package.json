@@ -76,6 +76,7 @@
     "dist",
     "worker",
     "dist/types",
-    "themes"
+    "themes",
+    "README.md"
   ]
 }
