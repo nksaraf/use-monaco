@@ -1,6 +1,6 @@
 # 🗒️ use-monaco
 
-A few simple hooks to use [monaco-editor](https://github.com/microsoft/monaco-editor) in any React app without webpack plugins or AMD loaders (in esm) without losing support for web-workers. The library is headless so you have render the element yourself (it's just a single div without space for an editor). But this allows us to give you easy access to the underlying monaco objects like `monaco`, the `editor` instance, and the `model` instances. You can use these in effects them to wire up custom functionality.
+A few simple hooks to use [monaco-editor](https://github.com/microsoft/monaco-editor) in any React app without webpack plugins or AMD loaders (in esm) without losing support for web-workers. The library is headless so you have render the element yourself (it's just a single div without space for an editor). But this allows us to give you easy access to the underlying monaco objects like `monaco`, the `editor` instance, and the `model` instances. You can use these in effects them to wire up custom functionality. Here is a simple example of using it with support of the pika cdn, (no build tool here, just copy this html anywhere and you can golden).
 
 ```html
 <body>
