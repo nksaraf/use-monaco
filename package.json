@@ -1,5 +1,5 @@
 {
-  "version": "0.0.3-patch.2",
+  "version": "0.0.3-patch.3",
   "license": "MIT",
   "main": "./dist/cjs/production/use-monaco.js",
   "scripts": {
@@ -18,7 +18,11 @@
   "name": "use-monaco",
   "author": "Nikhil Saraf",
   "repository": {
+    "type": "git",
     "url": "https://github.com/nksaraf/use-monaco"
+  },
+  "bugs": {
+    "url": "https://github.com/nksaraf/use-monaco/issues"
   },
   "keywords": [
     "use-monaco",
