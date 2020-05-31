@@ -42,7 +42,6 @@ export interface UseEditorOptions {
     monaco: typeof monacoApi
     // containerRef: React.RefObject<HTMLDivElement>
   ) => monacoApi.editor.IEditorOptions | void;
-  model?: monacoApi.editor.ITextModel;
 }
 
 export const useEditor = ({
@@ -53,7 +52,7 @@ export const useEditor = ({
   monaco,
   overrideServices,
   onChange = noop,
-}: UseEditorOptions & Monaco) => {
+}: UseEditorOptions & Monaco & { model: monacoApi.editor.ITextModel }) => {
   const containerRef = React.useRef<HTMLDivElement>();
   const [editorRef, useEditorEffect] = useRefWithEffect<
     monacoApi.editor.IStandaloneCodeEditor
