@@ -15,6 +15,17 @@
 - Built with [pkger](https://github.com/nksaraf/pkger)
 - In progress: docs about setting up language providers, example with parcel, next.js, vanilla
 
+## Documentation
+
+- [Example](#example)
+- [Installation](#installation)
+- [`monaco-editor` documentation](https://microsoft.github.io/monaco-editor/api/index.html)
+- [`useMonacoEditor`](#usemonacoeditor)
+  - [`useMonaco`](#usemonaco)
+  - [`useEditor`](#useeditor)
+  - [`useMonacoModel`](#usemonacomodel)
+- [Working with workers](#workingwithworkers)
+
 ## Example
 ```html
 <body>
