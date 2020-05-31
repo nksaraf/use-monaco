@@ -2,6 +2,40 @@
 
 A few simple hooks to use [monaco-editor](https://github.com/microsoft/monaco-editor) in any React app without webpack plugins or AMD loaders (in esm) without losing support for web-workers. The library is headless so you have render the element yourself (it's just a single div without space for an editor). But this allows us to give you easy access to the underlying monaco objects like `monaco`, the `editor` instance, and the `model` instances. You can use these in effects them to wire up custom functionality.
 
+```html
+<body>
+  <div id="root"></div>
+  <script defer type="module">
+    import {
+      useMonacoEditor,
+      prettier,
+    } from 'https://cdn.pika.dev/use-monaco@0.0.3';
+    import themes from 'https://cdn.pika.dev/use-monaco@0.0.3/themes';
+    import * as React from 'https://cdn.pika.dev/react';
+    import ReactDOM from 'https://cdn.pika.dev/react-dom';
+    import htm from 'https://cdn.pika.dev/htm';
+    const html = htm.bind(React.createElement);
+
+    let Editor = () => {
+      const { containerRef, monaco, model, loading } = useMonacoEditor({
+        plugins: [prettier(['graphq'])],
+        themes,
+        theme: 'github',
+        path: 'model.graphql',
+        defaultValue: ['type Query {}'].join('\n'),
+      });
+
+      return html`<div
+        ref=${containerRef}
+        style=${{ height: 800, width: 600 }}
+      />`;
+    };
+
+    ReactDOM.render(html`<${Editor} />`, document.getElementById('root'));
+  </script>
+</body>
+```
+
 ## useMonacoEditor
 
 Single hook to get all `monaco` functionality for one editor that wires up these underlying hooks. **All the props are optional** with sensible defaults. The `useMonacoEditor` accepts all the props from all these hooks and returns everything they return;
