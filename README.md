@@ -18,7 +18,7 @@ A few simple hooks to use [monaco-editor](https://github.com/microsoft/monaco-ed
 
     let Editor = () => {
       const { containerRef, monaco, model, loading } = useMonacoEditor({
-        plugins: [prettier(['graphq'])],
+        plugins: [prettier(['graphql'])],
         themes,
         theme: 'github',
         path: 'model.graphql',
