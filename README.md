@@ -1,15 +1,16 @@
 # 🗒️ use-monaco
 
 - Simple hooks to use [monaco-editor](https://microsoft.github.io/monaco-editor/) in any React app
-- No webpack plugins or AMD loaders required while maintaining full worker support without build tools
+- No webpack plugins or AMD loaders required while maintaining full support for monaco web-workers without build tools
 - Easy API for working with web-workers.
-- Headless (just hooks), so you can 
-    - Render however you want (it's just a single div) 
-    - Decide how to show loading state
-    - Work with underlying monaco objects like `monaco`, the `editor` instance, and the `model` instances
-    - Use these in effects together to wire up custom functionality
-- Inspired by [@monaco-editor/react](https://github.com/suren-atoyan/monaco-react). 
-- Availabe on Pika CDN to work. Here is a simple example of using it, (no build tool here, just copy this [html](https://use-monaco.now.sh/simple.html) anywhere and you are golden).
+- Headless (just hooks), so you can
+  - Render however you want (it's just a single div)
+  - Decide how to show loading state
+  - Work with underlying monaco objects like [`monaco`](https://microsoft.github.io/monaco-editor/api/index.html), the [`editor`](https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.istandalonecodeeditor.html) instance, and the [`model`](https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.itextmodel.html) instances
+  - Use these in effects together to wire up custom functionality
+- Inspired by [@monaco-editor/react](https://github.com/suren-atoyan/monaco-react).
+- Availabe on Pika CDN. Here is a simple example of using it, (no build tool here, just copy this [html](https://use-monaco.now.sh/simple.html) anywhere and you are golden).
+- In progress: docs about setting up language providers, example with parcel, next.js, vanilla
 
 ```html
 <body>
@@ -47,7 +48,7 @@
 
 ## useMonacoEditor
 
-Single hook to get all `monaco` functionality for one editor that wires up the three underlying hooks `useMonaco`, `useMonacoModel` and `useEditor`. If you only need a single editor, `useMonacoEditor` is fine for you. For multiple editors, you would need to use some of the other hooks like `useMonacoModel` and `useEditor`. Most props are optional with sensible defaults. `useMonacoEditor` accepts the props for all these hooks and returns everything they return. 
+Single hook to get all `monaco` functionality for one editor that wires up the three underlying hooks `useMonaco`, `useMonacoModel` and `useEditor`. If you only need a single editor, `useMonacoEditor` is fine for you. For multiple editors, you would need to use some of the other hooks like `useMonacoModel` and `useEditor`. Most props are optional with sensible defaults. `useMonacoEditor` accepts the props for all these hooks and returns everything they return.
 
 ```typescript
 function useMonacoEditor(options: {
@@ -149,18 +150,19 @@ function useEditor(options: {
     editor: monaco.editor.IStandaloneCodeEditor,
     monaco: typeof monaco
   ) => monaco.IDisposable[] | Promise<void> | void;
-  
+
   // Override internal monaco services for the editor
   overrideServices?:
     | monaco.editor.IEditorOverrideServices
     | ((monaco: typeof monaco) => monaco.editor.IEditorOverrideServices);
   options?: monaco.editor.IEditorOptions;
-}): { 
+}): {
   // assign this ref to a div with some styling and you are good to go
   containerRef: React.MutableRefObject<HTMLDivElement>;
   editor: monaco.editor.IStandaloneCodeEditor;
 };
 ```
+
 - Creates a monaco code editor which provides a `containerRef` that you will need to render as a `div` in your React app.
 - Uses models to show content.
 - Can be used multiple times with multiple models to get a bunch of editors
@@ -168,16 +170,48 @@ function useEditor(options: {
 - Returns editor instance so that you can play with it
 
 ## Working with workers
+
 `monaco-editor` is already using a bunch of workers for typescript, etc. You can add custom workers to offload work from the main thread. You can register workers in your components using the `monaco.worker` api available on the main thread.
+
 ```typescript
 // Register the worker in onLoad or in an effect (remember to cleanup)
-monaco.worker.register({ 
-  label: 'babel', 
-  src: () => new Worker('./path.to.worker.js')
+monaco.worker.register({
+  label: 'babel',
+  src: () =>
+    new Worker('./path.to.worker.js', {
+      // to use esm syntax in worker
+      type: 'module',
+    }),
 });
+```
 
-// You get a proxy to the registered worker with the contents 
+You worker needs to follow a simple interface to work with `use-monaco`.
+
+```typescript
+import { initialize, BaseWorker } from 'use-monaco/worker';
+// or https://unpkg.com/use-monaco@0.0.2-patch.1/dist/esm/worker.js to load from CDN
+
+// Extend BaseWorker to get the ability to use the monaco models on the worker side. 
+class BabelWorker extends BaseWorker {
+  transpile(path) {
+    const text = this.getText(path);
+    // do some hard work;
+    const transpiled = Babel.transpile(text);
+    return transpiled;
+  }
+}
+
+// call initialize to setup the worker to communicate with monaco
+initialize('babel', BabelWorker);
+```
+
+And then you can use the worker on the main thread by retreiving the worker using its label and syncing the models you would need on the backend. You can then use the functions that were exposed by the worker as async functions.
+
+```typescript
+// You get a proxy to the registered worker with the contents
 // of the files that you mention here synced. The worker has to extend a simple interface
 const worker = await monaco.worker.get('babel', 'model1.ts', 'model2.ts');
-const something = await worker.doSomeWork('model.ts');
+const something = await worker.transpile('model.ts');
 ```
+
+Workers can also provide core functionality to monaco by registering providers to things like hover, auto-complete, validation, formatting, etc.
