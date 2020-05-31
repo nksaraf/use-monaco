@@ -2,7 +2,7 @@ import React from 'react';
 import { useMonacoEditor, typings, prettier } from '../src';
 import themes from '../src/themes';
 
-const defaultV = `<body>
+const defaultValue = `<body>
 <div id="root"></div>
 <script defer type="module">
   import {
@@ -38,13 +38,13 @@ const defaultV = `<body>
 let Editor = () => {
   const { containerRef, editor, monaco, loading } = useMonacoEditor({
     paths: {
-      vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.20.0/dev/vs',
+      vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.20.0/min/vs',
     },
     themes: themes as any,
     plugins: [prettier(['html']), typings()],
     path: 'index.html',
     language: 'html',
-    defaultValue: defaultV,
+    defaultValue,
     theme: 'vs-light',
     // editorDidMount: (editor, monaco) => {
     //   monaco.languages.typescript.loadTypes('faunadb', '2.13.0');
