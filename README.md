@@ -68,7 +68,7 @@ function useMonacoEditor(options: {
 };
 ```
 
-- ### `useMonaco`
+* ### `useMonaco`
 
 ```typescript
 function useMonaco(options: {
@@ -95,7 +95,7 @@ function useMonaco(options: {
 - Optinal plugins like `prettier`, `typings`, `graphql` that are backed by web-workers
 - Dedupes the request for the `monaco-editor` from the CDN across multiple calls
 
-- ### `useMonacoModel`
+* ### `useMonacoModel`
 
 ```typescript
 function useMonacoModel(options: {
@@ -122,7 +122,7 @@ function useMonacoModel(options: {
 - Basically a super simple file system backed by monaco models
 - Use path to select model
 
-- ### `useEditor`
+* ### `useEditor`
 
 ```typescript
 function useEditor(options: {
