@@ -21,7 +21,7 @@ const defaultV = `<body>
       themes,
       theme: 'github',
       path: 'model.graphql',
-      defaultValue: ['type Query {}'].join('\n'),
+      defaultValue: ['type Query {}'].join('\\n'),
     });
 
     return html\`<div
@@ -42,7 +42,8 @@ let Editor = () => {
     },
     themes: themes as any,
     plugins: [prettier(['html']), typings()],
-    path: 'model.ts',
+    path: 'index.html',
+    language: 'html',
     defaultValue: defaultV,
     theme: 'vs-light',
     // editorDidMount: (editor, monaco) => {
