@@ -127,32 +127,6 @@ function useMonaco(options: {
 };
 ```
 
-- ### `useTextModel`
-  - Create models to be viewed on `monaco` editors
-  - Create more that one for different files to show across editors
-  - Basically a super simple file system backed by monaco models
-  - Use path to select model
-
-```typescript
-function useTextModel(options: {
-  // must provide monaco instance from useMonaco hook
-  monaco?: typeof monaco;
-  // just the initial value for uncontrolled model
-  defaultValue?: string;
-  // or value for controlled mode
-  value?: string;
-  // or dictionary of paths to the content of the files (path is used to determine value of the file)
-  files?: { [key: string]: string };
-
-  // path of the model you want to select, a new model is created if one doesn't exist
-  path?: string;
-  // language of the model (can normally be interpreted from path extension)
-  language?: string;
-  // create models for all files eagerly
-  syncAllFiles?: boolean;
-}): monaco.editor.ITextModel;
-```
-
 - ### `useEditor`
   - Creates a monaco code editor which provides a `containerRef` that you will need to render as a `div` in your React app.
   - Uses models to show content.
@@ -200,6 +174,32 @@ function useEditor(options: {
   containerRef: React.MutableRefObject<HTMLDivElement>;
   editor: monaco.editor.IStandaloneCodeEditor;
 };
+```
+
+- ### `useTextModel`
+  - Create models to be viewed on `monaco` editors
+  - Create more that one for different files to show across editors
+  - Basically a super simple file system backed by monaco models
+  - Use path to select model
+
+```typescript
+function useTextModel(options: {
+  // must provide monaco instance from useMonaco hook
+  monaco?: typeof monaco;
+  // just the initial value for uncontrolled model
+  defaultValue?: string;
+  // or value for controlled mode
+  value?: string;
+  // or dictionary of paths to the content of the files (path is used to determine value of the file)
+  files?: { [key: string]: string };
+
+  // path of the model you want to select, a new model is created if one doesn't exist
+  path?: string;
+  // language of the model (can normally be interpreted from path extension)
+  language?: string;
+  // create models for all files eagerly
+  syncAllFiles?: boolean;
+}): monaco.editor.ITextModel;
 ```
 
 Example of using the hooks separately,
