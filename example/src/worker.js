@@ -5,6 +5,7 @@ initialize(
   class Hello extends BaseWorker {
     provideHover() {
       console.log('trying...');
+      return null;
     }
   }
 );

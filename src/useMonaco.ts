@@ -151,7 +151,7 @@ export interface UseMonacoOptions {
   onLoad?: (monaco: typeof monacoApi) => (() => void) | void;
   plugins?: monacoApi.plugin.IPlugin[];
   onThemeChange?: (theme: string, monaco: typeof monacoApi) => void;
-  themes?: { [key: string]: monacoApi.editor.IStandaloneThemeData };
+  themes?: { [key: string]: monacoApi.editor.IStandaloneThemeData | any };
   theme?: string | monacoApi.editor.IStandaloneThemeData;
 }
 

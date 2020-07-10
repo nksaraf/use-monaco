@@ -3,5 +3,5 @@
   "private": true,
   "main": "../dist/cjs/themes.js",
   "module": "../dist/esm/themes.js",
-  "types": "../dist/types"
+  "types": "../dist/types/themes"
 }
