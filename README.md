@@ -5,11 +5,11 @@
 - Simple hooks to use [monaco-editor](https://microsoft.github.io/monaco-editor/) in any React app
 - No webpack plugins or AMD loaders required while maintaining full support for monaco web-workers without build tools
 - Easy API for working with web-workers.
-- Headless (just hooks), so you can
-  - Render however you want (it's just a single div)
-  - Decide how to show loading state
-  - Work with underlying monaco objects like [`monaco`](https://microsoft.github.io/monaco-editor/api/index.html), the [`editor`](https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.istandalonecodeeditor.html) instance, and the [`model`](https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.itextmodel.html) instances
-  - Use these in effects together to wire up custom functionality
+- Headless (just hooks), so you can:
+  - Render however you want (it's just a single div, style it as you wish)
+  - Decide how to render loading state  (`loading` prop is returned by the [`useMonacoEditor`](#usemonacoeditor) and [`useMonaco`](#usemonaco) hooks)
+  - Work with underlying monaco objects like [`monaco`](https://microsoft.github.io/monaco-editor/api/index.html) API, the [`editor`](https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.istandalonecodeeditor.html) instance, and the text [`model`](https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.itextmodel.html) instances
+  - Use the above objects in `useEffect` hooks together to wire up custom functionality
 - Inspired by [@monaco-editor/react](https://github.com/suren-atoyan/monaco-react).
 - Availabe on Pika CDN. There is a simple example of using this below, (no build tool, just copy this [html](https://use-monaco.now.sh/simple.html) anywhere and you are golden).
 - Built with [pkger](https://github.com/nksaraf/pkger)
@@ -84,7 +84,7 @@ import { useMonacoEditor } from 'https://unpkg.com/use-monaco';
 
 ## `useMonacoEditor`
 
-Single hook to get all `monaco` functionality for one editor that wires up the three underlying hooks `useMonaco`, `useTextModel` and `useEditor`. If you only need a single editor, `useMonacoEditor` is fine for you. For multiple editors, you would need to use some of the other hooks like `useTextModel` and `useEditor`. Most props are optional with sensible defaults. `useMonacoEditor` accepts the props for all these hooks and returns everything they return.
+Single hook to get all [`monaco-editor` documentation](https://microsoft.github.io/monaco-editor/api/index.html) functionality for one editor instance that wires up the three underlying hooks [`useMonaco`](#usemonaco), [`useTextModel`](#usetextmodel) and `useEditor`. If you only need a single editor, `useMonacoEditor` will work fine for you as it allows you to send options for all underlying hooks. For multiple editors, you would need to use some of the other hooks like [`useTextModel`](#usetextmodel) and [`useEditor`](#useeditor). Most props are optional, coming with sensible defaults. `useMonacoEditor` accepts the props for all these hooks and returns everything they return.
 
 ```typescript
 function useMonacoEditor(options: {
@@ -102,10 +102,11 @@ function useMonacoEditor(options: {
 ```
 
 - ### `useMonaco`
-  - Provides you with `monaco` namespace to work with
-  - Extended API for easy support for adding custom workers and languages
-  - Optinal plugins like `prettier`, `typings`, `graphql` that are backed by web-workers
-  - Dedupes the request for the `monaco-editor` from the CDN across multiple calls
+  - Provides you with [`monaco-editor`](https://microsoft.github.io/monaco-editor/api/index.html) API namespace to work with, includes [`monaco.languages`](https://microsoft.github.io/monaco-editor/api/modules/monaco.languages.html), [`monaco.editor`](https://microsoft.github.io/monaco-editor/api/modules/monaco.editor.html)
+  - Extended `monaco.worker` API with for easy support for adding custom workers and languages
+  - Added `monaco.plugins` API to enable functionality by simply registering plugins 
+  - Plugins for `prettier`, `typings`, `graphql` available out-of-the-box (backed by web-workers and completely opt-in)
+  - Dedupes the request for the loading `monaco-editor` from the CDN across multiple calls
 
 ```typescript
 function useMonaco(options: {
@@ -246,7 +247,7 @@ Example of using the hooks separately,
 
 ## Working with workers
 
-`monaco-editor` is already using a bunch of workers for typescript, etc. You can add custom workers to offload work from the main thread. You can register workers in your components using the `monaco.worker` api available on the main thread.
+`monaco-editor` is already using a bunch of workers for languages like typescript, html, css as well some editor services. You can add custom workers to offload work for your custom functionality from the main thread. This can ensure that the UI  doesn't lag or your typing experience is not harmed by these computations like linting, etc. happening.  You can register workers in your components using the `monaco.worker` api available on the main thread. Workers are also used to provide core language functionality to monaco by registering providers to things like hover, auto-complete, validation, formatting, etc. There is an easy API to enable this as well provided by `use-monaco`.
 
 ```typescript
 // Register the worker in onLoad or in an effect (remember to cleanup)
@@ -264,7 +265,7 @@ You worker needs to follow a simple interface to work with `use-monaco`.
 
 ```typescript
 import { initialize, BaseWorker } from 'use-monaco/worker';
-// or https://unpkg.com/use-monaco@0.0.2-patch.1/dist/esm/worker.js to load from CDN
+// or https://unpkg.com/use-monaco/dist/esm/worker.js to load from CDN
 
 // Extend BaseWorker to get the ability to use the monaco models on the worker side.
 class BabelWorker extends BaseWorker {
@@ -289,4 +290,4 @@ const worker = await monaco.worker.get('babel', 'model1.ts', 'model2.ts');
 const something = await worker.transpile('model.ts');
 ```
 
-Workers can also provide core functionality to monaco by registering providers to things like hover, auto-complete, validation, formatting, etc.
+
