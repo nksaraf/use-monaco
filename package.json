@@ -1,5 +1,5 @@
 {
-  "version": "0.0.3-patch.6",
+  "version": "0.0.4",
   "license": "MIT",
   "main": "./dist/cjs/production/use-monaco.js",
   "scripts": {
