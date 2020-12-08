@@ -219,6 +219,6 @@ export const useMonaco = ({
 
   return {
     monaco: monacoRef.current,
-    loading: Boolean(monacoRef.current),
+    loading: !Boolean(monacoRef.current),
   };
 };
