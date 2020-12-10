@@ -43,9 +43,13 @@ export class PrettierWorker extends BaseWorker {
       singleQuote: true,
       ...options,
     });
+    
+    const lines = text.split('\n');
+    const fullRange = { startLineNumber: 1, endLineNumber: lines.length, startColumn: 0, endColumn: lines[lines.length - 1].length }
+    
     return [
       {
-        range: model.getFullModelRange(),
+        range: fullRange,
         text,
       },
     ];
