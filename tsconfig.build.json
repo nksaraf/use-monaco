@@ -1,26 +1,33 @@
 {
-  "include": ["src"],
-  "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
-    "lib": ["dom", "esnext"],
-    "importHelpers": true,
-    "declaration": true,
-    "sourceMap": true,
-    "rootDir": "./src",
-    "outDir": "dist/types",
-    "strict": false,
-    "moduleResolution": "node",
-    "baseUrl": "./src",
-    "jsx": "react",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "allowJs": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": false,
-    "emitDeclarationOnly": true,
-    "resolveJsonModule": true
-  },
-  "exclude": ["node_modules"]
+    "include": [
+        "src"
+    ],
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "commonjs",
+        "lib": [
+            "dom",
+            "esnext"
+        ],
+        "importHelpers": true,
+        "declaration": true,
+        "sourceMap": true,
+        "rootDir": "./src",
+        "outDir": "dist/types",
+        "strict": false,
+        "moduleResolution": "node",
+        "baseUrl": "./src",
+        "jsx": "react",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "allowJs": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "noEmit": false,
+        "emitDeclarationOnly": true,
+        "resolveJsonModule": true
+    },
+    "exclude": [
+        "node_modules"
+    ]
 }

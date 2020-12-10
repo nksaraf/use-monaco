@@ -1,91 +1,91 @@
 import * as monacoApi from 'monaco-editor';
 
 declare module 'monaco-editor' {
-  namespace editor {
-    interface IEditorOptions {
-      formatOnSave?: boolean;
-    }
+    namespace editor {
+        interface IEditorOptions {
+            formatOnSave?: boolean;
+        }
 
-    interface IStandaloneCodeEditor {
-      addSelectAction: (action: IQuickSelectAction) => monacoApi.IDisposable;
-    }
+        interface IStandaloneCodeEditor {
+            addSelectAction: (action: IQuickSelectAction) => monacoApi.IDisposable;
+        }
 
-    export function setTheme(themeName: string | IStandaloneThemeData): void;
-    export function onDidChangeTheme(
-      listener: (theme: string) => void
-    ): monacoApi.IDisposable;
-  }
+        export function setTheme(themeName: string | IStandaloneThemeData): void;
+        export function onDidChangeTheme(
+            listener: (theme: string) => void
+        ): monacoApi.IDisposable;
+    }
 }
 
 export default (monaco: typeof monacoApi) => {
-  function setupCommandPaletteShortcuts(
-    editor: monacoApi.editor.IStandaloneCodeEditor
-  ) {
-    // for firefox support (wasn't able to intercept key)
-    editor.addCommand(
-      monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_C,
-      () => {
-        editor.trigger('ctrl-shift-c', 'editor.action.quickCommand', null);
-      }
-    );
+    function setupCommandPaletteShortcuts(
+        editor: monacoApi.editor.IStandaloneCodeEditor
+    ) {
+        // for firefox support (wasn't able to intercept key)
+        editor.addCommand(
+            monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_C,
+            () => {
+                editor.trigger('ctrl-shift-c', 'editor.action.quickCommand', null);
+            }
+        );
 
-    editor.addCommand(
-      monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_P,
-      () => {
-        editor.trigger('ctrl-shift-p', 'editor.action.quickCommand', null);
-      }
-    );
+        editor.addCommand(
+            monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_P,
+            () => {
+                editor.trigger('ctrl-shift-p', 'editor.action.quickCommand', null);
+            }
+        );
 
-    window.addEventListener('keydown', (event: any) => {
-      if (event.metaKey && event.shiftKey && event.code === 'KeyP') {
-        editor.trigger('ctrl-shift-p', 'editor.action.quickCommand', null);
-        event.stopPropagation();
-      }
-    });
-  }
-
-  const createMonacoEditor = monaco.editor.create;
-
-  monaco.editor.create = (
-    domElement: HTMLElement,
-    options?: monacoApi.editor.IStandaloneEditorConstructionOptions | undefined,
-    override?: monacoApi.editor.IEditorOverrideServices | undefined
-  ) => {
-    const editor = createMonacoEditor(domElement, options, override);
-
-    if (options?.formatOnSave) {
-      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => {
-        editor?.trigger('ctrl-s', 'editor.action.formatDocument', null);
-      });
+        window.addEventListener('keydown', (event: any) => {
+            if (event.metaKey && event.shiftKey && event.code === 'KeyP') {
+                editor.trigger('ctrl-shift-p', 'editor.action.quickCommand', null);
+                event.stopPropagation();
+            }
+        });
     }
 
-    // editor.addSelectAction = function (descriptor) {
-    // return editor.addAction(new QuickSelectAction(descriptor, monaco) as any);
-    // };
+    const createMonacoEditor = monaco.editor.create;
 
-    setupCommandPaletteShortcuts(editor);
+    monaco.editor.create = (
+        domElement: HTMLElement,
+        options?: monacoApi.editor.IStandaloneEditorConstructionOptions | undefined,
+        override?: monacoApi.editor.IEditorOverrideServices | undefined
+    ) => {
+        const editor = createMonacoEditor(domElement, options, override);
 
-    monaco.worker.setEditor(editor);
-    return editor;
-  };
+        if (options?.formatOnSave) {
+            editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => {
+                editor?.trigger('ctrl-s', 'editor.action.formatDocument', null);
+            });
+        }
 
-  const setTheme = monaco.editor.setTheme;
-  const _onDidChangeTheme = new monaco.Emitter<string>();
-  monaco.editor.onDidChangeTheme = _onDidChangeTheme.event;
-  monaco.editor.setTheme = (
-    theme: string | monacoApi.editor.IStandaloneThemeData
-  ) => {
-    if (typeof theme === 'string') {
-      setTheme(theme);
-      _onDidChangeTheme.fire(theme);
-    } else if (typeof theme === 'object') {
-      monaco.editor.defineTheme('custom', theme);
-      setTheme('custom');
-      _onDidChangeTheme.fire('custom');
-    }
-  };
+        // editor.addSelectAction = function (descriptor) {
+        // return editor.addAction(new QuickSelectAction(descriptor, monaco) as any);
+        // };
 
-  return monaco;
+        setupCommandPaletteShortcuts(editor);
+
+        monaco.worker.setEditor(editor);
+        return editor;
+    };
+
+    const setTheme = monaco.editor.setTheme;
+    const _onDidChangeTheme = new monaco.Emitter<string>();
+    monaco.editor.onDidChangeTheme = _onDidChangeTheme.event;
+    monaco.editor.setTheme = (
+        theme: string | monacoApi.editor.IStandaloneThemeData
+    ) => {
+        if (typeof theme === 'string') {
+            setTheme(theme);
+            _onDidChangeTheme.fire(theme);
+        } else if (typeof theme === 'object') {
+            monaco.editor.defineTheme('custom', theme);
+            setTheme('custom');
+            _onDidChangeTheme.fire('custom');
+        }
+    };
+
+    return monaco;
 };
 
 // function setupCommandPaletteShortcuts(
@@ -126,20 +126,20 @@ export default (monaco: typeof monacoApi) => {
 // import { matchesFuzzy } from '../../node_modules/monaco-editor/esm/vs/base/common/filters';
 
 export type IQuickSelectAction = Omit<
-  monacoApi.editor.IActionDescriptor,
-  'run'
+    monacoApi.editor.IActionDescriptor,
+    'run'
 > & {
-  choices?: () => Promise<string[]> | string[];
-  runChoice?: (
-    choice: string,
-    mode: number,
-    context: any,
-    api: typeof monacoApi
-  ) => Promise<boolean | void> | boolean | void;
-  runAction?: (
-    editor: monacoApi.editor.IStandaloneCodeEditor,
-    api: typeof monacoApi
-  ) => Promise<void>;
+    choices?: () => Promise<string[]> | string[];
+    runChoice?: (
+        choice: string,
+        mode: number,
+        context: any,
+        api: typeof monacoApi
+    ) => Promise<boolean | void> | boolean | void;
+    runAction?: (
+        editor: monacoApi.editor.IStandaloneCodeEditor,
+        api: typeof monacoApi
+    ) => Promise<void>;
 };
 
 // export class QuickSelectAction extends BaseEditorQuickOpenAction {

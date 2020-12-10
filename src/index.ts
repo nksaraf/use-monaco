@@ -6,5 +6,4 @@ export * from './utils';
 export * from 'use-debounce';
 export * from './monaco';
 export { useLocalStorage } from './useLocalStorage';
-export { prettier } from './prettier';
-export { typings } from './typings';
+

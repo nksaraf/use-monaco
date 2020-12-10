@@ -3,7 +3,7 @@ import {
   initialize,
   IWorkerContext,
   importScript,
-} from '../worker';
+} from '../../worker';
 
 export class PrettierWorker extends BaseWorker {
   options: { parser: string; plugins: string[] };

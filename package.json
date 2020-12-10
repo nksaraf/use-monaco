@@ -1,92 +1,96 @@
 {
-  "version": "0.0.4",
-  "license": "MIT",
-  "main": "./dist/cjs/production/use-monaco.js",
-  "scripts": {
-    "start": "next",
-    "build": "next build"
-  },
-  "peerDependencies": {
-    "react": ">=16"
-  },
-  "prettier": {
-    "printWidth": 80,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5"
-  },
-  "name": "use-monaco",
-  "author": "Nikhil Saraf",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/nksaraf/use-monaco"
-  },
-  "bugs": {
-    "url": "https://github.com/nksaraf/use-monaco/issues"
-  },
-  "keywords": [
-    "use-monaco",
-    "monaco",
-    "editor",
-    "monaco-editor",
-    "react-hooks",
-    "web-editor",
-    "react-monaco-editor"
-  ],
-  "devDependencies": {
-    "@types/jest": "^25.2.3",
-    "@types/node": "^14.0.6",
-    "@types/react": "^16.9.35",
-    "@types/react-dom": "^16.9.8",
-    "comlink": "^4.3.0",
-    "hasha": "^5.2.0",
-    "husky": "^4.2.5",
-    "isomorphic-unfetch": "^3.0.0",
-    "next": "^9.4.2",
-    "prettier": "^2.0.5",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "tslib": "^2.0.0",
-    "typescript": "^3.9.3"
-  },
-  "dependencies": {
-    "monaco-editor": "^0.20.0",
-    "use-debounce": "^3.4.2",
-    "use-deep-compare-effect": "^1.3.1"
-  },
-  "module": "./dist/esm/use-monaco.js",
-  "browser": "./dist/esm/use-monaco.js",
-  "types": "dist/types",
-  "exports": {
-    ".": {
-      "import": "./dist/esm/use-monaco.js",
-      "browser": "./dist/esm/use-monaco.js",
-      "require": "./dist/cjs/production/use-monaco.js",
-      "node": "./dist/cjs/production/use-monaco.js",
-      "default": "./dist/esm/use-monaco.js"
+    "version": "0.0.4",
+    "license": "MIT",
+    "main": "./dist/cjs/production/use-monaco.js",
+    "scripts": {
+        "start": "next",
+        "build": "next build"
     },
-    "./worker": {
-      "import": "./dist/esm/worker.js",
-      "browser": "./dist/esm/worker.js",
-      "require": "./dist/cjs/production/worker.js",
-      "node": "./dist/cjs/production/worker.js",
-      "default": "./dist/esm/worker.js"
+    "peerDependencies": {
+        "react": ">=16"
     },
-    "./themes": {
-      "import": "./dist/esm/themes.js",
-      "browser": "./dist/esm/themes.js",
-      "require": "./dist/cjs/production/themes.js",
-      "node": "./dist/cjs/production/themes.js",
-      "default": "./dist/esm/themes.js"
+    "prettier": {
+        "printWidth": 80,
+        "semi": true,
+        "tabWidth": 2,
+        "singleQuote": true,
+        "trailingComma": "es5"
     },
-    "./package.json": "./package.json",
-    "./": "./"
-  },
-  "files": [
-    "dist",
-    "worker",
-    "dist/types",
-    "themes",
-    "README.md"
-  ]
+    "name": "use-monaco",
+    "author": "Nikhil Saraf",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nksaraf/use-monaco"
+    },
+    "bugs": {
+        "url": "https://github.com/nksaraf/use-monaco/issues"
+    },
+    "keywords": [
+        "use-monaco",
+        "monaco",
+        "editor",
+        "monaco-editor",
+        "react-hooks",
+        "web-editor",
+        "react-monaco-editor"
+    ],
+    "devDependencies": {
+        "@rollup/plugin-alias": "^3.1.1",
+        "@types/jest": "^25.2.3",
+        "@types/node": "^14.0.6",
+        "@types/react": "^16.9.35",
+        "@types/react-dom": "^16.9.8",
+        "comlink": "^4.3.0",
+        "hasha": "^5.2.0",
+        "husky": "^4.2.5",
+        "isomorphic-unfetch": "^3.0.0",
+        "next": "^9.4.2",
+        "pkger": "^0.0.2",
+        "prettier": "^2.0.5",
+        "react": "^16.13.1",
+        "react-dom": "^16.13.1",
+        "tslib": "^2.0.0",
+        "tsup": "^3.10.1",
+        "typescript": "^4.1.2"
+    },
+    "dependencies": {
+        "monaco-editor": "^0.21.2",
+        "use-debounce": "^3.4.2",
+        "use-deep-compare-effect": "^1.3.1"
+    },
+    "module": "./dist/esm/use-monaco.js",
+    "browser": "./dist/esm/use-monaco.js",
+    "types": "dist/types",
+    "exports": {
+        ".": {
+            "import": "./dist/esm/use-monaco.js",
+            "browser": "./dist/esm/use-monaco.js",
+            "require": "./dist/cjs/production/use-monaco.js",
+            "node": "./dist/cjs/production/use-monaco.js",
+            "default": "./dist/esm/use-monaco.js"
+        },
+        "./worker": {
+            "import": "./dist/esm/worker.js",
+            "browser": "./dist/esm/worker.js",
+            "require": "./dist/cjs/production/worker.js",
+            "node": "./dist/cjs/production/worker.js",
+            "default": "./dist/esm/worker.js"
+        },
+        "./themes": {
+            "import": "./dist/esm/themes.js",
+            "browser": "./dist/esm/themes.js",
+            "require": "./dist/cjs/production/themes.js",
+            "node": "./dist/cjs/production/themes.js",
+            "default": "./dist/esm/themes.js"
+        },
+        "./package.json": "./package.json",
+        "./": "./"
+    },
+    "files": [
+        "dist",
+        "worker",
+        "dist/types",
+        "themes",
+        "README.md"
+    ]
 }
