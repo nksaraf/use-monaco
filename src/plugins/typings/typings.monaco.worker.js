@@ -7,7 +7,7 @@
  * @flow
  */
 
-import path from 'path';
+import path from 'path-browserify';
 import { Store, set as setItem, get as getItem } from 'idb-keyval';
 import { BaseWorker, initialize } from '../../worker';
 
