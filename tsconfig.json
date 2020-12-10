@@ -1,33 +1,33 @@
 {
-    "include": [
-        "src",
+  "include": [
+    "src"
+  ],
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "lib": [
+      "dom",
+      "esnext"
     ],
-    "compilerOptions": {
-        "target": "esnext",
-        "module": "commonjs",
-        "lib": [
-            "dom",
-            "esnext"
-        ],
-        "importHelpers": true,
-        "declaration": true,
-        "sourceMap": true,
-        "rootDir": "./",
-        "noImplicitThis": true,
-        "alwaysStrict": true,
-        "noFallthroughCasesInSwitch": true,
-        "moduleResolution": "node",
-        "jsx": "preserve",
-        "esModuleInterop": true,
-        "allowJs": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "noEmit": true,
-        "resolveJsonModule": true,
-        "isolatedModules": true,
-        "strict": false
-    },
-    "exclude": [
-        "node_modules"
-    ]
+    "importHelpers": true,
+    "declaration": true,
+    "sourceMap": true,
+    "rootDir": "./",
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noFallthroughCasesInSwitch": true,
+    "moduleResolution": "node",
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "strict": false
+  },
+  "exclude": [
+    "node_modules"
+  ]
 }
