@@ -8620,6 +8620,11 @@ regexpu-core@^4.7.1:
     unicode-match-property-ecmascript "^1.0.4"
     unicode-match-property-value-ecmascript "^1.2.0"
 
+reghex@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/reghex/-/reghex-1.0.2.tgz#0a871f43d92da10f05ab5f953951c169e4ff0f15"
+  integrity sha512-bYtyDmFGHxn1Y4gxIs12+AUQ1WRDNvaIhn6ZuKc5KUbSVcmm6U6vx/RA66s26xGhTWBErKKDKK7lorkvvIBB5g==
+
 regjsgen@^0.5.1:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/regjsgen/-/regjsgen-0.5.2.tgz#92ff295fb1deecbf6ecdab2543d207e91aa33733"
@@ -9126,6 +9131,13 @@ shell-quote@^1.6.1:
   version "1.7.2"
   resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.7.2.tgz#67a7d02c76c9da24f99d20808fcaded0e0e04be2"
   integrity sha512-mRz/m/JVscCrkMyPqHc/bczi3OQHkLTqXHEFu0zDhK/qfv3UcOA4SVmRCLmos4bhjr9ekVQubj/R7waKapmiQg==
+
+shellac@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/shellac/-/shellac-0.3.1.tgz#83d6ce93dba80458083b054f592e10fda3b573f0"
+  integrity sha512-7vx4PKO2AU6wyPjsks7UJdiH2712chgcTjA4Fqv2ufwq8BgJ5C+Q2aAhzruPlI4JUEHSBVt7YFLG6W6QqzE9lA==
+  dependencies:
+    reghex "^1.0.2"
 
 shelljs@^0.8.4:
   version "0.8.4"

@@ -28,7 +28,7 @@ module.exports = withTM({
         {
           loader: 'worker-loader',
           options: {
-            name: 'static/[name].js',
+            name: 'static/workers/[name].js',
             publicPath: '/_next/',
           },
         },
@@ -57,7 +57,7 @@ module.exports = withTM({
           'scss',
           'yaml',
         ],
-        filename: 'static/[name].monaco.worker.js',
+        filename: 'static/workers/[name].monaco.worker.js',
       })
     );
     return config;

@@ -163,7 +163,7 @@ export interface Monaco {
 export const useMonaco = ({
   paths: {
     monaco = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.20.0/min/vs',
-    workers = 'https://unpkg.com/use-monaco/dist/assets/',
+    workers = 'https://unpkg.com/use-monaco/dist/workers/',
   } = {},
   onLoad = noop,
   plugins = [],

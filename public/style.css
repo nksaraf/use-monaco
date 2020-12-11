@@ -1,0 +1,16 @@
+.monaco-menu .monaco-action-bar.vertical .action-menu-item {
+  height: 1em !important;
+}
+
+.monaco-menu .monaco-action-bar.vertical {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.monaco-menu .monaco-action-bar.vertical .submenu-indicator.codicon::before {
+  margin-right: -8px !important;
+}
+
+.monaco-editor * {
+  box-sizing: content-box;
+}
