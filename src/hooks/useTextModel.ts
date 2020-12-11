@@ -1,5 +1,5 @@
 import React from 'react';
-import { Monaco, fixPath } from './monaco';
+import { Monaco, fixPath } from '../monaco';
 import type * as monacoApi from 'monaco-editor';
 
 export interface UseTextModelOptions {

@@ -6,7 +6,7 @@ import {
   hc_black,
   vs,
   vs_dark,
-} from '../../node_modules/monaco-editor/esm/vs/editor/standalone/common/themes';
+} from 'monaco-editor/esm/vs/editor/standalone/common/themes';
 import all from './monaco-themes';
 
 const allThemes = {

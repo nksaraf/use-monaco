@@ -1,5 +1,5 @@
 import * as monacoApi from 'monaco-editor';
-import { createPlugin } from '../monaco/plugin-api';
+import { createPlugin } from '../../monaco';
 
 declare module 'monaco-editor' {
   namespace editor {

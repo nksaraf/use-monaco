@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import React from 'react';
 import type * as monacoApi from 'monaco-editor';
-import { asDisposable, noop } from './monaco/utils';
-import loadMonaco from './monaco';
+import { asDisposable, noop } from '../monaco/utils';
+import loadMonaco from '../monaco';
 
-import * as corePlugins from './plugins/core';
+import * as corePlugins from '../plugins/core';
 
 export interface UseMonacoOptions {
   paths?: {
