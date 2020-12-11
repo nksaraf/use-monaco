@@ -1,5 +1,5 @@
 import type * as monacoApi from 'monaco-editor';
-import { monacoPlugin } from '../../monaco';
+import { createPlugin } from '../../monaco';
 const extraLibs = new Map();
 
 declare module 'monaco-editor' {
@@ -20,7 +20,7 @@ declare module 'monaco-editor' {
 export default (
   compilerOptions: monacoApi.languages.typescript.CompilerOptions = {}
 ) =>
-  monacoPlugin(
+  createPlugin(
     { name: 'typescript.typings', dependencies: ['core.worker'] },
     (monaco) => {
       let disposable = monaco.worker.register({

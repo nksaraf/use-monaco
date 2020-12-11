@@ -43,6 +43,29 @@ export interface UseEditorOptions {
     // containerRef: React.RefObject<HTMLDivElement>
   ) => monacoApi.editor.IEditorOptions | void;
 }
+function useElementWatcher(watcher) {
+  const lastRef = React.useRef(null);
+
+  const elRef = React.useRef((el) => {
+    lastRef.current?.();
+    lastRef.current = el ? watcher(el) : null;
+  });
+
+  return elRef.current;
+}
+
+function useStateWithEffects<T>() {
+  const [state, setState] = React.useState<T>();
+  const useRefEffect = (effect: (obj: T) => void, deps: any[]) => {
+    React.useEffect(() => {
+      if (state) {
+        return effect(state);
+      }
+    }, [state, ...deps]);
+  };
+
+  return [state, setState, useRefEffect] as const;
+}
 
 export const useEditor = ({
   options = {},
@@ -53,10 +76,24 @@ export const useEditor = ({
   overrideServices,
   onChange = noop,
 }: UseEditorOptions & Monaco & { model: monacoApi.editor.ITextModel }) => {
-  const containerRef = React.useRef<HTMLDivElement>();
-  const [editorRef, useEditorEffect] = useRefWithEffect<
+  // const [container, setContainer] = React.useRef<HTMLDivElement>();
+  const [container, setContainer] = React.useState<HTMLDivElement>();
+  const [editor, setEditor, useEditorEffect] = useStateWithEffects<
     monacoApi.editor.IStandaloneCodeEditor
   >();
+  const editorRef = React.useRef<monacoApi.editor.IStandaloneCodeEditor>();
+  // const [editorRef, useEditorEffect] = useRefWithEffect<
+  //   monacoApi.editor.IStandaloneCodeEditor
+  // >();
+
+  const elWatcher = useElementWatcher((el) => {
+    // containerRef.current = el;
+    setContainer(el);
+    if (!monaco) {
+      return;
+    }
+  });
+
   const subscriptionRef = React.useRef<monacoApi.IDisposable>(null);
 
   React.useEffect(() => {
@@ -64,7 +101,12 @@ export const useEditor = ({
       return;
     }
 
-    if (!containerRef.current) {
+    // if (!containerRef.current) {
+    //   console.error('Assign container ref to something');
+    //   return;
+    // }
+
+    if (!container) {
       console.error('Assign container ref to something');
       return;
     }
@@ -79,11 +121,18 @@ export const useEditor = ({
     );
 
     editorRef.current = monaco.editor.create(
-      containerRef.current,
+      container,
       options,
       typeof overrideServices === 'function'
         ? overrideServices(monaco)
         : overrideServices
+    );
+
+    console.log(
+      `[monaco] created editor with options: `,
+      options,
+      ` in container:`,
+      container
     );
 
     // After initializing monaco editor
@@ -94,6 +143,8 @@ export const useEditor = ({
       userDisposables = asDisposable(didMount);
     }
 
+    setEditor(editorRef.current);
+
     return () => {
       // themeListener.dispose();
       if (userDisposables) {
@@ -103,7 +154,7 @@ export const useEditor = ({
         editorRef.current.dispose();
       }
     };
-  }, [monaco]);
+  }, [monaco, container]);
 
   useEditorEffect(
     (editor) => {
@@ -132,13 +183,14 @@ export const useEditor = ({
   );
 
   useDeepCompareEffect(() => {
-    if (editorRef.current) {
-      editorRef.current.updateOptions(options);
+    if (editor) {
+      editor.updateOptions(options);
     }
-  }, [options]);
+  }, [editor, options]);
 
   return {
-    containerRef: containerRef as React.MutableRefObject<HTMLDivElement | null>,
-    editor: editorRef.current,
+    // containerRef: containerRef as React.MutableRefObject<HTMLDivElement | null>,
+    containerRef: elWatcher,
+    editor,
   };
 };

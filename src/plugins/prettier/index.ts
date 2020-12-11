@@ -1,5 +1,5 @@
 import type * as monacoApi from 'monaco-editor';
-import { monacoPlugin, asDisposable } from '../../monaco';
+import { createPlugin, asDisposable } from '../../monaco';
 
 const parsers: { [key: string]: keyof typeof plugins } = {
   javascript: 'babel',
@@ -33,7 +33,7 @@ export default (
   options: any = {},
   { workerSrc }: { workerSrc?: string | (() => Worker) } = {}
 ) =>
-  monacoPlugin(
+  createPlugin(
     {
       name: 'prettier',
       dependencies: ['core.worker'],
@@ -54,6 +54,7 @@ export default (
             )
         )
       );
+
       languages.forEach((langauge) => {
         if (typeof langauge === 'string') {
           disposables.push(

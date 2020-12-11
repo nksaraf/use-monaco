@@ -83,11 +83,14 @@ export const useTextModel = ({
     if (!monaco || !language) {
       return;
     }
-    const model = findModel(path);
     if (model) {
+      console.log(
+        `[monaco] setting language: "${language}" for`,
+        model.uri.toString()
+      );
       monaco.editor.setModelLanguage(model, language);
     }
-  }, [language]);
+  }, [monaco, model, language]);
 
   React.useEffect(() => {
     if (!monaco) {
@@ -107,7 +110,7 @@ export const useTextModel = ({
         () => null
       );
     }
-  }, [files[path]]);
+  }, [monaco, path, files[path]]);
 
   return model;
 };

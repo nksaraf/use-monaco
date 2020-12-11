@@ -1,5 +1,5 @@
 import type * as monacoApi from 'monaco-editor';
-import { monacoPlugin } from '../monaco/plugin-api';
+import { createPlugin } from '../monaco/plugin-api';
 
 declare module 'monaco-editor' {
   namespace languages {
@@ -71,7 +71,7 @@ class LazyLanguageLoader {
   }
 }
 
-export default monacoPlugin(
+export default createPlugin(
   {
     name: 'core.language',
     dependencies: ['core.worker'],

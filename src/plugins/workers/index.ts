@@ -1,6 +1,6 @@
 import type * as monacoApi from 'monaco-editor';
 import { WorkerClient } from './worker-client';
-import { endingSlash, monacoPlugin, noop } from '../../monaco';
+import { endingSlash, createPlugin, noop } from '../../monaco';
 
 interface Environment {
   baseUrl?: string;
@@ -70,7 +70,7 @@ declare module 'monaco-editor' {
 }
 
 export default (baseWorkerPath: string) =>
-  monacoPlugin(
+  createPlugin(
     { name: 'core.worker', dependencies: ['core.editor'] },
     (monaco) => {
       const javascriptClient: WorkerClient<
@@ -137,7 +137,7 @@ export default (baseWorkerPath: string) =>
             getWorker: (label) => {
               const workerSrc = this.workerClients[label].src;
               console.log(
-                `[monaco] Loading worker ${label} from ${workerSrc}...`
+                `[monaco] loading worker "${label}" from ${workerSrc} ...`
               );
               if (typeof workerSrc === 'string') {
                 var workerBlobURL = createBlobURL(
@@ -162,6 +162,7 @@ export default (baseWorkerPath: string) =>
           onRegister,
           ...config
         }: monacoApi.worker.IWorkerRegistrationOptions<TOptions>) {
+          console.log('[monaco] registering worker', `"${config.label}"`);
           const client = new WorkerClient(config, monaco);
           this.workerClients[config.label ?? ''] = client;
           if (onRegister) {
@@ -172,13 +173,13 @@ export default (baseWorkerPath: string) =>
         register<TOptions>(
           config: monacoApi.worker.IWorkerRegistrationOptions<TOptions>
         ) {
-          if (config.languageId) {
-            return monaco.languages.onLanguage(config.languageId, () => {
-              return this._registerWorker(config);
-            });
-          } else {
-            return this._registerWorker(config);
-          }
+          // if (config.languageId) {
+          //   return monaco.languages.onLanguage(config.languageId, () => {
+          //     return this._registerWorker(config);
+          //   });
+          // } else {
+          return this._registerWorker(config);
+          // }
         }
         getClient<TOptions, TWorker>(label: string) {
           if (!this.workerClients[label]) {

@@ -13,7 +13,7 @@ declare module 'monaco-editor' {
   }
 }
 
-export const monacoPlugin = (
+export const createPlugin = (
   {
     dependencies,
     name,
@@ -42,30 +42,36 @@ export default (monaco: typeof monacoApi) => {
 
   function release(done) {
     if (waitingFor[done]) {
-      return asDisposable(
-        waitingFor[done].map((plugin) => {
-          let keepWaiting;
-          plugin.dependencies.forEach((dep) => {
-            if (!installed[dep]) {
-              keepWaiting = true;
-            }
-          });
-          if (!keepWaiting) {
-            return installPlugin(plugin);
-          } else {
-            return null;
+      const disposables = waitingFor[done].map((plugin) => {
+        let keepWaiting;
+        plugin.dependencies.forEach((dep) => {
+          if (!installed[dep]) {
+            keepWaiting = true;
           }
-        })
-      );
+        });
+        if (!keepWaiting) {
+          return installPlugin(plugin);
+        } else {
+          return null;
+        }
+      });
+      delete waitingFor[done];
+      return asDisposable(disposables);
     }
   }
 
-  function installPlugin(plugin) {
-    console.log('[monaco] installing ', plugin.label);
+  function installPlugin(plugin: monacoApi.plugin.IPlugin) {
+    console.log(`[monaco] installing plugin "${plugin.label ?? plugin.name}"`);
     let d1 = plugin(monaco);
-    installed[plugin.label] = plugin;
-    let d2 = release(plugin.name);
-    return asDisposable([d1, d2]);
+
+    installed[plugin.label ?? plugin.name] = plugin;
+
+    if (plugin.label) {
+      let d2 = release(plugin.label);
+      return asDisposable([d1, d2].filter(Boolean) as monacoApi.IDisposable[]);
+    }
+
+    return d1;
   }
 
   Object.assign(monaco, {
@@ -74,7 +80,7 @@ export default (monaco: typeof monacoApi) => {
         let disposables: monacoApi.IDisposable[] = [];
         plugins.forEach((plugin) => {
           let waiting;
-          plugin.dependencies.forEach((dep) => {
+          plugin.dependencies?.forEach((dep) => {
             if (installed[dep]) {
             } else {
               if (!waitingFor[dep]) {
@@ -92,7 +98,7 @@ export default (monaco: typeof monacoApi) => {
           const disposable = installPlugin(plugin);
           if (disposable) disposables.push(disposable);
         });
-        return disposables;
+        return asDisposable(disposables);
       },
     },
   });

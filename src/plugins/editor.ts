@@ -1,5 +1,5 @@
 import type * as monacoApi from 'monaco-editor';
-import { monacoPlugin } from '../monaco/plugin-api';
+import { createPlugin } from '../monaco/plugin-api';
 
 declare module 'monaco-editor' {
   namespace editor {
@@ -17,7 +17,7 @@ declare module 'monaco-editor' {
   }
 }
 
-export default monacoPlugin(
+export default createPlugin(
   {
     name: 'core.editor',
     dependencies: [],

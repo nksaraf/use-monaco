@@ -34,9 +34,9 @@ export const useMonaco = ({
   useEffect(() => {
     const cancelable = loadMonaco(paths.monaco, [
       corePlugins.editor,
+      corePlugins.shortcuts,
       corePlugins.worker(paths.workers),
       corePlugins.languages,
-      corePlugins.shortcuts,
       corePlugins.theme({ themes, onThemeChange }),
       ...plugins,
     ]);
@@ -50,7 +50,8 @@ export const useMonaco = ({
           error
         )
       );
-    return;
+
+    return cancelable.cancel;
   }, []);
 
   useEffect(() => {

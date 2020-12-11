@@ -1,5 +1,5 @@
 import * as monacoApi from 'monaco-editor';
-import { monacoPlugin } from '../monaco/plugin-api';
+import { createPlugin } from '../monaco/plugin-api';
 
 declare module 'monaco-editor' {
   namespace editor {
@@ -65,7 +65,7 @@ function setupThemes(
 }
 
 export default ({ themes, onThemeChange }) =>
-  monacoPlugin({ name: 'core.theme', dependencies: [] }, (monaco) => {
+  createPlugin({ name: 'core.theme', dependencies: [] }, (monaco) => {
     const setTheme = monaco.editor.setTheme;
     const _onDidChangeTheme = new monaco.Emitter<string>();
     monaco.editor.onDidChangeTheme = _onDidChangeTheme.event;
