@@ -87,17 +87,7 @@ export const useEditor = ({
   const subscriptionRef = React.useRef<monacoApi.IDisposable>(null);
 
   React.useEffect(() => {
-    if (!monaco) {
-      return;
-    }
-
-    // if (!containerRef.current) {
-    //   console.error('Assign container ref to something');
-    //   return;
-    // }
-
-    if (!container) {
-      console.error('Assign container ref to something');
+    if (!monaco || !container) {
       return;
     }
 
@@ -111,11 +101,9 @@ export const useEditor = ({
     );
 
     console.groupCollapsed(`[monaco] creating editor`);
-
-      console.log('options:', options)
-      console.log('container:', container)
-      console.groupEnd();
-
+    console.log('options:', options);
+    console.log('container:', container);
+    console.groupEnd();
 
     const monacoEditor = monaco.editor.create(
       container,
@@ -125,9 +113,6 @@ export const useEditor = ({
         : overrideServices
     );
 
-
-    // After initializing monaco editor
-    //@ts-ignore
     let didMount = editorDidMount(monacoEditor, monaco);
     let userDisposables: monacoApi.IDisposable;
     if (didMount && Array.isArray(didMount)) {
@@ -137,7 +122,6 @@ export const useEditor = ({
     setEditor(monacoEditor);
 
     return () => {
-      // themeListener.dispose();
       if (userDisposables) {
         (userDisposables as monacoApi.IDisposable).dispose();
       }
@@ -158,10 +142,9 @@ export const useEditor = ({
 
   useEditorEffect(
     (editor) => {
-      // @ts-ignore
       subscriptionRef.current = editor.onDidChangeModelContent((event) => {
         if (editor) {
-          onChange(editor?.getValue(), editor, event, monaco as any);
+          onChange(editor?.getValue(), editor, event, monaco);
         }
       });
       return () => {
@@ -180,7 +163,6 @@ export const useEditor = ({
   }, [editor, options]);
 
   return {
-    // containerRef: containerRef as React.MutableRefObject<HTMLDivElement | null>,
     containerRef: elWatcher,
     editor,
   };
