@@ -1,7 +1,7 @@
 import { BaseWorker, IWorkerContext } from './base-worker';
 
-import { SimpleWorkerServer } from 'monaco-editor/esm/vs/base/common/worker/simpleWorker';
-import { EditorSimpleWorker } from 'monaco-editor/esm/vs/editor/common/services/editorSimpleWorker';
+import { SimpleWorkerServer } from '../../node_modules/monaco-editor/esm/vs/base/common/worker/simpleWorker';
+import { EditorSimpleWorker } from '../../node_modules/monaco-editor/esm/vs/editor/common/services/editorSimpleWorker';
 
 const hashCode = function (s: string) {
   var hash = 0;
