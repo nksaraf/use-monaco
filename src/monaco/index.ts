@@ -14,7 +14,7 @@ export default function loadMonaco(
   path = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.20.0/min/vs',
   plugins: monacoApi.plugin.IPlugin[] = []
 ): CancellablePromise<typeof monacoApi> {
-  console.log('[monaco] loading monaco from...', path);
+  console.log('[monaco] loading monaco from', path, '...');
   const cancelable = monacoLoader.init({ paths: { vs: path } });
   let disposable: monacoApi.IDisposable;
   const promise: CancellablePromise<typeof monacoApi> = cancelable

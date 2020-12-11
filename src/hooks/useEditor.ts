@@ -81,18 +81,8 @@ export const useEditor = ({
   const [editor, setEditor, useEditorEffect] = useStateWithEffects<
     monacoApi.editor.IStandaloneCodeEditor
   >();
-  const editorRef = React.useRef<monacoApi.editor.IStandaloneCodeEditor>();
-  // const [editorRef, useEditorEffect] = useRefWithEffect<
-  //   monacoApi.editor.IStandaloneCodeEditor
-  // >();
 
-  const elWatcher = useElementWatcher((el) => {
-    // containerRef.current = el;
-    setContainer(el);
-    if (!monaco) {
-      return;
-    }
-  });
+  const elWatcher = useElementWatcher(setContainer);
 
   const subscriptionRef = React.useRef<monacoApi.IDisposable>(null);
 
@@ -120,7 +110,14 @@ export const useEditor = ({
       editorWillMount(monaco) || {}
     );
 
-    editorRef.current = monaco.editor.create(
+    console.groupCollapsed(`[monaco] creating editor`);
+
+      console.log('options:', options)
+      console.log('container:', container)
+      console.groupEnd();
+
+
+    const monacoEditor = monaco.editor.create(
       container,
       options,
       typeof overrideServices === 'function'
@@ -128,30 +125,24 @@ export const useEditor = ({
         : overrideServices
     );
 
-    console.log(
-      `[monaco] created editor with options: `,
-      options,
-      ` in container:`,
-      container
-    );
 
     // After initializing monaco editor
     //@ts-ignore
-    let didMount = editorDidMount(editorRef.current, monaco);
+    let didMount = editorDidMount(monacoEditor, monaco);
     let userDisposables: monacoApi.IDisposable;
     if (didMount && Array.isArray(didMount)) {
       userDisposables = asDisposable(didMount);
     }
 
-    setEditor(editorRef.current);
+    setEditor(monacoEditor);
 
     return () => {
       // themeListener.dispose();
       if (userDisposables) {
         (userDisposables as monacoApi.IDisposable).dispose();
       }
-      if (editorRef.current) {
-        editorRef.current.dispose();
+      if (monacoEditor) {
+        monacoEditor.dispose();
       }
     };
   }, [monaco, container]);

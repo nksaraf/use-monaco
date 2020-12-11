@@ -283,8 +283,8 @@ function fetchDefinitions(name, version) {
 
 export class TypingsWorker extends BaseWorker {
   async fetchTypings(name, version) {
+    console.log(`[typings] fetching typings: ${name}@${version} ...`);
     const typings = await fetchDefinitions(name, version);
-    console.log(`[typings] Fetching typings for ${name}@${version}...`);
     return { name, version, typings };
   }
 }

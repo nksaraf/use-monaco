@@ -61,7 +61,7 @@ export default (monaco: typeof monacoApi) => {
   }
 
   function installPlugin(plugin: monacoApi.plugin.IPlugin) {
-    console.log(`[monaco] installing plugin "${plugin.label ?? plugin.name}"`);
+    console.log(`[monaco] installing plugin: ${plugin.label ?? plugin.name}`);
     let d1 = plugin(monaco);
 
     installed[plugin.label ?? plugin.name] = plugin;

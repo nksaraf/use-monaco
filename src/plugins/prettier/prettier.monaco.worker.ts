@@ -36,7 +36,7 @@ export class PrettierWorker extends BaseWorker {
     model
   ) => {
     const { plugins, ...options } = this.options;
-    console.log(`[prettier] Formatting ...`);
+    console.log(`[prettier] formatting`);
 
     const text = this.prettier.format(model.getValue(), {
       plugins: this.plugins,
@@ -44,7 +44,6 @@ export class PrettierWorker extends BaseWorker {
       ...options,
     });
 
-    console.log(`[prettier] Formatted successfully`);
 
     const lines = text.split('\n');
     const formattedFulLRange = {

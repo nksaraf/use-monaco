@@ -60,7 +60,10 @@ export const useMonaco = ({
   }, [monaco]);
 
   React.useEffect(() => {
-    if (monaco) monaco.editor.setTheme(theme);
+    if (monaco) {
+      console.log('[monaco] setting theme:', theme)
+      monaco.editor.setTheme(theme);
+    }
   }, [monaco, theme]);
 
   return {

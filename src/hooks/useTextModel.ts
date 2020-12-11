@@ -53,6 +53,10 @@ export const useTextModel = ({
         );
       }
     } else {
+      console.groupCollapsed(`[monaco] creating model`, modelPath);
+      console.log('value:', value);
+      console.log('language:', language);
+      console.groupEnd();
       model = monaco?.editor.createModel(
         value || '',
         language,
@@ -85,8 +89,7 @@ export const useTextModel = ({
     }
     if (model) {
       console.log(
-        `[monaco] setting language: "${language}" for`,
-        model.uri.toString()
+        `[monaco] setting language for ${model.uri.path}: ${language}`
       );
       monaco.editor.setModelLanguage(model, language);
     }

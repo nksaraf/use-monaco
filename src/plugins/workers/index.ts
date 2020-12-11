@@ -136,9 +136,7 @@ export default (baseWorkerPath: string) =>
           this.setEnvironment({
             getWorker: (label) => {
               const workerSrc = this.workerClients[label].src;
-              console.log(
-                `[monaco] loading worker "${label}" from ${workerSrc} ...`
-              );
+              console.log(`[monaco] loading worker: ${label}`);
               if (typeof workerSrc === 'string') {
                 var workerBlobURL = createBlobURL(
                   `importScripts("${workerSrc}")`
@@ -162,7 +160,10 @@ export default (baseWorkerPath: string) =>
           onRegister,
           ...config
         }: monacoApi.worker.IWorkerRegistrationOptions<TOptions>) {
-          console.log('[monaco] registering worker', `"${config.label}"`);
+          ``;
+          console.log(
+            `[monaco] registering worker: ${config.label}\n                     path: ${config.src}`
+          );
           const client = new WorkerClient(config, monaco);
           this.workerClients[config.label ?? ''] = client;
           if (onRegister) {

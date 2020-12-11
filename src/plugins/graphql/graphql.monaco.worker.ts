@@ -30,6 +30,7 @@ initialize(
     provideDocumentFormattingEdits: BaseWorker['provideDocumentFormattingEdits'] = async (
       model
     ) => {
+      console.log('[graphql] formatting');
       const info = await this.worker.doFormat(model.getValue());
       const lines = info.split('\n');
       const formattedFulLRange = {
