@@ -1,4 +1,4 @@
-import { fixPath } from './utils';
+import { fixPath } from './monaco/utils';
 import React from 'react';
 import { Monaco } from './useMonaco';
 import * as monacoApi from 'monaco-editor';

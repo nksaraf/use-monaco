@@ -1,18 +1,18 @@
 {
-  "include": [
-    "src"
-  ],
+  "include": ["src"],
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
-    "lib": [
-      "dom",
-      "esnext"
-    ],
+    "lib": ["dom", "esnext"],
     "importHelpers": true,
     "declaration": true,
     "sourceMap": true,
     "rootDir": "./",
+    "baseUrl": "./",
+    "paths": {
+      "use-monaco/*": ["src/*"],
+      "use-monaco": ["src/index.ts"]
+    },
     "noImplicitThis": true,
     "alwaysStrict": true,
     "noFallthroughCasesInSwitch": true,
@@ -27,7 +27,5 @@
     "isolatedModules": true,
     "strict": false
   },
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

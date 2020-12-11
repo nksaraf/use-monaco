@@ -1,5 +1,5 @@
 import * as monacoApi from 'monaco-editor';
-import { asDisposable } from '../utils';
+import { asDisposable } from './utils';
 
 declare module 'monaco-editor' {
   namespace plugin {

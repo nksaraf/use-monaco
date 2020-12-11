@@ -1,4 +1,4 @@
-import { asDisposable } from '../../utils';
+import { asDisposable } from '../../monaco/utils';
 import * as monacoApi from 'monaco-editor';
 
 const parsers: { [key: string]: keyof typeof plugins } = {

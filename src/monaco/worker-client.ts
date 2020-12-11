@@ -1,5 +1,5 @@
 import * as monacoApi from 'monaco-editor';
-import { asDisposable, disposeAll } from '../utils';
+import { asDisposable, disposeAll } from './utils';
 import { createWebWorker } from '../../node_modules/monaco-editor/esm/vs/editor/common/services/webWorker';
 import { setupWorkerProviders, defaultProviderConfig } from './providers';
 

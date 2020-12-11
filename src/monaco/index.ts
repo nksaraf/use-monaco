@@ -15,3 +15,7 @@ export * from './worker';
 export default (monaco: typeof monacoApi) => {
   return pipe(monaco, workerAddons, languagesAddon, editorAddons, pluginsAddon);
 };
+
+export const loadMonaco = (path: string) => {
+  
+};

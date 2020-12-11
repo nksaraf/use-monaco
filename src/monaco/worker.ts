@@ -1,6 +1,6 @@
 import * as monacoApi from 'monaco-editor';
 import { WorkerClient } from './worker-client';
-import { endingSlash, noop } from '../utils';
+import { endingSlash, noop } from './utils';
 
 export interface Environment {
   baseUrl?: string;
