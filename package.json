@@ -5,7 +5,7 @@
   "scripts": {
     "start": "next",
     "pkg": "pkger build && node copy-workers.js",
-    "build": "yarn pkg && next build"
+    "build": "next build"
   },
   "peerDependencies": {
     "react": ">=16"
