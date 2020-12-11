@@ -5,5 +5,6 @@ export * from './useMonacoEditor';
 export * from './monaco/utils';
 export * from 'use-debounce';
 export * from './monaco';
-export * from './plugins';
+import * as plugins from './plugins';
+export { plugins };
 export { useLocalStorage } from './useLocalStorage';

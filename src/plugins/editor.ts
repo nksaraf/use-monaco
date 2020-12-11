@@ -20,7 +20,7 @@ declare module 'monaco-editor' {
 export default monacoPlugin(
   {
     name: 'core.editor',
-    dependencies: ['core.worker'],
+    dependencies: [],
   },
   (monaco) => {
     const createMonacoEditor = monaco.editor.create;

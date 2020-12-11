@@ -1,4 +1,5 @@
 import type * as monacoApi from 'monaco-editor';
+import { noEndingSlash } from './utils';
 
 export interface CancellablePromise<T> extends Promise<T> {
   cancel: () => void;
@@ -48,7 +49,9 @@ export class MonacoLoader {
     return src && (script.src = src), script;
   }
   createMonacoLoaderScript(mainScript: HTMLScriptElement) {
-    const loaderScript = this.createScript(`${this.config.paths.vs}/loader.js`);
+    const loaderScript = this.createScript(
+      `${noEndingSlash(this.config.paths.vs)}/loader.js`
+    );
     loaderScript.onload = () => this.injectScripts(mainScript);
     loaderScript.onerror = this.reject;
     return loaderScript;

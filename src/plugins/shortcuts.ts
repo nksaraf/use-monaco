@@ -1,10 +1,9 @@
 import { monacoPlugin } from '../monaco/plugin-api';
 
-
 export const shortcuts = monacoPlugin(
   {
     name: 'core.shortcuts',
-    dependencies: [],
+    dependencies: ['core.editor'],
   },
   (monaco) => {
     return monaco.editor.onCreatedEditor((editor) => {

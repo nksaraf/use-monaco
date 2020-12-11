@@ -44,7 +44,7 @@ export default (
       let disposables: monacoApi.IDisposable[] = [];
 
       disposables.push(
-        monaco.editor.onDidCreateEditor(
+        monaco.editor.onCreatedEditor(
           (editor: monacoApi.editor.IStandaloneCodeEditor) =>
             editor.addCommand(
               monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S,
