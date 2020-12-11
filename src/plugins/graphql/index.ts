@@ -1,12 +1,15 @@
-export const graphql = ({ uri }) => (monaco) => {
+import { LanguageServiceAPI } from 'monaco-graphql/dist/api';
+import { ICreateData } from 'monaco-graphql/dist/typings';
+
+export const graphql = (
+  config: ICreateData['languageConfig']['schemaConfig']
+) => (monaco) => {
   return monaco.worker.register({
     label: 'graphql',
     languageId: 'graphql',
     options: {
       languageConfig: {
-        schemaConfig: {
-          uri,
-        },
+        schemaConfig: config,
       },
     },
     src: monaco.worker.baseWorkerPath + 'graphql.monaco.worker.js',
