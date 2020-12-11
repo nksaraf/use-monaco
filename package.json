@@ -1,7 +1,7 @@
 {
-  "version": "0.0.6",
+  "version": "0.0.7",
   "license": "MIT",
-  "main": "./dist/use-monaco.js",
+  "main": "./dist/cjs/production/use-monaco.js",
   "scripts": {
     "start": "next",
     "pkg": "pkger build && node copy-workers.js",
@@ -45,6 +45,7 @@
     "@types/react": "^16.9.35",
     "@types/react-dom": "^16.9.8",
     "comlink": "^4.3.0",
+    "esbuild": "^0.8.21",
     "estrella": "^1.2.10",
     "graphql": "^15.4.0",
     "hasha": "^5.2.0",
@@ -55,7 +56,6 @@
     "monaco-graphql": "^0.3.3",
     "next": "9.3.2",
     "next-transpile-modules": "3.1.0",
-    "parcel-bundler": "^1.12.4",
     "path-browserify": "^1.0.1",
     "pkger": "^0.0.2",
     "prettier": "^2.0.5",
@@ -69,12 +69,8 @@
     "worker-loader": "2"
   },
   "dependencies": {
-    "esbuild": "^0.8.21",
-    "graphiql-playground": "https://gist.github.com/nksaraf/02f2e67cdd500bd4c92a6a30674f55ba.git",
-    "idb-keyval": "^3.2.0",
     "monaco-editor": "0.20.0",
     "monaco-graphql": "^0.3.3",
-    "parcel-plugin-bundle-visualiser": "^1.2.0",
     "use-debounce": "^3.4.2",
     "use-deep-compare-effect": "^1.3.1"
   },
@@ -84,30 +80,28 @@
     ".": {
       "import": "./dist/esm/use-monaco.js",
       "browser": "./dist/esm/use-monaco.js",
-      "require": "./dist/use-monaco.js",
-      "node": "./dist/use-monaco.js",
+      "require": "./dist/cjs/production/use-monaco.js",
+      "node": "./dist/cjs/production/use-monaco.js",
       "default": "./dist/esm/use-monaco.js"
     },
     "./worker": {
       "import": "./dist/esm/worker.js",
       "browser": "./dist/esm/worker.js",
-      "require": "./dist/worker.js",
-      "node": "./dist/worker.js",
+      "require": "./dist/cjs/production/worker.js",
+      "node": "./dist/cjs/production/worker.js",
       "default": "./dist/esm/worker.js"
     },
     "./themes": {
       "import": "./dist/esm/themes.js",
       "browser": "./dist/esm/themes.js",
-      "require": "./dist/themes.js",
-      "node": "./dist/themes.js",
+      "require": "./dist/cjs/production/themes.js",
+      "node": "./dist/cjs/production/themes.js",
       "default": "./dist/esm/themes.js"
     },
     "./package.json": "./package.json",
     "./": "./"
   },
-  "browser": {
-    "path": "path-browserify"
-  },
+  "browser": "./dist/esm/use-monaco.js",
   "files": [
     "dist",
     "worker",
