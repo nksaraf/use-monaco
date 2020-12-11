@@ -43,13 +43,28 @@ export class PrettierWorker extends BaseWorker {
       singleQuote: true,
       ...options,
     });
-    
+
+    console.log(`[prettier] Formatted successfully ...`);
+
     const lines = text.split('\n');
-    const fullRange = { startLineNumber: 1, endLineNumber: lines.length, startColumn: 0, endColumn: lines[lines.length - 1].length }
-    
+    const formattedFulLRange = {
+      startLineNumber: 1,
+      endLineNumber: lines.length,
+      startColumn: 0,
+      endColumn: lines[lines.length - 1].length,
+    };
+
+    const originalFullRange = model.getFullModelRange();
+
     return [
       {
-        range: fullRange,
+        range:
+          originalFullRange.endLineNumber > formattedFulLRange.endLineNumber ||
+          (originalFullRange.endLineNumber ===
+            formattedFulLRange.endLineNumber &&
+            originalFullRange.endColumn > formattedFulLRange.endColumn)
+            ? originalFullRange
+            : formattedFulLRange,
         text,
       },
     ];

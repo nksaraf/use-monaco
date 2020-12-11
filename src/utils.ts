@@ -36,6 +36,12 @@ export const getNextWorkerPath = (label: string) => {
 export const fixPath = (path: string) =>
   path.startsWith('/') ? path : `/${path}`;
 
+export const endingSlash = (path: string) =>
+  path.endsWith('/') ? path : `${path}/`;
+
+export const noEndingSlash = (path: string) =>
+  !path.endsWith('/') ? path : path.substr(0, path.length - 1);
+
 export function noop<T>(): T {
   return undefined as any;
 }

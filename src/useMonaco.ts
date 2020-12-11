@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import React from 'react';
 import * as monacoApi from 'monaco-editor';
 import addons from './monaco';
-import { noop } from './utils';
+import { noEndingSlash, noop } from './utils';
 
 interface CancellablePromise<T> extends Promise<T> {
   cancel: () => void;
@@ -52,7 +52,9 @@ export class MonacoLoader {
     return src && (script.src = src), script;
   }
   createMonacoLoaderScript(mainScript: HTMLScriptElement) {
-    const loaderScript = this.createScript(`${this.config.paths.vs}/loader.js`);
+    const loaderScript = this.createScript(
+      `${noEndingSlash(this.config.paths.vs)}/loader.js`
+    );
     loaderScript.onload = () => this.injectScripts(mainScript);
     loaderScript.onerror = this.reject;
     return loaderScript;
@@ -163,7 +165,7 @@ export interface Monaco {
 export const useMonaco = ({
   paths: {
     monaco = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.20.0/min/vs',
-    workers = 'https://unpkg.com/use-monaco/dist/workers/',
+    workers = 'https://cdn.jsdelivr.net/npm/use-monaco/dist/workers',
   } = {},
   onLoad = noop,
   plugins = [],

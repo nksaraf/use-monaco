@@ -1,6 +1,6 @@
 import * as monacoApi from 'monaco-editor';
 import { WorkerClient } from './worker-client';
-import { noop } from '../utils';
+import { endingSlash, noop } from '../utils';
 
 export interface Environment {
   baseUrl?: string;
@@ -73,38 +73,32 @@ export const MONACO_NEXT_WORKER_PATH =
   'http://localhost:3000/_next/static/workers/';
 
 export default (monaco: typeof monacoApi) => {
-  const javascriptClient: (
-    path: string
-  ) => WorkerClient<
+  const javascriptClient: WorkerClient<
     monacoApi.languages.typescript.LanguageServiceDefaults,
     monacoApi.languages.typescript.TypeScriptWorker
-  > = (basePath) => ({
+  > = {
     getSyncedWorker: async (
       ...resources: monacoApi.Uri[]
     ): Promise<monacoApi.languages.typescript.TypeScriptWorker> => {
       const getWorker = await monaco.languages.typescript.getJavaScriptWorker();
       return await getWorker(...resources);
     },
-    src: basePath + 'ts.monaco.worker.js',
     // @ts-ignore
     config: monaco.languages.typescript.javascriptDefaults,
-  });
-  const typescriptClient: (
-    path: string
-  ) => WorkerClient<
+  };
+  const typescriptClient: WorkerClient<
     monacoApi.languages.typescript.LanguageServiceDefaults,
     monacoApi.languages.typescript.TypeScriptWorker
-  > = (basePath) => ({
+  > = {
     getSyncedWorker: async (
       ...resources: monacoApi.Uri[]
     ): Promise<monacoApi.languages.typescript.TypeScriptWorker> => {
       const getWorker = await monaco.languages.typescript.getTypeScriptWorker();
       return await getWorker(...resources);
     },
-    src: basePath + 'ts.monaco.worker.js',
     // @ts-ignore
     config: monaco.languages.typescript.typescriptDefaults,
-  });
+  };
 
   const defaultClients = (basePath) => ({
     typescript: {
@@ -132,7 +126,7 @@ export default (monaco: typeof monacoApi) => {
   class MonacoWorkerApi {
     baseWorkerPath: string;
     setup(basePath: string) {
-      this.baseWorkerPath = basePath;
+      this.baseWorkerPath = endingSlash(basePath);
       this.workerClients = {
         ...this.workerClients,
         ...defaultClients(this.baseWorkerPath),

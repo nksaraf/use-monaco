@@ -32,14 +32,25 @@ initialize(
     ) => {
       const info = await this.worker.doFormat(model.getValue());
       const lines = info.split('\n');
+      const formattedFulLRange = {
+        startLineNumber: 1,
+        endLineNumber: lines.length,
+        startColumn: 0,
+        endColumn: lines[lines.length - 1].length,
+      };
+
+      const originalFullRange = model.getFullModelRange();
+
       return [
         {
-          range: {
-            startLineNumber: 1,
-            endLineNumber: lines.length,
-            startColumn: 0,
-            endColumn: lines[lines.length - 1].length,
-          },
+          range:
+            originalFullRange.endLineNumber >
+              formattedFulLRange.endLineNumber ||
+            (originalFullRange.endLineNumber ===
+              formattedFulLRange.endLineNumber &&
+              originalFullRange.endColumn > formattedFulLRange.endColumn)
+              ? originalFullRange
+              : formattedFulLRange,
           text: info,
         },
       ];

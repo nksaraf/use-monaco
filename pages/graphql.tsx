@@ -12,8 +12,7 @@ query {
 let Editor = () => {
   const { containerRef, monaco, loading } = useMonacoEditor({
     paths: {
-      monaco: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.20.0/min/vs',
-      workers: 'http://localhost:3000/_next/static/',
+      workers: 'http://localhost:3000/_next/static/workers/',
     },
     themes: themes as any,
     plugins: [

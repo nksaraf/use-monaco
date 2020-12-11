@@ -5,6 +5,10 @@ import { typings } from '../src/plugins/typings';
 import { prettier } from '../src/plugins/prettier';
 import { graphql } from '../src/plugins/graphql';
 
+import '../src/plugins/graphql/graphql.monaco.worker';
+import '../src/plugins/prettier/prettier.monaco.worker';
+import '../src/plugins/typings/typings.monaco.worker';
+
 const defaultValue = `
 import {
   useMonacoEditor,
@@ -38,8 +42,7 @@ ReactDOM.render(html\`<\${Editor} />\`, document.getElementById('root'));
 let Editor = () => {
   const { containerRef, monaco, loading } = useMonacoEditor({
     paths: {
-      monaco: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.20.0/min/vs',
-      workers: 'http://localhost:3000/_next/static/',
+      workers: 'http://localhost:3000/_next/static/workers',
     },
     themes: themes as any,
     plugins: [
