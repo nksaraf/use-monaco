@@ -249,6 +249,7 @@ export class DiagnosticsProvider {
   private async _doValidate(resource: monacoApi.Uri, languageId: string) {
     try {
       const worker = await this.client.getSyncedWorker(resource);
+      console.log(worker);
       const diagnostics = await worker.doValidation(resource.toString());
       this.monaco.editor.setModelMarkers(
         this.monaco.editor.getModel(resource) as monacoApi.editor.ITextModel,

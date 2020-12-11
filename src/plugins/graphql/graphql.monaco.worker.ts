@@ -21,9 +21,11 @@ initialize(
         },
       };
     };
-    doValidation: BaseWorker['doValidation'] = async (uri) => {
+
+    // Monaco will only make methods available from client (not properties)
+    async doValidation(uri) {
       return await this.worker.doValidation(uri);
-    };
+    }
 
     provideDocumentFormattingEdits: BaseWorker['provideDocumentFormattingEdits'] = async (
       model

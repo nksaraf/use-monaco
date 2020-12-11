@@ -1,38 +1,12 @@
 import React from 'react';
 import { useMonacoEditor } from '../src';
 import themes from '../src/themes';
-import { typings } from '../src/plugins/typings';
-import { prettier } from '../src/plugins/prettier';
 import { graphql } from '../src/plugins/graphql';
 
 const defaultValue = `
-import {
-  useMonacoEditor,
-  prettier,
-} from 'https://cdn.pika.dev/use-monaco@0.0.3';
-import themes from 'https://cdn.pika.dev/use-monaco@0.0.3/themes';
-import * as React from 'https://cdn.pika.dev/react';
-import ReactDOM from 'https://cdn.pika.dev/react-dom';
-import htm from 'https://cdn.pika.dev/htm';
-const html = htm.bind(React.createElement);
-
-let Editor = () => {
-  const { containerRef, monaco, model, loading } = useMonacoEditor({
-    plugins: [prettier(['graphq'])],
-    themes,
-    theme: 'github',
-    path: 'model.graphql',
-    defaultValue: ['type Query {}'].join('\n'),
-  });
-
-  return html\`<div
-    ref=\${containerRef}
-    style=\${{ height: 800, width: 600 }}
-  />\`;
-};
-
-ReactDOM.render(html\`<\${Editor} />\`, document.getElementById('root'));
-
+query {
+  allFilms { edges { node { id }}}
+}
 `;
 
 let Editor = () => {
@@ -43,20 +17,14 @@ let Editor = () => {
     },
     themes: themes as any,
     plugins: [
-      prettier(['typescript']),
-      typings(),
-      // graphql({
-      //   uri: 'https://swapi-graphql.netlify.app/.netlify/functions/index',
-      // }),
+      graphql({
+        uri: 'https://swapi-graphql.netlify.app/.netlify/functions/index',
+      }),
     ],
-    path: 'index.ts',
-    language: 'typescript',
+    path: 'index.graphql',
+    language: 'graphql',
     defaultValue,
     theme: 'vs-light',
-    editorDidMount: (editor, monaco) => {
-      monaco.languages.typescript.loadTypes('faunadb', '2.13.0');
-      monaco.languages.typescript.exposeGlobal('faunadb', 'query', 'q');
-    },
   });
 
   return (
