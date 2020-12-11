@@ -161,9 +161,7 @@ export default (baseWorkerPath: string) =>
           ...config
         }: monacoApi.worker.IWorkerRegistrationOptions<TOptions>) {
           ``;
-          console.log(
-            `[monaco] registering worker: ${config.label}\n                     path: ${config.src}`
-          );
+          console.log(`[monaco] registering worker: ${config.label}`, config);
           const client = new WorkerClient(config, monaco);
           this.workerClients[config.label ?? ''] = client;
           if (onRegister) {

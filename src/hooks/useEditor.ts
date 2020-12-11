@@ -100,10 +100,7 @@ export const useEditor = ({
       editorWillMount(monaco) || {}
     );
 
-    console.groupCollapsed(`[monaco] creating editor`);
-    console.log('options:', options);
-    console.log('container:', container);
-    console.groupEnd();
+    console.log(`[monaco] creating editor`, { options, container });
 
     const monacoEditor = monaco.editor.create(
       container,

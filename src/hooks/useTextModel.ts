@@ -53,10 +53,7 @@ export const useTextModel = ({
         );
       }
     } else {
-      console.groupCollapsed(`[monaco] creating model`, modelPath);
-      console.log('value:', value);
-      console.log('language:', language);
-      console.groupEnd();
+      console.log(`[monaco] creating model:`, modelPath, { value, language });
       model = monaco?.editor.createModel(
         value || '',
         language,
