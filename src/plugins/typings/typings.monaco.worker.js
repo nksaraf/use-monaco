@@ -9,7 +9,7 @@
 
 import path from 'path-browserify';
 import { Store, set as setItem, get as getItem } from 'idb-keyval';
-import { BaseWorker, initialize } from '../../worker';
+import { BaseWorker, initialize } from '../../../dist/types/worker';
 
 self.importScripts(
   'https://cdnjs.cloudflare.com/ajax/libs/typescript/3.8.3/typescript.min.js'

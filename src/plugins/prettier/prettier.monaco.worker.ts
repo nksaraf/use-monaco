@@ -44,7 +44,7 @@ export class PrettierWorker extends BaseWorker {
       ...options,
     });
 
-    console.log(`[prettier] Formatted successfully ...`);
+    console.log(`[prettier] Formatted successfully`);
 
     const lines = text.split('\n');
     const formattedFulLRange = {

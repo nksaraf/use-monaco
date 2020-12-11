@@ -1,21 +1,36 @@
-import * as monacoApi from 'monaco-editor';
-import workerAddons from './worker';
-import languagesAddon from './languages';
-import editorAddons from './editor';
-import pluginsAddon from './plugin';
+import type * as api from 'monaco-editor';
+import withPlugins from './plugin-api';
+import { CancellablePromise, monacoLoader } from './loader';
 
-const pipe = <T>(a: T, ...addons: ((t: T) => T)[]) => {
-  for (var addon of addons) {
-    a = addon(a);
-  }
-  return a;
-};
+export interface Monaco {
+  monaco: typeof api | null;
+}
 
-export * from './worker';
-export default (monaco: typeof monacoApi) => {
-  return pipe(monaco, workerAddons, languagesAddon, editorAddons, pluginsAddon);
-};
+export type monacoApi = typeof api;
 
-export const loadMonaco = (path: string) => {
-  
-};
+export * from './loader';
+export * from './plugin-api';
+export * from './utils';
+
+export default function loadMonaco(
+  path = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.21.2/min/vs',
+  plugins: api.plugin.IPlugin[] = []
+): CancellablePromise<monacoApi> {
+  const cancelable = monacoLoader.init({ paths: { vs: path } });
+  let disposable: api.IDisposable;
+  const promise: CancellablePromise<monacoApi> = cancelable
+    .then((monaco) => {
+      monaco = withPlugins(monaco);
+      disposable = monaco.plugin.install(...plugins);
+      return monaco;
+    })
+    .catch((error) =>
+      console.error('An error occurred during initialization of Monaco:', error)
+    ) as any;
+
+  promise.cancel = () => {
+    cancelable.cancel();
+    disposable.dispose();
+  };
+  return promise;
+}

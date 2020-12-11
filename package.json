@@ -1,11 +1,13 @@
 {
   "version": "0.0.6",
   "license": "MIT",
-  "main": "./dist/cjs/production/use-monaco.js",
+  "main": "./dist/use-monaco.js",
   "scripts": {
     "start": "next",
     "pkg": "pkger build && node copy-workers.js",
-    "build": "next build"
+    "build": "next build",
+    "clean": "rm -rf dist",
+    "compile": "yarn clean && tsup src/index.ts src/themes.ts src/worker.ts src/plugins.ts --format esm,cjs --legacy-output && tsc --build tsconfig.build.json"
   },
   "peerDependencies": {
     "react": ">=16"
@@ -43,12 +45,14 @@
     "@types/react": "^16.9.35",
     "@types/react-dom": "^16.9.8",
     "comlink": "^4.3.0",
+    "estrella": "^1.2.10",
     "graphql": "^15.4.0",
     "hasha": "^5.2.0",
     "husky": "^4.2.5",
     "idb-keyval": "^3.2.0",
     "isomorphic-unfetch": "^3.0.0",
     "monaco-editor-webpack-plugin": "1.9.0",
+    "monaco-graphql": "^0.3.3",
     "next": "9.3.2",
     "next-transpile-modules": "3.1.0",
     "parcel-bundler": "^1.12.4",
@@ -65,38 +69,44 @@
     "worker-loader": "2"
   },
   "dependencies": {
+    "esbuild": "^0.8.21",
+    "graphiql-playground": "https://gist.github.com/nksaraf/02f2e67cdd500bd4c92a6a30674f55ba.git",
+    "idb-keyval": "^3.2.0",
     "monaco-editor": "0.20.0",
     "monaco-graphql": "^0.3.3",
+    "parcel-plugin-bundle-visualiser": "^1.2.0",
     "use-debounce": "^3.4.2",
     "use-deep-compare-effect": "^1.3.1"
   },
   "module": "./dist/esm/use-monaco.js",
-  "browser": "./dist/esm/use-monaco.js",
   "types": "dist/types",
   "exports": {
     ".": {
       "import": "./dist/esm/use-monaco.js",
       "browser": "./dist/esm/use-monaco.js",
-      "require": "./dist/cjs/production/use-monaco.js",
-      "node": "./dist/cjs/production/use-monaco.js",
+      "require": "./dist/use-monaco.js",
+      "node": "./dist/use-monaco.js",
       "default": "./dist/esm/use-monaco.js"
     },
     "./worker": {
       "import": "./dist/esm/worker.js",
       "browser": "./dist/esm/worker.js",
-      "require": "./dist/cjs/production/worker.js",
-      "node": "./dist/cjs/production/worker.js",
+      "require": "./dist/worker.js",
+      "node": "./dist/worker.js",
       "default": "./dist/esm/worker.js"
     },
     "./themes": {
       "import": "./dist/esm/themes.js",
       "browser": "./dist/esm/themes.js",
-      "require": "./dist/cjs/production/themes.js",
-      "node": "./dist/cjs/production/themes.js",
+      "require": "./dist/themes.js",
+      "node": "./dist/themes.js",
       "default": "./dist/esm/themes.js"
     },
     "./package.json": "./package.json",
     "./": "./"
+  },
+  "browser": {
+    "path": "path-browserify"
   },
   "files": [
     "dist",

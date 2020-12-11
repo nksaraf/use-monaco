@@ -1,12 +1,17 @@
-import type * as monaco from 'monaco-editor';
+import type * as monacoApi from 'monaco-editor';
 
 export function asDisposable(
-  disposables: monaco.IDisposable[]
-): monaco.IDisposable {
-  return { dispose: () => disposeAll(disposables) };
+  disposables: monacoApi.IDisposable[] | monacoApi.IDisposable | undefined
+): monacoApi.IDisposable {
+  return {
+    dispose: () =>
+      Array.isArray(disposables)
+        ? disposeAll(disposables)
+        : disposables?.dispose?.(),
+  };
 }
 
-export function disposeAll(disposables: monaco.IDisposable[]) {
+export function disposeAll(disposables: monacoApi.IDisposable[]) {
   while (disposables.length) {
     disposables.pop()?.dispose();
   }
@@ -28,10 +33,6 @@ export function processDimensions(
     height: fixedHeight,
   };
 }
-
-export const getNextWorkerPath = (label: string) => {
-  return `_next/static/workers/${label}.monaco.worker.js`;
-};
 
 export const fixPath = (path: string) =>
   path.startsWith('/') ? path : `/${path}`;

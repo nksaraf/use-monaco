@@ -1,8 +1,8 @@
 import { noop, asDisposable } from './monaco/utils';
-import * as monacoApi from 'monaco-editor';
+import type * as monacoApi from 'monaco-editor';
 import React from 'react';
 import useDeepCompareEffect from 'use-deep-compare-effect';
-import { Monaco } from './useMonaco';
+import { Monaco } from './monaco';
 
 export function useRefWithEffect<T>(): [
   React.MutableRefObject<T | undefined>,

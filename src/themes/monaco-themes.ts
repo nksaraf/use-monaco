@@ -1,4 +1,4 @@
-import * as monaco from 'monaco-editor';
+import type * as monaco from 'monaco-editor';
 
 export interface AllThemes {
   active4d: monaco.editor.IStandaloneThemeData;
