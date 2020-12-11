@@ -32,7 +32,6 @@ export const useMonaco = ({
   const monacoRef = React.useRef(monaco);
   monacoRef.current = monaco;
   useEffect(() => {
-    console.log(plugins);
     const cancelable = loadMonaco(paths.monaco, [
       corePlugins.editor,
       corePlugins.worker(paths.workers),
