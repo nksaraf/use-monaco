@@ -85,6 +85,9 @@ export const useEditor = ({
     monacoApi.editor.IStandaloneCodeEditor
   >();
 
+  const editorRef = React.useRef(editor);
+  editorRef.current = editor;
+
   const elWatcher = useElementWatcher((el) => {
     if (el !== container) {
       setContainer(el);
@@ -98,42 +101,48 @@ export const useEditor = ({
       return;
     }
 
-    options = Object.assign(
-      {
-        automaticLayout: true,
-        formatOnSave: true,
-      },
-      options,
-      editorWillMount(monaco) || {}
-    );
+    if (container.getElementsByClassName('monaco-editor').length === 0) {
+      console.log(`[monaco] creating editor`, { options, container });
+      options = Object.assign(
+        {
+          automaticLayout: true,
+          formatOnSave: true,
+        },
+        options,
+        editorWillMount(monaco) || {}
+      );
 
-    console.log(`[monaco] creating editor`, { options, container });
+      const monacoEditor = monaco.editor.create(
+        container,
+        options,
+        typeof overrideServices === 'function'
+          ? overrideServices(monaco)
+          : overrideServices
+      );
 
-    const monacoEditor = monaco.editor.create(
-      container,
-      options,
-      typeof overrideServices === 'function'
-        ? overrideServices(monaco)
-        : overrideServices
-    );
-
-    let didMount = editorDidMount(monacoEditor, monaco);
-    let userDisposables: monacoApi.IDisposable;
-    if (didMount && Array.isArray(didMount)) {
-      userDisposables = asDisposable(didMount);
-    }
-
-    setEditor(monacoEditor);
-
-    return () => {
-      if (userDisposables) {
-        (userDisposables as monacoApi.IDisposable).dispose();
+      let didMount = editorDidMount(monacoEditor, monaco);
+      let userDisposables: monacoApi.IDisposable;
+      if (didMount && Array.isArray(didMount)) {
+        userDisposables = asDisposable(didMount);
       }
-      if (monacoEditor) {
-        monacoEditor.dispose();
+
+      setEditor(monacoEditor);
+
+      return () => {
+        if (userDisposables) {
+          (userDisposables as monacoApi.IDisposable).dispose();
+        }
+      };
+    }
+  }, [monaco, container, setEditor]);
+
+  React.useEffect(() => {
+    return () => {
+      if (editor) {
+        editor?.dispose?.();
       }
     };
-  }, [monaco, container]);
+  }, []);
 
   useEditorEffect(
     (editor) => {

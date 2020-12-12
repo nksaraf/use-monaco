@@ -1,5 +1,5 @@
 {
-  "version": "0.0.17",
+  "version": "0.0.18",
   "license": "MIT",
   "main": "./dist/cjs/production/use-monaco.js",
   "scripts": {

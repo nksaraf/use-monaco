@@ -79,6 +79,9 @@ export default (monaco: typeof monacoApi) => {
       install: (...plugins: monacoApi.plugin.IPlugin[]) => {
         let disposables: monacoApi.IDisposable[] = [];
         plugins.forEach((plugin) => {
+          if (installed[plugin.label]) {
+            return;
+          }
           let waiting;
           plugin.dependencies?.forEach((dep) => {
             if (installed[dep]) {

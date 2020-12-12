@@ -47,7 +47,7 @@ export const useMonaco = ({
   const monacoRef = React.useRef(monaco);
   monacoRef.current = contextMonaco?.monaco || monaco;
   React.useEffect(() => {
-    if (contextMonaco === undefined) {
+    if (contextMonaco === undefined && !monacoRef.current) {
       const cancelable = loadMonaco(
         paths.monaco,
         typeof plugins === 'boolean'

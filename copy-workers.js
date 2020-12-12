@@ -1,5 +1,6 @@
 const shellac = require('shellac').default;
 shellac`
+  $ git restore monaco/package.json worker/package.json themes/package.json
   $ mkdir -p dist/workers
   $ mkdir -p public/workers
   $ mkdir -p dist/css
