@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocalStorage, useFile, useEditor } from '../src';
-import { withMonaco } from '../src/react/withMonaco';
+import { withMonaco } from '../src';
 
 export function App() {
   const [val, setVal] = useLocalStorage(

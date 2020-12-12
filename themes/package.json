@@ -1,7 +1,7 @@
 {
   "name": "use-monaco/themes",
   "private": true,
-  "main": "../dist/cjs/themes.js",
+  "main": "../dist/themes.js",
   "module": "../dist/esm/themes.js",
-  "types": "../dist/types"
+  "types": "../dist/types/themes"
 }

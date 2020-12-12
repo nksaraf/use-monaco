@@ -1,2 +1,2 @@
 export * from './monaco';
-export * from './react';
+export * from './hooks';

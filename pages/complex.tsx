@@ -1,7 +1,5 @@
 import React from 'react';
 import {
-  useMonacoEditor,
-  plugins,
   useLocalStorage,
   useFile,
   useEditor,

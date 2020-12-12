@@ -6,6 +6,9 @@ const withTM = require('next-transpile-modules')([
 ]);
 
 module.exports = withTM({
+  experimental: {
+    jsConfigPaths: true,
+  },
   webpack: (config) => {
     const rule = config.module.rules
       .find((rule) => rule.oneOf)

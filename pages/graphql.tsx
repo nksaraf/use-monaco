@@ -1,7 +1,5 @@
 import React from 'react';
 import { useMonacoEditor } from '../src';
-import themes from '../src/themes';
-import { plugins } from '../src';
 
 const defaultContents = `
 query {
