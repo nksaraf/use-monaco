@@ -59,8 +59,8 @@
     "path-browserify": "^1.0.1",
     "pkger": "^0.0.2",
     "prettier": "^2.0.5",
-    "react": ">=16",
-    "react-dom": "^16.13.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
     "react-monaco-editor": "0.35.0",
     "shellac": "^0.3.1",
     "tslib": "^2.0.0",
@@ -69,6 +69,7 @@
     "worker-loader": "2"
   },
   "dependencies": {
+    "create-hook-context": "^1.0.0",
     "monaco-editor": "0.20.0",
     "monaco-graphql": "^0.3.3",
     "use-debounce": "^3.4.2",
@@ -98,6 +99,13 @@
       "node": "./dist/cjs/production/themes.js",
       "default": "./dist/esm/themes.js"
     },
+    "./monaco": {
+      "import": "./dist/esm/monaco.js",
+      "browser": "./dist/esm/monaco.js",
+      "require": "./dist/cjs/production/monaco.js",
+      "node": "./dist/cjs/production/monaco.js",
+      "default": "./dist/esm/monaco.js"
+    },
     "./package.json": "./package.json",
     "./": "./"
   },
@@ -107,6 +115,7 @@
     "worker",
     "themes",
     "README.md",
-    "dist/types"
+    "dist/types",
+    "monaco"
   ]
 }

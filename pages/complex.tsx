@@ -3,7 +3,7 @@ import {
   useMonacoEditor,
   plugins,
   useLocalStorage,
-  useTextModel,
+  useFile,
   useEditor,
   useMonaco,
 } from '../src';
@@ -19,18 +19,20 @@ export default function App() {
   );
 
   const { monaco } = useMonaco({
-    paths: {
-      workers: 'http://localhost:3000/_next/static/workers',
+    plugins: {
+      worker: {
+        path:
+          `https://${process.env.VERCEL_URL}` ??
+          'http://localhost:3000' + '/_next/static/workers',
+      },
+      graphql: { uri: 'https://poke-api-delta.vercel.app/api/graphql' },
     },
-    plugins: [
-      plugins.graphql({ uri: 'https://poke-api-delta.vercel.app/api/graphql' }),
-    ],
   });
 
-  const model = useTextModel({
+  const model = useFile({
     path: 'index.graphql',
     monaco,
-    defaultValue: val,
+    defaultContents: val,
   });
 
   const { containerRef } = useEditor({

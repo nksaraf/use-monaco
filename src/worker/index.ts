@@ -1,4 +1,4 @@
-import { BaseWorker, IWorkerContext } from './base-worker';
+import { MonacoWorker, IWorkerContext } from './monaco-worker';
 
 import { SimpleWorkerServer } from '../../node_modules/monaco-editor/esm/vs/base/common/worker/simpleWorker';
 import { EditorSimpleWorker } from '../../node_modules/monaco-editor/esm/vs/editor/common/services/editorSimpleWorker';
@@ -16,7 +16,7 @@ const hashCode = function (s: string) {
   return hash;
 };
 
-export * from './base-worker';
+export * from './monaco-worker';
 
 declare global {
   const importScripts: any;
@@ -38,7 +38,7 @@ export const importScript = async (src: string) => {
 
 var initialized = false;
 
-export function initialize(name: string, WorkerClass: typeof BaseWorker) {
+export function initialize(name: string, WorkerClass: typeof MonacoWorker) {
   if (initialized) {
     return;
   }
@@ -63,33 +63,4 @@ export function initialize(name: string, WorkerClass: typeof BaseWorker) {
 // @ts-ignore
 self.initialize = initialize;
 // @ts-ignore
-self.BaseWorker = BaseWorker;
-
-// self.onmessage = function (e) {
-//   // Ignore first message in this case and initialize if not yet initialized
-//   if (!initialized) {
-//     // @ts-ignore
-//     initialize(null);
-//   }
-// };
-
-// // export const monacoWorker: IWorkerInitializer = workerApi;
-// export const initialize = (name: string, WorkerClass: typeof BaseWorker) => {
-//   // @ts-ignore
-//   self[name + 'MonacoWorker'] = WorkerClass;
-
-//   const server = new WorkerServer();
-
-//   Comlink.expose(server);
-
-//   // self.onmessage = () => {
-//   //   try {
-//   //     monacoWorker.initialize((ctx, options) => {
-//   //       return new WorkerClass(ctx, options);
-//   //     });
-//   //   } catch (err) {
-//   //     console.error(err);
-//   //     throw err;
-//   //   }
-//   // };
-// };
+self.MonacoWorker = MonacoWorker;

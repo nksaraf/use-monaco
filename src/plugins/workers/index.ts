@@ -1,6 +1,6 @@
 import type * as monacoApi from 'monaco-editor';
 import { WorkerClient } from './worker-client';
-import { endingSlash, createPlugin, noop } from '../../monaco';
+import { endingSlash, createPlugin, noop } from '../../core';
 
 interface Environment {
   baseUrl?: string;
@@ -69,10 +69,15 @@ declare module 'monaco-editor' {
   }
 }
 
-export default (baseWorkerPath: string) =>
+export default ({
+  path: baseWorkerPath = 'https://unpkg.com/use-monaco/dist/workers/',
+}: {
+  path: string;
+}) =>
   createPlugin(
     { name: 'core.worker', dependencies: ['core.editor'] },
     (monaco) => {
+      console.log(baseWorkerPath);
       const javascriptClient: WorkerClient<
         monacoApi.languages.typescript.LanguageServiceDefaults,
         monacoApi.languages.typescript.TypeScriptWorker

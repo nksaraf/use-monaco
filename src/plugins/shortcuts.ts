@@ -1,4 +1,4 @@
-import { createPlugin } from '../monaco/plugin-api';
+import { createPlugin } from '../plugin-api';
 
 export default createPlugin(
   {

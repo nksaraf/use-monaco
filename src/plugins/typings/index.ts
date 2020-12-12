@@ -1,5 +1,5 @@
 import type * as monacoApi from 'monaco-editor';
-import { createPlugin } from '../../monaco';
+import { createPlugin } from '../../core';
 const extraLibs = new Map();
 
 declare module 'monaco-editor' {

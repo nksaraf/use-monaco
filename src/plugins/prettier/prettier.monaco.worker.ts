@@ -1,11 +1,11 @@
 import {
-  BaseWorker,
+  MonacoWorker,
   initialize,
   IWorkerContext,
   importScript,
 } from '../../worker';
 
-export class PrettierWorker extends BaseWorker {
+export class PrettierWorker extends MonacoWorker {
   options: { parser: string; plugins: string[] };
   loader: Promise<any>;
   plugins: any[] = [];
@@ -32,7 +32,7 @@ export class PrettierWorker extends BaseWorker {
     this.plugins = prettierPlugins;
   }
 
-  provideDocumentFormattingEdits: BaseWorker['provideDocumentFormattingEdits'] = async (
+  provideDocumentFormattingEdits: MonacoWorker['provideDocumentFormattingEdits'] = async (
     model
   ) => {
     const { plugins, ...options } = this.options;
@@ -43,7 +43,6 @@ export class PrettierWorker extends BaseWorker {
       singleQuote: true,
       ...options,
     });
-
 
     const lines = text.split('\n');
     const formattedFulLRange = {

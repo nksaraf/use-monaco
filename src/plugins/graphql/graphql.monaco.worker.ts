@@ -1,16 +1,16 @@
-import { initialize, BaseWorker } from '../../worker';
+import { initialize, MonacoWorker } from '../../worker';
 import { GraphQLWorker } from 'monaco-graphql/dist/GraphQLWorker';
 
 initialize(
   'graphql',
-  class MonacoGraphQLWorker extends BaseWorker {
+  class MonacoGraphQLWorker extends MonacoWorker {
     worker: GraphQLWorker;
     constructor(ctx, options) {
       super(ctx, options);
       this.worker = new GraphQLWorker(ctx, options);
       this.worker.loadSchema();
     }
-    provideHover: BaseWorker['provideHover'] = async (model, position) => {
+    provideHover: MonacoWorker['provideHover'] = async (model, position) => {
       const info = await this.worker.doHover(model.uri.path, position);
       return {
         contents: [{ value: info.content as string }],
@@ -27,7 +27,7 @@ initialize(
       return await this.worker.doValidation(uri);
     }
 
-    provideDocumentFormattingEdits: BaseWorker['provideDocumentFormattingEdits'] = async (
+    provideDocumentFormattingEdits: MonacoWorker['provideDocumentFormattingEdits'] = async (
       model
     ) => {
       console.log('[graphql] formatting');
@@ -56,7 +56,7 @@ initialize(
         },
       ];
     };
-    provideCompletionItems: BaseWorker['provideCompletionItems'] = async (
+    provideCompletionItems: MonacoWorker['provideCompletionItems'] = async (
       model,
       pos,
       ctx
@@ -66,7 +66,7 @@ initialize(
         suggestions: info as any,
       };
     };
-    resolveCompletionItem: BaseWorker['resolveCompletionItem'] = async (
+    resolveCompletionItem: MonacoWorker['resolveCompletionItem'] = async (
       model,
       pos,
       item

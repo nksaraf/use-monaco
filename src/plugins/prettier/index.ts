@@ -1,5 +1,5 @@
 import type * as monacoApi from 'monaco-editor';
-import { createPlugin, asDisposable } from '../../monaco';
+import { createPlugin, asDisposable } from '../../core';
 
 const parsers: { [key: string]: keyof typeof plugins } = {
   javascript: 'babel',
@@ -29,7 +29,7 @@ export default (
   languages: (
     | keyof typeof parsers
     | { [key: string]: keyof typeof plugins }
-  )[] = [],
+  )[] = Object.keys(parsers),
   options: any = {},
   { workerSrc }: { workerSrc?: string | (() => Worker) } = {}
 ) =>

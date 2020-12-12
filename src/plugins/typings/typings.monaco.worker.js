@@ -9,7 +9,7 @@
 
 import path from 'path-browserify';
 import { Store, set as setItem, get as getItem } from 'idb-keyval';
-import { BaseWorker, initialize } from '../../worker';
+import { MonacoWorker, initialize } from '../../worker';
 
 self.importScripts(
   'https://cdnjs.cloudflare.com/ajax/libs/typescript/3.8.3/typescript.min.js'
@@ -281,7 +281,7 @@ function fetchDefinitions(name, version) {
   // });
 }
 
-export class TypingsWorker extends BaseWorker {
+export class TypingsWorker extends MonacoWorker {
   async fetchTypings(name, version) {
     console.log(`[typings] fetching typings: ${name}@${version} ...`);
     const typings = await fetchDefinitions(name, version);

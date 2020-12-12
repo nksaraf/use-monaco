@@ -1,12 +1,8 @@
 import React from 'react';
-import { plugins, useMonacoEditor } from '../src';
+import { useMonacoEditor } from '../src';
 import themes from '../src/themes';
-import '../src/plugins/typings/typings.monaco.worker';
 
-import '../src/plugins/graphql/graphql.monaco.worker';
-import '../src/plugins/prettier/prettier.monaco.worker';
-
-const defaultValue = `
+const defaultContents = `
 import {
   useMonacoEditor,
   prettier,
@@ -37,21 +33,21 @@ ReactDOM.render(html\`<\${Editor} />\`, document.getElementById('root'));
 `;
 
 let Editor = () => {
-  const { containerRef, monaco, loading } = useMonacoEditor({
-    paths: {
-      workers: 'http://localhost:3000/_next/static/workers',
+  const { containerRef } = useMonacoEditor({
+    plugins: {
+      prettier: ['typescript'],
+      typings: true,
+      theme: { themes: themes as any },
+      worker: {
+        path:
+          `https://${process.env.VERCEL_URL}` ??
+          'http://localhost:3000' + '/_next/static/workers',
+      },
     },
-    themes: themes as any,
-    plugins: [
-      plugins.prettier(['typescript']),
-      plugins.typings(),
-      // graphql({
-      //   uri: 'https://swapi-graphql.netlify.app/.netlify/functions/index',
-      // }),
-    ],
+
     path: 'index.ts',
     language: 'typescript',
-    defaultValue,
+    defaultContents,
     theme: 'vs-light',
     editorDidMount: (editor, monaco) => {
       monaco.languages.typescript.loadTypes('faunadb', '2.13.0');
@@ -61,18 +57,6 @@ let Editor = () => {
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <style
-        // @ts-ignore
-        jsx
-        global
-      >
-        {`
-          body {
-            margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont;
-          }
-        `}
-      </style>
       <pre
         style={{ fontFamily: 'SF Mono', fontWeight: 'bold', marginLeft: 32 }}
       >

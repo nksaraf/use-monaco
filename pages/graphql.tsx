@@ -3,26 +3,27 @@ import { useMonacoEditor } from '../src';
 import themes from '../src/themes';
 import { plugins } from '../src';
 
-const defaultValue = `
+const defaultContents = `
 query {
   allFilms { edges { node { id }}}
 }
 `;
 
 let Editor = () => {
-  const { containerRef, monaco, loading } = useMonacoEditor({
-    paths: {
-      workers: 'http://localhost:3000/_next/static/workers/',
-    },
-    themes: themes as any,
-    plugins: [
-      plugins.graphql({
+  const { containerRef } = useMonacoEditor({
+    plugins: {
+      graphql: {
         uri: 'https://swapi-graphql.netlify.app/.netlify/functions/index',
-      }),
-    ],
+      },
+      worker: {
+        path:
+          `https://${process.env.VERCEL_URL}` ??
+          'http://localhost:3000' + '/_next/static/workers',
+      },
+    },
     path: 'index.graphql',
     language: 'graphql',
-    defaultValue,
+    defaultContents,
     theme: 'vs-light',
   });
 

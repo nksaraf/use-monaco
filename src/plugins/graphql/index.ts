@@ -1,5 +1,5 @@
-import { ICreateData } from 'monaco-graphql/dist/typings';
-import { createPlugin } from '../../monaco';
+import type { ICreateData } from 'monaco-graphql/dist/typings';
+import { createPlugin } from '../../core';
 
 export default (config: ICreateData['languageConfig']['schemaConfig']) =>
   createPlugin({ name: 'graphql', dependencies: ['core.worker'] }, (monaco) => {
