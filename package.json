@@ -1,13 +1,13 @@
 {
-  "version": "0.0.10",
+  "version": "0.0.11",
   "license": "MIT",
-  "main": "./dist/cjs/production/use-monaco.js",
+  "main": "./dist/use-monaco.js",
   "scripts": {
     "start": "next",
-    "pkg": "pkger build && node copy-workers.js",
+    "pkg": "yarn compile && node copy-workers.js",
     "build": "next build",
     "clean": "rm -rf dist",
-    "compile": "yarn clean && tsup src/index.ts src/themes.ts src/worker.ts src/plugins.ts --format esm,cjs --legacy-output && tsc --build tsconfig.build.json"
+    "compile": "yarn clean && tsup src/monaco.ts src/index.ts src/themes.ts src/worker.ts --format esm,cjs --legacy-output && tsc --build tsconfig.build.json"
   },
   "peerDependencies": {
     "react": ">=16"
@@ -59,7 +59,7 @@
     "path-browserify": "^1.0.1",
     "pkger": "^0.0.2",
     "prettier": "^2.0.5",
-    "react": "^17.0.1",
+    "react": "16.13",
     "react-dom": "^17.0.1",
     "react-monaco-editor": "0.35.0",
     "shellac": "^0.3.1",
@@ -81,29 +81,29 @@
     ".": {
       "import": "./dist/esm/use-monaco.js",
       "browser": "./dist/esm/use-monaco.js",
-      "require": "./dist/cjs/production/use-monaco.js",
-      "node": "./dist/cjs/production/use-monaco.js",
+      "require": "./dist/use-monaco.js",
+      "node": "./dist/use-monaco.js",
       "default": "./dist/esm/use-monaco.js"
     },
     "./worker": {
       "import": "./dist/esm/worker.js",
       "browser": "./dist/esm/worker.js",
-      "require": "./dist/cjs/production/worker.js",
-      "node": "./dist/cjs/production/worker.js",
+      "require": "./dist/worker.js",
+      "node": "./dist/worker.js",
       "default": "./dist/esm/worker.js"
     },
     "./themes": {
       "import": "./dist/esm/themes.js",
       "browser": "./dist/esm/themes.js",
-      "require": "./dist/cjs/production/themes.js",
-      "node": "./dist/cjs/production/themes.js",
+      "require": "./dist/themes.js",
+      "node": "./dist/themes.js",
       "default": "./dist/esm/themes.js"
     },
     "./monaco": {
       "import": "./dist/esm/monaco.js",
       "browser": "./dist/esm/monaco.js",
-      "require": "./dist/cjs/production/monaco.js",
-      "node": "./dist/cjs/production/monaco.js",
+      "require": "./dist/monaco.js",
+      "node": "./dist/monaco.js",
       "default": "./dist/esm/monaco.js"
     },
     "./package.json": "./package.json",
@@ -115,7 +115,6 @@
     "worker",
     "themes",
     "README.md",
-    "dist/types",
     "monaco"
   ]
 }
