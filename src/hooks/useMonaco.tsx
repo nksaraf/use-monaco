@@ -1,4 +1,3 @@
-import { useContext, useEffect } from 'react';
 import React from 'react';
 import type * as monacoApi from 'monaco-editor';
 import {
@@ -47,7 +46,7 @@ export const useMonaco = ({
   );
   const monacoRef = React.useRef(monaco);
   monacoRef.current = contextMonaco?.monaco || monaco;
-  useEffect(() => {
+  React.useEffect(() => {
     if (contextMonaco === undefined) {
       const cancelable = loadMonaco(
         paths.monaco,
@@ -70,11 +69,11 @@ export const useMonaco = ({
           )
         );
 
-      return cancelable.cancel;
+      return () => cancelable.cancel?.();
     }
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (onLoad) {
       const disposable = asDisposable(onLoad(monaco));
       return disposable.dispose;

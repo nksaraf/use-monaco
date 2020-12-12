@@ -9,20 +9,20 @@ query {
 
 let Editor = () => {
   const { containerRef } = useMonacoEditor({
-    plugins: {
-      graphql: {
-        uri: 'https://swapi-graphql.netlify.app/.netlify/functions/index',
-      },
-      worker: {
-        path:
-          `https://${process.env.VERCEL_URL}` ??
-          'http://localhost:3000' + '/_next/static/workers',
-      },
-    },
+    // plugins: {
+    //   graphql: {
+    //     uri: 'https://swapi-graphql.netlify.app/.netlify/functions/index',
+    //   },
+    //   worker: {
+    //     path:
+    //       `https://${process.env.VERCEL_URL}` ??
+    //       'http://localhost:3000' + '/_next/static/workers',
+    //   },
+    // },
     path: 'index.graphql',
-    language: 'graphql',
-    defaultContents,
-    theme: 'vs-light',
+    // language: 'graphql',
+    // defaultContents,
+    // theme: 'vs-light',
   });
 
   return (

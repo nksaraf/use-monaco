@@ -11,7 +11,7 @@
     "baseUrl": "./",
     "paths": {
       "use-monaco/*": ["src/*"],
-      "use-monaco": ["src/index.ts"]
+      "use-monaco": ["src/use-monaco.ts"]
     },
     "noImplicitThis": true,
     "alwaysStrict": true,

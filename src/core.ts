@@ -29,7 +29,7 @@ export function loadMonaco(
     ) as any;
 
   promise.cancel = () => {
-    cancelable.cancel();
+    cancelable.cancel?.();
     disposable.dispose();
   };
   return promise;
