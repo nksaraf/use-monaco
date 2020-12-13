@@ -112,6 +112,10 @@ export const useEditor = ({
         editorWillMount(monaco) || {}
       );
 
+      while (container.firstChild) {
+        container.removeChild(container.firstChild);
+      }
+
       const monacoEditor = monaco.editor.create(
         container,
         options,

@@ -1,5 +1,6 @@
 import { initialize, MonacoWorker } from '../../worker';
 import { GraphQLWorker } from 'monaco-graphql/dist/GraphQLWorker';
+import { printSchema } from 'graphql';
 
 initialize(
   'graphql',
@@ -25,6 +26,14 @@ initialize(
     // Monaco will only make methods available from client (not properties)
     async doValidation(uri) {
       return await this.worker.doValidation(uri);
+    }
+
+    async getSchema() {
+      return await this.worker
+        .loadSchema(this.options.languageConfig.schemaConfig.uri)
+        .then((schema) => {
+          return printSchema(schema);
+        });
     }
 
     provideDocumentFormattingEdits: MonacoWorker['provideDocumentFormattingEdits'] = async (

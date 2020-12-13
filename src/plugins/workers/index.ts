@@ -23,7 +23,7 @@ declare module 'monaco-editor' {
       timeoutDelay?: number;
       /* if boolean, all providers registered/not-registered,
             if object, more control over which specific providers are registered */
-      providers?: boolean | ILangProvidersOptions;
+      providers?: boolean | monacoApi.worker.ILangProvidersOptions;
     }
 
     interface IWorkerRegistrationOptions<T> extends IWorkerConfig<T> {
@@ -77,7 +77,7 @@ export default ({
   createPlugin(
     { name: 'core.worker', dependencies: ['core.editor'] },
     (monaco) => {
-      console.log(baseWorkerPath);
+      console.log('[monaco] base worker path:', baseWorkerPath);
       const javascriptClient: WorkerClient<
         monacoApi.languages.typescript.LanguageServiceDefaults,
         monacoApi.languages.typescript.TypeScriptWorker

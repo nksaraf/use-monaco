@@ -26,7 +26,7 @@ declare module 'monaco-editor' {
       declaration?: boolean;
       selectionRange?: boolean;
       // via diagnostics provider
-      diagnostics?: boolean;
+      diagnostics?: boolean | { disableWhenInactive?: boolean };
       // documentSemanticTokens?: boolean
       // documentRangeSemanticTokens?: boolean
     }
@@ -180,23 +180,36 @@ export class DiagnosticsProvider {
         return;
       }
 
+      // console.log(
+      //   'model added',
+      //   model.uri.toString(),
+      //   client.config.languageId,
+      //   model.getModeId()
+      // );
+
       let handle: number;
+      // console.log(handle, this._listener, this._client, model);
       this._listener[model.uri.toString()] = model.onDidChangeContent(() => {
         clearTimeout(handle);
         // @ts-ignore
         handle = setTimeout(() => {
-          if (this.isActiveModel(model)) {
-            this._doValidate(model.uri, modeId);
-          }
+          // if (this.isActiveModel(model)) {
+          this._doValidate(model.uri, modeId);
+          // }
         }, 500);
       });
 
       // if (this.isActiveModel(model)) {
-      //   this._doValidate(model.uri, modeId);
+      this._doValidate(model.uri, modeId);
       // }
     };
 
     const onModelRemoved = (model: monacoApi.editor.IModel): void => {
+      // console.log(
+      //   'model removed',
+      //   model.uri.toString(),
+      //   client.config.languageId
+      // );
       monaco.editor.setModelMarkers(model, client.config.languageId ?? '', []);
       const uriStr = model.uri.toString();
       const listener = this._listener[uriStr];
@@ -207,13 +220,25 @@ export class DiagnosticsProvider {
     };
 
     this._disposables.push(monaco.editor.onDidCreateModel(onModelAdd));
+
     this._disposables.push(
       monaco.editor.onWillDisposeModel((model) => {
+        // console.log(
+        //   'model disposed',
+        //   model.uri.toString(),
+        //   client.config.languageId
+        // );
         onModelRemoved(model);
       })
     );
+
     this._disposables.push(
       monaco.editor.onDidChangeModelLanguage((event) => {
+        // console.log(
+        //   'model changed language',
+        //   event.model.uri.toString(),
+        //   client.config.languageId
+        // );
         onModelRemoved(event.model);
         onModelAdd(event.model);
       })

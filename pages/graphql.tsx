@@ -1,14 +1,16 @@
 import React from 'react';
-import { useMonacoEditor } from '../src';
+import { useEditor, useFile, useMonacoEditor } from '../src';
 
 const defaultContents = `
+
 query {
-  allFilms { edges { node { id }}}
+  allFilms { edges { node { i }}}
 }
+
 `;
 
 let Editor = () => {
-  const { containerRef } = useMonacoEditor({
+  const { containerRef, monaco } = useMonacoEditor({
     plugins: {
       graphql: {
         uri: 'https://swapi-graphql.netlify.app/.netlify/functions/index',
@@ -22,6 +24,18 @@ let Editor = () => {
     path: 'index.graphql',
     // language: 'graphql',
     defaultContents,
+  });
+
+  const file = useFile({
+    path: 'variables.json',
+    monaco,
+    // language: 'json',
+    contents: '{}',
+  });
+
+  const { containerRef: containerRef2 } = useEditor({
+    model: file,
+    monaco,
   });
 
   return (
@@ -50,7 +64,8 @@ let Editor = () => {
         </a>
       </pre>
       <div style={{ display: 'flex', flex: 1 }}>
-        <div ref={containerRef} style={{ width: '100vw', height: '100%' }} />
+        <div ref={containerRef} style={{ width: '100vw', height: '50%' }} />
+        <div ref={containerRef2} style={{ width: '100vw', height: '50%' }} />
       </div>
     </div>
   );
