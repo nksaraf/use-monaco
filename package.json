@@ -1,12 +1,12 @@
 {
-  "version": "0.0.23",
+  "version": "0.0.24",
   "license": "MIT",
   "main": "./dist/cjs/production/use-monaco.js",
   "scripts": {
     "start": "next",
     "pkg": "pkger build",
     "build": "next build",
-    "prepublishOnly": "yarn build && yarn pkg && yarn tsc --build tsconfig.build.json && node copy-workers.js",
+    "all": "yarn build && yarn pkg && yarn tsc --build tsconfig.build.json && node copy-workers.js",
     "clean": "rm -rf dist",
     "compile": "yarn clean && tsup src/monaco.ts src/index.ts src/themes.ts src/worker.ts --format esm,cjs --legacy-output && tsc --build tsconfig.build.json"
   },
