@@ -25,9 +25,7 @@ export default (
     (monaco) => {
       let disposable = monaco.worker.register({
         label: 'typings',
-        // src: 'https://unpkg.com/use-monaco/dist/assets/typings.monaco.worker.js',
         src: monaco.worker.baseWorkerPath + `typings.monaco.worker.js`,
-        // src: 'http://localhost:3000/_next/static/workers/typings.monaco.worker.js',
         options: {},
         providers: false,
       });

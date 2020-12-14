@@ -3,5 +3,5 @@
   "private": true,
   "main": "../dist/worker.js",
   "module": "../dist/esm/worker.js",
-  "types": "../dist/types/worker"
+  "types": "../dist/types/src/worker"
 }
