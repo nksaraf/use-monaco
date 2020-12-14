@@ -83,8 +83,18 @@ export default createPlugin(
       language: monacoApi.languages.ILanguageExtensionPoint
     ) => {
       const languageId = language.id;
-      languageDefinitions[languageId] = language;
-      console.log('[monaco] registering language:', languageId);
+      const lang = monaco.languages
+        .getLanguages()
+        .find((l) => l.id === languageId);
+      if (lang) {
+        console.log('[monaco] replacing language:', languageId);
+        Object.assign(lang, language);
+        languageDefinitions[languageId] = language;
+      } else {
+        languageDefinitions[languageId] = language;
+        console.log('[monaco] registering language:', languageId);
+      }
+
       monacoLanguageRegister(language);
 
       if (language.loader) {

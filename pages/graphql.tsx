@@ -15,22 +15,27 @@ let Editor = () => {
       graphql: {
         uri: 'https://swapi-graphql.netlify.app/.netlify/functions/index',
       },
-      //   worker: {
-      //     path: process.env.VERCEL_URL
-      //       ? `https://${process.env.VERCEL_URL}`
-      //       : 'http://localhost:3000' + '/_next/static/workers',
-      //   },
+      prettier: ['graphql'],
+      worker: {
+        path: process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : 'http://localhost:3000' + '/_next/static/workers',
+      },
     },
     path: 'index.graphql',
-    // language: 'graphql',
     defaultContents,
   });
 
   const file = useFile({
-    path: 'variables.json',
+    path: 'schema.graphql',
     monaco,
-    // language: 'json',
-    contents: '{}',
+    contents: `
+
+    query {
+      allFilms { edges { node { id }}}
+    }
+    
+    `,
   });
 
   const { containerRef: containerRef2 } = useEditor({

@@ -69,8 +69,11 @@ declare module 'monaco-editor' {
   }
 }
 
+// @ts-ignore
+import pkg from '../../../package.json';
+
 export default ({
-  path: baseWorkerPath = 'https://unpkg.com/use-monaco/dist/workers/',
+  path: baseWorkerPath = `https://unpkg.com/use-monaco@${pkg.version}/dist/workers/`,
 }: {
   path: string;
 }) =>
