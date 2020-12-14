@@ -84,7 +84,7 @@ export default createPlugin(
     ) => {
       const languageId = language.id;
       languageDefinitions[languageId] = language;
-
+      console.log('[monaco] registering language:', languageId);
       monacoLanguageRegister(language);
 
       if (language.loader) {
