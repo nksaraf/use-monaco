@@ -76,7 +76,7 @@ export const useMonaco = ({
   React.useEffect(() => {
     if (onLoad) {
       const disposable = asDisposable(onLoad(monaco));
-      return disposable.dispose;
+      return disposable?.dispose;
     }
   }, [monaco]);
 

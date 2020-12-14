@@ -30,7 +30,7 @@ export function loadMonaco(
 
   promise.cancel = () => {
     cancelable.cancel?.();
-    disposable.dispose();
+    disposable?.dispose?.();
   };
   return promise;
 }
