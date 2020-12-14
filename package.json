@@ -1,5 +1,5 @@
 {
-  "version": "0.0.25",
+  "version": "0.0.26",
   "license": "MIT",
   "main": "./dist/cjs/production/use-monaco.js",
   "scripts": {
@@ -79,7 +79,7 @@
     "use-deep-compare-effect": "^1.3.1"
   },
   "module": "./dist/esm/use-monaco.js",
-  "types": "dist/types",
+  "types": "dist/types/src",
   "exports": {
     ".": {
       "import": "./dist/esm/use-monaco.js",
