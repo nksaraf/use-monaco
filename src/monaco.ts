@@ -1,7 +1,7 @@
 export * from './core';
 import * as monacoPlugins from './plugins';
 
-import * as monacoApi from 'monaco-editor';
+import type * as monacoApi from 'monaco-editor';
 import { noop } from './core';
 
 export { monacoPlugins as plugins };

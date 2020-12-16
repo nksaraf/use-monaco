@@ -1,6 +1,5 @@
 import type * as monacoApi from 'monaco-editor';
 import { asDisposable, disposeAll } from '../../utils';
-import { createWebWorker } from '../../../node_modules/monaco-editor/esm/vs/editor/common/services/webWorker';
 import { setupWorkerProviders, defaultProviderConfig } from './providers';
 
 export class WorkerConfig<TOptions>
@@ -177,21 +176,23 @@ export class WorkerClient<TOptions, TWorker> implements monacoApi.IDisposable {
     this._lastUsedTime = Date.now();
     if (!this._client) {
       const _this = this;
-      this._worker = createWebWorker(
-        new Proxy(
-          {},
-          {
-            get: function (target, prop, receiver) {
-              if (prop === 'getModel') {
-                return _this._monaco.editor.getModel;
-              }
-              if (prop === 'getModels') {
-                return _this._monaco.editor.getModels;
-              }
-              throw new Error('Invalid operation on getModel');
-            },
-          }
-        ),
+      this._worker = monaco.editor.createWebWorker(
+        // new Proxy(
+        //   {},
+        //   {
+        //     get: function (target, prop, receiver) {
+        //       console.log(prop);
+        //       if (prop === 'getModel') {
+        //         return _this._monaco.editor.getModel;
+        //       }
+        //       if (prop === 'getModels') {
+        //         return _this._monaco.editor.getModels;
+        //       }
+        //       throw new Error('Invalid operation on getModel');
+        //     },
+        //   }
+        // ),
+        // @ts-ignore
         {
           moduleId: this.config.label,
           // this._monaco.worker.environment.workerLoader,

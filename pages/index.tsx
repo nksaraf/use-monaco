@@ -39,9 +39,9 @@ let Editor = () => {
       typings: true,
       theme: { themes: themes as any },
       worker: {
-        path:
-          `https://${process.env.VERCEL_URL}` ??
-          'http://localhost:3000' + '/_next/static/workers',
+        path: process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : 'http://localhost:3000' + '/_next/static/workers',
       },
     },
 
