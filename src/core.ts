@@ -18,10 +18,10 @@ export function loadMonaco(
   const cancelable = monacoLoader.init({ paths: { vs: path } });
   let disposable: monacoApi.IDisposable;
   const promise: CancellablePromise<typeof monacoApi> = cancelable
-    .then((monaco) => {
+    .then(async (monaco) => {
       console.log('[monaco] loaded monaco');
       monaco = withPlugins(monaco);
-      disposable = monaco.plugin.install(...plugins);
+      disposable = await monaco.plugin.install(...plugins);
       return monaco;
     })
     .catch((error) =>

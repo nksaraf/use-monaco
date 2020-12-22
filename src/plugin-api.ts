@@ -4,12 +4,18 @@ import { asDisposable } from './utils';
 declare module 'monaco-editor' {
   export namespace plugin {
     export interface IPlugin {
-      (monaco: typeof monacoApi): monacoApi.IDisposable | void;
+      (monaco: typeof monacoApi):
+        | monacoApi.IDisposable
+        | void
+        | Promise<void>
+        | Promise<monacoApi.IDisposable>;
       dependencies?: string[];
       label?: string;
     }
 
-    export function install(...plugins: IPlugin[]): monacoApi.IDisposable;
+    export function install(
+      ...plugins: IPlugin[]
+    ): Promise<monacoApi.IDisposable>;
   }
 }
 
@@ -60,9 +66,9 @@ export default (monaco: typeof monacoApi) => {
     }
   }
 
-  function installPlugin(plugin: monacoApi.plugin.IPlugin) {
+  async function installPlugin(plugin: monacoApi.plugin.IPlugin) {
     console.log(`[monaco] installing plugin: ${plugin.label ?? plugin.name}`);
-    let d1 = plugin(monaco);
+    let d1 = await plugin(monaco);
 
     installed[plugin.label ?? plugin.name] = plugin;
 
@@ -76,9 +82,11 @@ export default (monaco: typeof monacoApi) => {
 
   Object.assign(monaco, {
     plugin: {
-      install: (...plugins: monacoApi.plugin.IPlugin[]) => {
+      install: async (...plugins: monacoApi.plugin.IPlugin[]) => {
         let disposables: monacoApi.IDisposable[] = [];
-        plugins.forEach((plugin) => {
+        for (var i in plugins) {
+          const plugin = plugins[i];
+
           if (installed[plugin.label]) {
             return;
           }
@@ -98,9 +106,10 @@ export default (monaco: typeof monacoApi) => {
             return;
           }
 
-          const disposable = installPlugin(plugin);
+          const disposable = await installPlugin(plugin);
           if (disposable) disposables.push(disposable);
-        });
+        }
+
         return asDisposable(disposables);
       },
     },

@@ -14,7 +14,12 @@ export interface UseMonacoOptions {
     monaco: typeof monacoApi
   ) => monacoApi.IDisposable | monacoApi.IDisposable[] | undefined;
   plugins?: boolean | PluginConfig;
-  theme?: string | monacoApi.editor.IStandaloneThemeData;
+  theme?:
+    | string
+    | monacoApi.editor.IStandaloneThemeData
+    | (() =>
+        | monacoApi.editor.IStandaloneThemeData
+        | Promise<monacoApi.editor.IStandaloneThemeData>);
 }
 
 const [MonacoProvider, _, __, MonacoContext] = createContext(
@@ -83,7 +88,18 @@ export const useMonaco = ({
   React.useEffect(() => {
     if (monaco) {
       console.log('[monaco] setting theme:', theme);
-      monaco.editor.setTheme(theme);
+      if (typeof theme === 'function') {
+        const returnedTheme: any = theme();
+        if ((returnedTheme as Promise<any>).then) {
+          returnedTheme.then((result) => {
+            monaco.editor.setTheme(result);
+          });
+        } else {
+          monaco.editor.setTheme(returnedTheme);
+        }
+      } else {
+        monaco.editor.setTheme(theme);
+      }
     }
   }, [monaco, theme]);
 
