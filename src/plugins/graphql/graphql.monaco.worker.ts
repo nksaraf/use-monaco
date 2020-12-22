@@ -139,8 +139,6 @@ export class GraphQLWorker extends MonacoWorker {
     };
   };
   resolveCompletionItem: MonacoWorker['resolveCompletionItem'] = async (
-    model,
-    pos,
     item
   ) => {
     return item;

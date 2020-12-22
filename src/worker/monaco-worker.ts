@@ -148,8 +148,6 @@ export interface LanguageWorker {
     context: monaco.languages.CompletionContext
   ): monaco.languages.ProviderResult<monaco.languages.CompletionList>;
   resolveCompletionItem?(
-    model: IMirrorModel,
-    pos: monaco.Position,
     item: monaco.languages.CompletionItem
   ): monaco.languages.ProviderResult<monaco.languages.CompletionItem>;
   completionTriggerCharacters?: string[];

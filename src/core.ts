@@ -11,7 +11,7 @@ export * from './plugin-api';
 export * from './utils';
 
 export function loadMonaco(
-  path = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.20.0/min/vs',
+  path = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.21.2/min/vs',
   plugins: monacoApi.plugin.IPlugin[] = []
 ): CancellablePromise<typeof monacoApi> {
   console.log('[monaco] loading monaco from', path, '...');

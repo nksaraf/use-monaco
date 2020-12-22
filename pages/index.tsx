@@ -50,8 +50,8 @@ let Editor = () => {
     defaultContents,
     theme: 'vs-light',
     editorDidMount: (editor, monaco) => {
-      monaco.languages.typescript.loadTypes('faunadb', '2.13.0');
-      monaco.languages.typescript.exposeGlobal('faunadb', 'query', 'q');
+      monaco.languages.typescript?.loadTypes('faunadb', '2.13.0');
+      monaco.languages.typescript?.exposeGlobal('faunadb', 'query', 'q');
     },
   });
 

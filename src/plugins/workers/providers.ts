@@ -434,8 +434,8 @@ export const setupWorkerProviders = (
       monaco.languages.registerCompletionItemProvider(languageId, {
         triggerCharacters: providers.completionTriggerCharacters || [],
         provideCompletionItems: getProvider(getWorker, 'completionItems'),
-        // resolveCompletionItem: getCompletionItemResolver(getWorker),
-        resolveCompletionItem: getResolver(getWorker, 'completionItem'),
+        resolveCompletionItem: getCompletionItemResolver(getWorker),
+        // resolveCompletionItem: getResolver(getWorker, 'completionItem'),
       })
     );
   }

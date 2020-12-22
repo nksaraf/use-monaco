@@ -88,12 +88,12 @@ export default ({
         getSyncedWorker: async (
           ...resources: monacoApi.Uri[]
         ): Promise<monacoApi.languages.typescript.TypeScriptWorker> => {
-          const getWorker = await monaco.languages.typescript.getJavaScriptWorker();
+          const getWorker = await monaco.languages.typescript?.getJavaScriptWorker();
           return await getWorker(...resources);
         },
         src: baseWorkerPath + 'ts.monaco.worker.js',
         // @ts-ignore
-        config: monaco.languages.typescript.javascriptDefaults,
+        config: monaco.languages.typescript?.javascriptDefaults ?? {},
       };
       const typescriptClient: WorkerClient<
         monacoApi.languages.typescript.LanguageServiceDefaults,
@@ -102,12 +102,12 @@ export default ({
         getSyncedWorker: async (
           ...resources: monacoApi.Uri[]
         ): Promise<monacoApi.languages.typescript.TypeScriptWorker> => {
-          const getWorker = await monaco.languages.typescript.getTypeScriptWorker();
+          const getWorker = await monaco.languages.typescript?.getTypeScriptWorker();
           return await getWorker(...resources);
         },
         src: baseWorkerPath + 'ts.monaco.worker.js',
         // @ts-ignore
-        config: monaco.languages.typescript.typescriptDefaults,
+        config: monaco.languages.typescript?.typescriptDefaults ?? {},
       };
 
       const defaultClients = (basePath) => ({

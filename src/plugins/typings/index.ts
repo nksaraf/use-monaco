@@ -23,12 +23,20 @@ export default (
   createPlugin(
     { name: 'typescript.typings', dependencies: ['core.worker'] },
     (monaco) => {
+      if (!monaco.languages.typescript) {
+        console.warn(
+          `Couldn't install typescript.typings since the typescript worker is not registered`
+        );
+        return;
+      }
+
       let disposable = monaco.worker.register({
         label: 'typings',
         src: monaco.worker.baseWorkerPath + `typings.monaco.worker.js`,
         options: {},
         providers: false,
       });
+
       monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
       monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
 
