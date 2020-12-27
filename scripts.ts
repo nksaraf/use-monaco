@@ -53,6 +53,7 @@ switch (cli.input[0]) {
     `;
   case 'build:languages':
     shellac`
+      $$ yarn patch-package
       $$ rm -rf .garage
       $$ mkdir -p .garage
       $$ yarn tsup ${services

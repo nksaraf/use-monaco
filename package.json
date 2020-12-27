@@ -6,8 +6,7 @@
     "start": "next",
     "clean": "rm -rf dist",
     "build": "yarn script build",
-    "script": "sucrase-node scripts.ts",
-    "postinstall": "yarn patch-package"
+    "script": "sucrase-node scripts.ts"
   },
   "peerDependencies": {
     "react": ">=16"
@@ -123,13 +122,6 @@
       "require": "./dist/cjs/production/themes.js",
       "node": "./dist/cjs/production/themes.js",
       "default": "./dist/esm/themes.js"
-    },
-    "./monaco": {
-      "import": "./dist/esm/monaco.js",
-      "browser": "./dist/esm/monaco.js",
-      "require": "./dist/cjs/production/monaco.js",
-      "node": "./dist/cjs/production/monaco.js",
-      "default": "./dist/esm/monaco.js"
     },
     "./package.json": "./package.json",
     "./": "./"
