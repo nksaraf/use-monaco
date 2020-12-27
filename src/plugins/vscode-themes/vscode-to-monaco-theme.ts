@@ -29,7 +29,18 @@ export function convertTheme(
   theme: IVSCodeTheme
 ): monaco.editor.IStandaloneThemeData {
   const colors = Object.fromEntries(
-    Object.entries(theme.colors ?? {}).map(([k, v]) => [k, validateColor(v)])
+    Object.entries(theme.colors ?? {})
+      .map(([k, v]) => {
+        try {
+          if (k.split('.').length === 2) return [k, validateColor(v)];
+          else {
+            return null;
+          }
+        } catch (e) {
+          return null;
+        }
+      })
+      .filter(Boolean)
   );
 
   const monacoThemeRule: IMonacoThemeRule = [
@@ -50,7 +61,7 @@ export function convertTheme(
 
   theme.tokenColors.map((color) => {
     if (typeof color.scope == 'string') {
-      const split = color.scope.split(',');
+      const split = color.scope.split(/[, ]/g);
 
       if (split.length > 1) {
         color.scope = split;
@@ -76,6 +87,10 @@ export function convertTheme(
       return;
     }
 
+    if (!color.scope) {
+      return;
+    }
+
     evalAsArray();
 
     function evalAsArray() {
@@ -97,8 +112,6 @@ export function convertTheme(
       });
     }
   });
-
-
 
   return returnTheme;
 }
