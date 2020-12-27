@@ -6,7 +6,7 @@
     "start": "next",
     "clean": "rm -rf dist",
     "build": "yarn script build",
-    "script": "sucrase-node scripts.ts"
+    "script": "yarn sucrase-node scripts.ts"
   },
   "peerDependencies": {
     "react": ">=16"
