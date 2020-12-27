@@ -6,7 +6,7 @@
     "start": "next",
     "clean": "rm -rf dist",
     "build": "yarn tsup scripts.ts --out-dir ./dist && node ./dist/scripts.js build",
-    "script": "yarn sucrase-node scripts.ts"
+    "script": "yarn tsup scripts.ts --out-dir ./dist && node ./dist/scripts.js"
   },
   "peerDependencies": {
     "react": ">=16"
