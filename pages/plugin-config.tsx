@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocalStorage, useFile, useEditor } from '../src';
+import { useLocalStorage, useTextModel, useEditor, plugins } from '../src';
 import { withMonaco } from '../src';
 
 export function App() {
@@ -12,14 +12,16 @@ export function App() {
   }`
   );
 
-  const model = useFile({
+  const model = useTextModel({
     path: 'index.graphql',
     defaultContents: val,
   });
 
   const { containerRef } = useEditor({
     model,
-    // onChange,
+    options: {
+      formatOnSave: true, // a
+    },
   });
 
   const [v, setv] = React.useState(true);
@@ -36,14 +38,15 @@ export function App() {
 
 export default withMonaco(
   {
-    plugins: {
-      worker: {
-        path:
-          `https://${process.env.VERCEL_URL}` ??
-          'http://localhost:3000' + '/_next/static/workers',
-      },
-      graphql: { uri: 'https://poke-api-delta.vercel.app/api/graphql' },
-    },
+    workersPath: process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : 'http://localhost:3000' + '/_next/static/workers',
+    languagesPath: '/languages/',
+    languages: ['graphql'],
+    plugins: [
+      plugins.prettier(),
+      plugins.graphql({ uri: 'https://poke-api-delta.vercel.app/api/graphql' }),
+    ],
   },
   App
 );

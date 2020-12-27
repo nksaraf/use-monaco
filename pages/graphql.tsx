@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEditor, useFile, useMonacoEditor } from '../src';
+import { useEditor, useTextModel, useMonacoEditor, plugins } from '../src';
 
 const defaultContents = `
 
@@ -11,28 +11,31 @@ query {
 
 let Editor = () => {
   const { containerRef, monaco } = useMonacoEditor({
-    plugins: {
-      graphql: {
-        uri: 'https://swapi-graphql.netlify.app/.netlify/functions/index',
-      },
-      prettier: ['graphql'],
-      worker: {
-        path: process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}`
-          : 'http://localhost:3000' + '/_next/static/workers',
-      },
-    },
+    workersPath: process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : 'http://localhost:3000' + '/_next/static/workers',
+    languagesPath: '/languages/',
+    plugins: [
+      'prettier',
+      'textmate',
+      ['graphql', { uri: 'https://poke-api-delta.vercel.app/api/graphql' }],
+    ],
+    languages: ['graphql'],
+    onThemeChange: console.log,
     path: 'index.graphql',
+    options: {
+      formatOnSave: true,
+    },
     defaultContents,
   });
 
-  const file = useFile({
+  const file = useTextModel({
     path: 'schema.graphql',
     monaco,
     contents: `
 
     query {
-      allFilms { edges { node { id }}}
+      pokemons { id titl }
     }
     
     `,
@@ -41,6 +44,9 @@ let Editor = () => {
   const { containerRef: containerRef2 } = useEditor({
     model: file,
     monaco,
+    options: {
+      // formatOnSave: true,
+    },
   });
 
   return (
@@ -65,7 +71,7 @@ let Editor = () => {
           href="https://github.com/nksaraf/use-monaco"
           style={{ textDecoration: 'none' }}
         >
-          use-monaco
+          use-monaco a b
         </a>
       </pre>
       <div style={{ display: 'flex', flex: 1 }}>

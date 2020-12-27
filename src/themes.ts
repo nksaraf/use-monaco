@@ -1,3 +1,3 @@
-export * from './plugins/themes/index';
-import allThemes from './plugins/themes/index';
+export * from './themes/monaco';
+import allThemes from './themes/monaco';
 export default allThemes;

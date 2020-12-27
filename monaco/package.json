@@ -1,7 +1,0 @@
-{
-  "name": "use-monaco/monaco",
-  "private": true,
-  "main": "../dist/monaco.js",
-  "module": "../dist/esm/monaco.js",
-  "types": "../dist/types/src/monaco"
-}

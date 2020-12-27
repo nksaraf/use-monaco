@@ -1,2 +1,4 @@
 export * from './monaco';
-export * from './hooks';
+export * from './react';
+import * as plugins from './plugins';
+export { plugins };

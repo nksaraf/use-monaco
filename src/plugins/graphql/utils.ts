@@ -12,6 +12,8 @@ import type {
   CompletionItem as GraphQLCompletionItem,
 } from 'graphql-language-service-types';
 
+import type * as monaco from 'monaco-editor';
+
 // @ts-ignore
 export type MonacoCompletionItem = monaco.languages.CompletionItem & {
   isDeprecated?: boolean;

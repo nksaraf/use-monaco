@@ -1,7 +1,7 @@
 import type * as monacoApi from 'monaco-editor';
-import { createPlugin, asDisposable } from '../../core';
+import { createPlugin, asDisposable } from '../../monaco';
 
-const parsers: { [key: string]: keyof typeof plugins } = {
+const knownParsers: { [key: string]: keyof typeof knownPlugins } = {
   javascript: 'babel',
   typescript: 'babel-ts',
   markdown: 'markdown',
@@ -13,7 +13,7 @@ const parsers: { [key: string]: keyof typeof plugins } = {
   vue: 'vue',
 };
 
-const plugins = {
+const knownPlugins = {
   babel: ['parser-babel'],
   'babel-ts': ['parser-babel'],
   markdown: ['parser-markdown'],
@@ -23,78 +23,72 @@ const plugins = {
   angular: ['parser-html'],
   vue: ['parser-html'],
   json: ['parser-babel'],
+  css: [''],
 };
 
+declare module 'monaco-editor' {
+  namespace plugin {
+    export let prettier: {
+      enable: (languageId: string, options?: any) => monacoApi.IDisposable;
+    };
+  }
+}
+
 export default (
-  languages: (
-    | keyof typeof parsers
-    | { [key: string]: keyof typeof plugins }
-  )[] = Object.keys(parsers),
-  options: any = {},
+  // languages: (
+  //   | keyof typeof knownParsers
+  //   | { [key: string]: keyof typeof knownPlugins }
+  // )[] = Object.keys(knownParsers),
+  prettierOptions: any = {},
   { workerSrc }: { workerSrc?: string | (() => Worker) } = {}
 ) =>
   createPlugin(
     {
       name: 'prettier',
-      dependencies: ['core.worker'],
+      dependencies: ['core.workers'],
     },
     (monaco) => {
       const workerPath =
-        workerSrc ?? monaco.worker.baseWorkerPath + 'prettier.monaco.worker.js';
-      let disposables: monacoApi.IDisposable[] = [];
+        workerSrc ?? monaco.loader.workersPath + 'prettier.monaco.worker.js';
 
-      disposables.push(
-        monaco.editor.onCreatedEditor(
-          (editor: monacoApi.editor.IStandaloneCodeEditor) =>
-            editor.addCommand(
-              monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S,
-              () => {
-                editor?.trigger('ctrl-s', 'editor.action.formatDocument', null);
-              }
-            )
-        )
-      );
-
-      languages.forEach((langauge) => {
-        if (typeof langauge === 'string') {
-          disposables.push(
-            monaco.worker.register({
-              languageId: langauge,
-              label: 'prettier',
-              src: workerPath,
-              providers: {
-                documentFormattingEdit: true,
-              },
-              options: {
-                parser: parsers[langauge],
-                plugins: plugins[parsers[langauge]],
-                ...options,
-                // workerSrc: workerPath,
-              },
-            })
-          );
-        } else if (typeof langauge === 'object') {
-          Object.keys(langauge).forEach((languageId) => {
-            disposables.push(
-              monaco.worker.register({
-                languageId: languageId,
-                label: 'prettier',
-                src: workerPath,
-                providers: {
-                  documentFormattingEdit: true,
-                },
-                options: {
-                  parser: langauge[languageId],
-                  plugins: plugins[langauge[languageId]],
-                  workerSrc: workerPath,
-                  ...options,
-                },
-              })
-            );
+      monaco.plugin.prettier = {
+        enable: (
+          languageId,
+          {
+            parser = knownParsers[languageId],
+            plugins = knownPlugins[parser],
+            ...options
+          } = prettierOptions
+        ) => {
+          return monaco.worker.register({
+            languageId: languageId,
+            label: 'prettier',
+            src: workerPath,
+            providers: {
+              documentFormattingEdit: true,
+            },
+            options: {
+              workerSrc: workerPath,
+              parser,
+              plugins,
+              ...options,
+            },
           });
-        }
-      });
+        },
+      };
 
-      return asDisposable(disposables);
+      let oldRegister = monaco.languages.register;
+
+      monaco.languages.register = (def) => {
+        oldRegister(def);
+
+        if (knownParsers[def.id]) {
+          monaco.plugin.prettier.enable(def.id, prettierOptions);
+        }
+
+        if (def.id === 'html') {
+          // monaco.languages.html.htmlDefaults.
+        }
+      };
     }
   );

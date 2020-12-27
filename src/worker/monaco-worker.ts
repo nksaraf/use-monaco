@@ -210,15 +210,16 @@ export class MonacoWorker {
   }
 
   getModel(uri: string) {
-    for (let model of this.getModels()) {
+    let models = this.getModels();
+    for (let index = 0; index < models.length; index++) {
+      let model = models[index];
       if (model.uri.toString() === uri) {
         Object.assign(model, {
           getFullModelRange: () => ({
             startLineNumber: 1,
             endLineNumber: model.getLineCount(),
             startColumn: 1,
-            endColumn:
-              model.getLineContent(model.getLineCount() - 1).length + 1,
+            endColumn: model.getLineContent(model.getLineCount()).length + 1,
           }),
         });
         return model;

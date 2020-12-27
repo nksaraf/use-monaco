@@ -1,22 +1,29 @@
-import { createPlugin } from '../../core';
-import { SchemaConfig } from './typings';
+import { createPlugin } from '../../monaco';
+import { SchemaConfig } from './types';
 
 export default (config: SchemaConfig) =>
-  createPlugin({ name: 'graphql', dependencies: ['core.worker'] }, (monaco) => {
-    return monaco.worker.register({
-      label: 'graphql',
-      languageId: 'graphql',
-      options: {
-        languageConfig: {
-          schemaConfig: config,
+  createPlugin(
+    {
+      name: 'language.graphql.service',
+      dependencies: ['core.workers', 'language.graphql'],
+    },
+    (monaco) => {
+      return monaco.worker.register({
+        label: 'graphql',
+        languageId: 'graphql',
+        options: {
+          languageConfig: {
+            schemaConfig: config,
+          },
         },
-      },
-      src: monaco.worker.baseWorkerPath + 'graphql.monaco.worker.js',
-      providers: {
-        hover: true,
-        documentFormattingEdit: true,
-        completionItem: true,
-        diagnostics: true,
-      },
-    });
-  });
+        src: monaco.loader.workersPath + 'graphql.monaco.worker.js',
+        providers: {
+          hover: true,
+          // will conflict with prettier plugin, do disable this if you are using that
+          documentFormattingEdit: !monaco.plugin.isInstalled('prettier'),
+          completionItem: true,
+          diagnostics: true,
+        },
+      });
+    }
+  );

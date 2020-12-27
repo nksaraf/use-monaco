@@ -1,7 +1,7 @@
 {
   "name": "use-monaco/worker",
   "private": true,
-  "main": "../dist/worker.js",
+  "main": "../dist/cjs/worker.js",
   "module": "../dist/esm/worker.js",
-  "types": "../dist/types/src/worker"
+  "types": "../dist/types/worker"
 }
