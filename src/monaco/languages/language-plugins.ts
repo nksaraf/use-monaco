@@ -13,10 +13,7 @@ export const basicLanguagePlugins: {
   basicLanguages.map((lang) => [
     lang,
     createPlugin({ name: 'language.' + lang }, async (monaco) => {
-      if (
-        knownBasicLanguages.includes(lang as any) &&
-        !monaco.loader.includeBasicLanguages
-      ) {
+      if (knownBasicLanguages.includes(lang as any)) {
         await monaco.plugin.install(
           createRemotePlugin({
             name: 'language.' + lang + '.basic',
@@ -26,10 +23,7 @@ export const basicLanguagePlugins: {
         );
       }
 
-      if (
-        knonwLanguageServices.includes(lang as any) &&
-        !monaco.loader.includeBasicLanguages
-      ) {
+      if (knonwLanguageServices.includes(lang as any)) {
         await monaco.plugin.install(
           createRemotePlugin({
             name: 'language.' + lang + '.service',
@@ -39,10 +33,7 @@ export const basicLanguagePlugins: {
         );
       }
 
-      if (
-        languageServiceAliases[lang] &&
-        !monaco.loader.includeBasicLanguages
-      ) {
+      if (languageServiceAliases[lang]) {
         await monaco.plugin.install(
           createRemotePlugin({
             name: 'language.' + languageServiceAliases[lang] + '.service',

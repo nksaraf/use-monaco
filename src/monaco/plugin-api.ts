@@ -81,15 +81,20 @@ async function fetchPlugin({ url, fetchOptions = {} }) {
   const code = text;
 
   const plugin = (monaco) => {
-    modularize(
-      code,
-      { monaco },
-      {
-        'monaco-editor-core': monaco,
-        'monaco-editor': monaco,
-        'use-monaco': monaco,
-      }
-    );
+    try {
+      modularize(
+        code,
+        { monaco },
+        {
+          'monaco-editor-core': monaco,
+          'monaco-editor': monaco,
+          'use-monaco': monaco,
+        }
+      );
+    } catch (e) {
+      console.log('[monaco] Error installing plugin from', url);
+    }
+
     return {
       dispose: () => {},
     };

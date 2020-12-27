@@ -103,8 +103,6 @@ export const useMonaco = ({
       plugins: any,
       languages: any
     ) {
-      console.log({ pluginMap, basicLanguagePlugins });
-
       let pluginDisposables = await monaco.plugin.install(
         ...plugins
           .map((plug) =>
@@ -206,7 +204,6 @@ export const useMonaco = ({
 
   useMonacoEffect(
     (monaco) => {
-      console.log('heree1');
       if (typeof theme === 'function') {
         const returnedTheme: any = theme();
         if ((returnedTheme as Promise<any>).then) {

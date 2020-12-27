@@ -293,8 +293,6 @@ const shades = (color) => {
   const hsl = Color(color).hsl();
   const isLight = hsl.isLight();
 
-  console.log({ isLight });
-
   for (var i = 0; i < 10.1; i = i + 0.5) {
     old.push([
       (isLight ? i : 10 - i) * 100,
