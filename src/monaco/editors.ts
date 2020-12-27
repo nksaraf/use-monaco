@@ -85,16 +85,13 @@ export default createPlugin(
         focusedEditor = editor;
       }
 
-      let _oldDispose = editor.dispose;
-
       editor.onDidFocusEditorText(() => {
         focusedEditor = editor;
       });
 
-      editor.dispose = () => {
+      editor.onDidDispose(() => {
         editors = editors.filter((ed) => ed !== editor);
-        _oldDispose();
-      };
+      });
     });
   }
 );
