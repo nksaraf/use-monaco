@@ -88,16 +88,25 @@ export const useMonaco = ({
   ...loaderOptions
 }: UseMonacoOptions = {}): CreatedMonacoContext => {
   // Loading (unset once we have initialized monaco)
+  let rFirstMount = React.useRef(true);
   const [isLoading, setIsLoading] = React.useState(true);
 
   // Set monaco context to state
   const contextMonaco = useMonacoContext();
 
   // Monaco instance (use the one in context if we have it)
-  const [monaco, setMonaco] = React.useState<null | Monaco>(() =>
-    contextMonaco ? contextMonaco.monaco : null
+  const [monaco, setMonaco] = React.useState<null | Monaco>(
+    contextMonaco?.monaco
+      ? contextMonaco.monaco
+      : typeof window !== 'undefined'
+      ? window.monaco
+      : null
   );
 
+  // A ref to hold our disposables (don't run these until the hook unmounts!)
+  const disposablesRef = React.useRef<(() => void)[]>([]);
+
+  //
   // Load and/or initialize monaco
   React.useEffect(() => {
     let cancelable: CancellablePromise<Monaco>;
@@ -108,9 +117,9 @@ export const useMonaco = ({
     if (typeof window === 'undefined') return;
 
     // If we have monaco already....
-    if (monaco) {
+    if (monaco && isLoading) {
       if (!window.monaco) window.monaco = monaco;
-      if (isLoading) setIsLoading(false);
+      setIsLoading(false);
       return;
     }
 
@@ -124,9 +133,26 @@ export const useMonaco = ({
         monaco = await cancelable;
       }
 
-      monaco.plugin
+      // Load plugins
+      await monaco.plugin
         .install(...getPlugins(plugins, languages))
         .then((d) => (pluginDisposable = asDisposable(d)));
+
+      // Setup themes
+      if (!!themes) {
+        monaco.editor.defineThemes(themes);
+      }
+
+      // Set the current theme
+      if (!!theme) {
+        let themeToSet = typeof theme === 'function' ? theme() : theme;
+
+        if (typeof themeToSet === 'string' || !('then' in themeToSet)) {
+          monaco.editor.setTheme(themeToSet);
+        } else {
+          themeToSet.then(monaco.editor.setTheme);
+        }
+      }
 
       // Perform any onLoad tasks.
       if (onLoad) {
@@ -148,17 +174,19 @@ export const useMonaco = ({
       console.error('An error occurred during initialization of Monaco:', error)
     );
 
-    return () => {
-      cancelable?.cancel?.();
-      pluginDisposable?.dispose();
-      onLoadDisposable?.dispose();
-    };
-  }, [monaco]);
+    disposablesRef.current = [
+      pluginDisposable?.dispose,
+      onLoadDisposable?.dispose,
+      cancelable?.cancel,
+    ];
+  }, [monaco, languages, plugins]);
 
+  //
   // Setup onThemeChange event handler
   React.useEffect(() => {
     if (!monaco) return;
     if (!onThemeChange) return;
+    if (rFirstMount.current) return;
 
     const disposable = monaco.editor.onDidChangeTheme((theme) => {
       onThemeChange(theme, monaco);
@@ -169,9 +197,11 @@ export const useMonaco = ({
     };
   }, [monaco, onThemeChange, theme]);
 
+  //
   // Setup theme and themes
   React.useEffect(() => {
     if (!monaco) return;
+    if (rFirstMount.current) return;
 
     // Setup themes
     if (!!themes) {
@@ -190,6 +220,7 @@ export const useMonaco = ({
     }
   }, [monaco, theme, themes]);
 
+  //
   // A hook to run changes when monaco changes. (Maybe not needed?)
   const useMonacoEffect = React.useCallback(
     (cb: (monaco?: Monaco) => void | (() => void), deps: any[] = []) => {
@@ -197,6 +228,12 @@ export const useMonaco = ({
     },
     [monaco]
   );
+
+  // Cleanup disposables on unmount.
+  React.useEffect(() => {
+    rFirstMount.current = false;
+    return () => disposablesRef.current.forEach((fn) => fn && fn());
+  }, []);
 
   return {
     monaco,
@@ -206,7 +243,7 @@ export const useMonaco = ({
   };
 };
 
-// Other stuff
+// Helpers
 
 function getPlugins(
   plugins: UseMonacoOptions['plugins'],
@@ -234,22 +271,4 @@ function getPlugins(
       )
       .filter(Boolean),
   ];
-}
-
-export function useRefWithEffect<T>(
-  initialValue: T
-): [
-  React.MutableRefObject<T | undefined>,
-  (effect: (obj: T) => void, deps: any[]) => void
-] {
-  const ref = React.useRef<T>(initialValue);
-  const useRefEffect = (effect: (obj: T) => void, deps: any[]) => {
-    React.useEffect(() => {
-      if (ref.current) {
-        return effect(ref.current);
-      }
-    }, [ref.current, ...deps]);
-  };
-
-  return [ref, useRefEffect];
 }
