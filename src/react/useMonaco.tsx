@@ -83,7 +83,7 @@ export const useMonaco = ({
     },
   },
   plugins = [],
-  theme = 'ayu-light',
+  theme,
   languages = ['javascript', 'typescript', 'html', 'css', 'json'],
   ...loaderOptions
 }: UseMonacoOptions = {}): CreatedMonacoContext => {
