@@ -207,7 +207,7 @@ export default (monaco: typeof monacoApi) => {
               : null;
 
           if (!plugin) {
-            throw new Error(`Could'nt resolve plugin, ${plugin}`);
+            throw new Error(`Couldn't resolve plugin, ${plugin}`);
           }
 
           plugin.label = plugin.label ?? plugin.name;

@@ -68,7 +68,7 @@ export default (
       monaco.languages.typescript.typescriptDefaults.setCompilerOptions(
         defaultCompilerOptions
       );
-      monaco.languages.typescript.typescriptDefaults.setCompilerOptions(
+      monaco.languages.typescript.javascriptDefaults.setCompilerOptions(
         defaultCompilerOptions
       );
 

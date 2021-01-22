@@ -13,8 +13,13 @@ import ReactDOM from 'https://cdn.pika.dev/react-dom';
 import htm from 'https://cdn.pika.dev/htm';
 const html = htm.bind(React.createElement);
 
- createState(1);
-
+createState({
+	data: { count: 0 },
+	on: { INCREMENTED: 'increment' },
+	actions: {
+		increment: (data) => data.scount++
+	}
+});
 
 let Editor = () => {
   const { containerRef, monaco, model, loading } = useMonacoEditor({
@@ -37,17 +42,23 @@ ReactDOM.render(html\`<\${Editor} />\`, document.getElementById('root'));
 
 let Editor = () => {
   const { containerRef } = useMonacoEditor({
-    plugins: ['prettier', 'typings'],
+    languages: ['javascript', 'typescript'],
+    plugins: [plugins.prettier({ semi: false }), 'typings'],
     onLoad: (monaco) => {
-      monaco.languages.typescript?.loadTypes('faunadb', '2.13.0');
-      monaco.languages.typescript?.loadTypes('state-designer', '1.3.35');
-      monaco.languages.typescript?.loadTypes('@state-designer/core', '1.3.35');
-      monaco.languages.typescript?.loadTypes('@state-designer/react', '1.3.35');
-      monaco.languages.typescript?.exposeGlobal(
-        `import { createState as _createState } from 'state-designer';`,
+      if (!monaco.languages.typescript) {
+        console.warn(
+          'You need to add the typescript language in order to load types.'
+        );
+        return;
+      }
+
+      monaco.languages.typescript.loadTypes('faunadb', '2.13.0');
+      monaco.languages.typescript.loadTypes('@state-designer/core', '1.3.35');
+      monaco.languages.typescript.exposeGlobal(
+        `import { createState as _createState } from '@state-designer/core';`,
         `export const createState: typeof _createState;`
       );
-      monaco.languages.typescript?.exposeGlobal(
+      monaco.languages.typescript.exposeGlobal(
         `import { query } from 'faunadb';`,
         `export const q: typeof query;`
       );
