@@ -73,18 +73,18 @@ export function useMonacoContext() {
 }
 
 export const useMonaco = ({
-  themes,
-  onThemeChange = () => {},
-  onLoad,
+  plugins = [],
+  languages = ['javascript', 'typescript', 'html', 'css', 'json'],
   defaultEditorOptions = {
     automaticLayout: true,
     minimap: {
       enabled: false,
     },
   },
-  plugins = [],
+  onLoad,
   theme,
-  languages = ['javascript', 'typescript', 'html', 'css', 'json'],
+  themes,
+  onThemeChange = () => {},
   ...loaderOptions
 }: UseMonacoOptions = {}): CreatedMonacoContext => {
   // Loading (unset once we have initialized monaco)
@@ -123,11 +123,6 @@ export const useMonaco = ({
         cancelable = loadMonaco(loaderOptions ?? {});
         monaco = await cancelable;
       }
-
-      // Install and setup plugins.
-      pluginDisposable = await monaco.plugin.install(
-        ...getPlugins(plugins, languages)
-      );
 
       // Perform any onLoad tasks.
       if (onLoad) {
