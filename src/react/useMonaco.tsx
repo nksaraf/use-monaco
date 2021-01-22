@@ -84,7 +84,7 @@ export const useMonaco = ({
   onLoad,
   theme,
   themes,
-  onThemeChange = () => {},
+  onThemeChange,
   ...loaderOptions
 }: UseMonacoOptions = {}): CreatedMonacoContext => {
   // Loading (unset once we have initialized monaco)
@@ -124,6 +124,10 @@ export const useMonaco = ({
         monaco = await cancelable;
       }
 
+      monaco.plugin
+        .install(...getPlugins(plugins, languages))
+        .then((d) => (pluginDisposable = asDisposable(d)));
+
       // Perform any onLoad tasks.
       if (onLoad) {
         const disposables = await onLoad(monaco);
@@ -150,21 +154,6 @@ export const useMonaco = ({
       onLoadDisposable?.dispose();
     };
   }, [monaco]);
-
-  // Handle changed plugins or languages
-  React.useEffect(() => {
-    if (!monaco) return;
-    // Install and setup plugins.
-    let disposable: monacoApi.IDisposable;
-
-    monaco.plugin
-      .install(...getPlugins(plugins, languages))
-      .then((d) => (disposable = asDisposable(d)));
-
-    return () => {
-      disposable?.dispose();
-    };
-  }, [monaco, plugins, languages]);
 
   // Setup onThemeChange event handler
   React.useEffect(() => {
