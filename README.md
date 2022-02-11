@@ -1,6 +1,6 @@
 # 🗒️ `use-monaco`
 
-! Documentation is not updated yet, in progress...
+__This works with `monaco-editor` v0.20.0, and has NOT been updated for more recent versions.__
 
 [![npm](https://img.shields.io/npm/v/use-monaco)](https://npm.im/use-monaco)
 
