@@ -54,7 +54,7 @@ interface CreatedMonacoContext {
   monaco: Monaco;
   isLoading: boolean;
   useMonacoEffect: (
-    cb: (monaco?: Monaco) => void | (() => void),
+    cb: (monaco: Monaco) => void | (() => void),
     deps?: any[]
   ) => void;
   defaultEditorOptions?: monacoApi.editor.IEditorOptions;

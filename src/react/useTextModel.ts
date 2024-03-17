@@ -73,7 +73,7 @@ export const useTextModel = ({
   onChange = noop,
   defaultContents = '',
   path,
-}: UseTextModelOptions & MonacoProp) => {
+}: UseTextModelOptions & MonacoProp): monacoApi.editor.ITextModel => {
   const contextMonaco = useMonacoContext()?.monaco;
   const monaco = customMonaco || contextMonaco;
 

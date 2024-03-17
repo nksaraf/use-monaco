@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   MonacoProvider,
   useMonacoContext,
@@ -37,7 +38,7 @@ USER
 `;
 
 function Editor() {
-  const { monaco, useMonacoEffect } = useMonacoContext();
+  const { monaco, useMonacoEffect } = useMonacoContext()!;
 
   const model = useTextModel({
     monaco,
