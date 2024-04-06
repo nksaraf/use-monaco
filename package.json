@@ -66,7 +66,7 @@
     "monaco-html": "^3.1.1",
     "monaco-json": "^3.2.1",
     "monaco-typescript": "^4.1.1",
-    "next": "9.3.2",
+    "next": "^12.0.4",
     "next-transpile-modules": "3.1.0",
     "patch-package": "^6.2.2",
     "path-browserify": "^1.0.1",
